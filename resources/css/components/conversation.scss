@@ -1,0 +1,104 @@
+.conversation {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    position: relative;
+
+    &__header {
+        padding: var(--size-m) var(--size-l);
+        box-shadow: 0 1px 0 rgba(var(--color-text-rgb), .2);
+        z-index: 2;
+
+        &-inner {
+            align-items: center;
+            display: flex;
+            gap: var(--size-m);
+            justify-content: space-between;
+            min-height: var(--btn-height);
+        }
+    }
+
+    &__participants {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--size-m);
+    }
+
+    &__participant {
+        align-items: center;
+        color: var(--color-text-dark);
+        display: flex;
+        font-weight: 600;
+        gap: var(--size-s);
+        text-decoration: none;
+    }
+
+    &__messages {
+        background: var(--color-bg-tint);
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: var(--size-s);
+        padding: var(--size-l);
+        overflow-y: auto;
+        z-index: 1;
+    }
+
+    &__reply-inner {
+        max-width: 56rem;
+        margin: auto;
+    }
+
+    &__date {
+        align-items: center;
+        color: var(--color-text-lc);
+        display: flex;
+        font-size: var(--fontSize-xs);
+        gap: var(--size-s);
+        list-style: none;
+        padding: var(--size-s) 0;
+
+        &::before,
+        &::after {
+            border-top: 1px solid var(--color-border-lc);
+            content: '';
+            flex: 1;
+        }
+    }
+
+    &__loader {
+        color: var(--color-text-lc);
+        display: flex;
+        font-size: var(--fontSize-xs);
+        justify-content: center;
+        list-style: none;
+        padding: var(--size-s) 0;
+
+        button {
+            color: inherit;
+            cursor: pointer;
+            text-decoration: underline;
+
+            &:disabled {
+                cursor: default;
+                text-decoration: none;
+            }
+        }
+    }
+
+    &__reply {
+        box-shadow: 0 -1px 0 rgba(var(--color-text-rgb), .2);
+        display: flex;
+        padding: var(--size-m) var(--size-l);
+        z-index: 2;
+
+        &-inner {
+            align-items: flex-end;
+            display: flex;
+            gap: var(--size-s);
+            margin: auto;
+            max-width: 56rem;
+            width: 100%;
+        }
+    }
+}

@@ -1,0 +1,84 @@
+@use '@css/mixins' as *;
+
+.page {
+    flex-direction: column;
+    display: flex;
+    gap: var(--size-xl);
+    min-height: calc(100svh - var(--nav-height));
+
+    &__header {
+        display: flex;
+        flex-direction: column;
+        gap: var(--size-s);
+        margin-bottom: var(--size-xl);
+    }
+
+    &__intro {
+        font-size: var(--fontSize-l);
+    }
+
+    &__actions {
+        align-items: center;
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: space-between;
+    }
+
+    &__main {
+        flex: 1;
+        padding: var(--size-xxl) 0;
+    }
+
+    &__footer {
+        border-top: 1px solid var(--color-border);
+        color: var(--color-text-lc);
+        font-size: var(--fontSize-xs);
+        line-height: var(--lineHeight-l);
+        padding: var(--size-l) 0;
+
+        &-heart {
+            color: var(--color-1);
+        }
+
+        &-inner {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 0 var(--gutter-width);
+        }
+
+        &-legal {
+            display: flex;
+            gap: var(--size-m);
+        }
+    }
+
+    &--full {
+        gap: 0;
+
+        .page__main {
+            padding: 0;
+
+            & > .wrapper {
+                max-width: none;
+                padding: 0;
+            }
+        }
+
+        .page__footer {
+            display: none;
+        }
+    }
+
+    @include screen-min(m) {
+        &__footer {
+            font-size: var(--fontSize-s);
+
+            &-inner {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+    }
+}

@@ -1,0 +1,31 @@
+.topicListItem {
+    align-items: center;
+    display: flex;
+    gap: .75em;
+    justify-content: space-between;
+    padding: 1.25em;
+
+    &:not(:last-child) {
+        border-bottom: 1px solid var(--color-border-lc);
+    }
+
+    &__text {
+        flex: 1;
+    }
+
+    &__title {
+        color: var(--color-1);
+        font-size: var(--fontSize-l);
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    &__areas {
+        color: var(--color-text-lc);
+
+        a {
+            color: var(--color-text-lc);
+            font-size: var(--fontSize-s);
+        }
+    }
+}

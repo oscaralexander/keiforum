@@ -1,0 +1,13 @@
+[
+    { "name": "Bergkwartier", "slug": "bergkwartier" },
+    { "name": "Centrum", "slug": "centrum" },
+    { "name": "Kattenbroek", "slug": "kattenbroek" },
+    { "name": "Leusderkwartier", "slug": "leusderkwartier" },
+    { "name": "Nieuwland", "slug": "nieuwland" },
+    { "name": "Randenbroek", "slug": "randenbroek" },
+    { "name": "Schothorst", "slug": "schothorst" },
+    { "name": "Soesterkwartier", "slug": "soesterkwartier" },
+    { "name": "Stoutenburg", "slug": "stoutenburg" },
+    { "name": "Vathorst", "slug": "vathorst" },
+    { "name": "Zielhorst", "slug": "zielhorst" }
+]

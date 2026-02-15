@@ -1,0 +1,11 @@
+.areaList {
+    color: var(--color-1);
+    display: flex;
+    flex-wrap: wrap;
+    font-size: var(--fontSize-l);
+    gap: .35em;
+
+    a {
+        text-decoration: none;
+    }
+}

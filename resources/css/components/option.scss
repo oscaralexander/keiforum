@@ -1,0 +1,87 @@
+@keyframes option-check {
+    from {
+        transform: scale(0);
+    }
+}
+
+.option {
+    position: relative;
+    user-select: none;
+
+    input {
+        height: 0;
+        position: absolute;
+        width: 0;
+
+        &:checked + label {
+            &::before {
+                background-color: var(--option-bg-color-on);
+                border-color: var(--option-border-color-on);
+            }
+
+            &::after {
+                display: block;
+            }
+        }
+
+        &:focus-visible + label {
+            &::before {
+                outline: var(--btn-outline-focus);
+            }
+        }
+    }
+
+    label {
+        align-items: center;
+        cursor: pointer;
+        display: flex;
+        gap: .5em;
+
+        &::before {
+            background: var(--option-bg-color-off);
+            border: 1px solid var(--option-border-color-off);
+            border-radius: var(--borderRadius-s);
+            content: '';
+            cursor: pointer;
+            height: 1.25em;
+            outline: var(--btn-outline);
+            outline-offset: 2px;
+            transition: var(--duration-s);
+            flex: 0 0 1.25em;
+            width: 1.25em;
+            z-index: 1;
+        }
+
+        &::after {
+            animation: option-check var(--duration-m) both cubic-bezier(0, 1, .5, 1.5);
+            background: #FFF;
+            color: #FFF;
+            content: '';
+            display: none;
+            height: 1.25em;
+            mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" vector-effect="non-scaling-stroke"/></svg>');
+            mask-position: center;
+            mask-repeat: no-repeat;
+            mask-size: 1em;
+            pointer-events: none;
+            position: absolute;
+            width: 1.25em;
+            z-index: 2;
+        }
+    }
+
+    &.option--radio {
+        label::before {
+            border-radius: 50%;
+        }
+
+        input:checked + label::after {
+            transform: scale(1);
+            transition: var(--duration-m);;
+        }
+
+        label::after {
+            border-radius: 50%;
+        }
+    }
+}

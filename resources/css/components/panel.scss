@@ -1,0 +1,22 @@
+@use '@css/mixins' as *;
+
+.panel {
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-border);
+    margin-left: calc(var(--gutter-width) * -1);
+    margin-right: calc(var(--gutter-width) * -1);
+
+    &--padded {
+        padding: var(--size-xl);
+    }
+
+    &__inner {
+        max-width: 32rem;
+    }
+
+    @include screen-min(m) {
+        border: 1px solid var(--color-border);
+        border-radius: var(--borderRadius-l);
+    }
+}

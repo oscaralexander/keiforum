@@ -1,0 +1,46 @@
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+
+    &__description,
+    &__error,
+    &__label,
+    &__success {
+        font-size: var(--fontSize-s);
+        line-height: var(--lineHeight-l);
+    }
+
+    &__label {
+        color: var(--color-text-hc);
+        font-weight: 500;
+    }
+
+    &__description {
+        color: #999;
+    }
+
+    &__error {
+        color: var(--color-bad);
+    }
+
+    &__success {
+        display: flex;
+        align-items: center;
+        gap: .25em;
+        color: var(--color-good);
+
+        svg {
+            flex: 0 0 1.25em;
+            height: 1.25em;
+            stroke-width: 1.75;
+        }
+    }
+
+    &:has(input[required]) &__label::after,
+    &:has(select[required]) &__label::after {
+        color: var(--color-bad);
+        content: '*';
+        margin-left: .15em;
+    }
+}

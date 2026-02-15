@@ -1,0 +1,21 @@
+.login {
+    .input {
+        position: relative;
+        z-index: 1;
+
+        &:first-child {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            margin-bottom: -1px;
+        }
+
+        &:last-child {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        &:focus-within {
+            z-index: 2;
+        }
+    }
+}

@@ -1,0 +1,63 @@
+.conversationList {
+    flex: 1;
+
+    &__item {
+        align-items: center;
+        // border-bottom: 1px solid var(--color-border-lc);
+        border-radius: 0;
+        color: var(--color-text);
+        display: flex;
+        gap: var(--size-m);
+        padding: var(--size-m);
+        text-decoration: none;
+
+        &.is-active {
+            background: rgba(var(--color-1-rgb), .1);
+        }
+
+        &-flex {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            gap: var(--size-xs);
+            justify-content: center;
+            min-width: 0;
+        }
+
+        &-lastMessage {
+            color: var(--color-text-lc);
+            display: block;
+            font-size: var(--fontSize-s);
+            line-height: var(--lineHeight-m);
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 100%;
+        }
+
+        &-usernames {
+            color: var(--color-text-hc);
+            font-weight: 500;
+            line-height: var(--lineHeight-m);
+        }
+
+        &-avatars {
+            display: flex;
+            flex-wrap: wrap;
+
+            & > *:not(:first-child) {
+                margin-left: -.5em;
+            }
+        }
+
+        &-unreadCount {
+            background: var(--color-1);
+            color: var(--color-bg);
+            font-size: var(--fontSize-xxs);
+            font-weight: 600;
+            line-height: 1rem;
+            border-radius: 2rem;
+            padding: 0 0.33rem;
+        }
+    }
+}

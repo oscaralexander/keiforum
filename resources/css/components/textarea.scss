@@ -1,0 +1,50 @@
+.textarea {
+    border: 1px solid var(--input-border-color);
+    border-radius: var(--borderRadius-m);
+    display: grid;
+    min-width: 0;
+    outline: var(--input-outline);
+    overflow: hidden;
+    padding: calc(.5rem - 1px) 0;
+    position: relative;
+    transition: var(--duration-s);
+    width: 100%;
+
+    textarea,
+    &::after {
+        background: var(--color-bg);
+        border: none;
+        color: var(--color-text);
+        font-size: var(--fontSize-m);
+        grid-area: 1 / 1 / 2 / 2;
+        line-height: var(--lineHeight-l);
+        margin: 0;
+        max-height: calc(1em * var(--lineHeight-l) * var(--max-rows));
+        min-width: 0;
+        outline: none;
+        padding: 0 .75em;
+        position: relative;
+        text-align: left;
+    }
+
+    textarea {
+        overflow: hidden;
+        resize: none;
+        z-index: 2;
+
+        &::placeholder {
+            color: rgba(var(--color-text-rgb), .5);
+        }
+    }
+
+    &::after {
+        content: attr(data-replicated-value) ' ';
+        opacity: 0;
+        white-space: pre-wrap;
+    }
+
+    &:focus-within {
+        border-color: var(--input-border-color-focus);
+        outline: 1px solid var(--input-border-color-focus);
+    }
+}

@@ -1,0 +1,91 @@
+@use '../vars' as *;
+@use '../mixins' as *;
+@use 'sass:map';
+
+.flex {
+    display: flex;
+    width: 100%;
+
+    &-align {
+        &-baseline {
+            align-items: baseline;
+        }
+
+        &-spaceBetween {
+            align-items: space-between;
+        }
+
+        &-center {
+            align-items: center;
+        }
+
+        &-end {
+            align-items: flex-end;
+        }
+
+        &-start {
+            align-items: flex-start;
+        }
+    }
+
+    &-col {
+        flex-direction: column;
+    }
+
+    &-flex {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    &-justify {
+        &-center {
+            justify-content: center;
+        }
+
+        &-end {
+            justify-content: flex-end;
+        }
+    
+        &-spaceBetween {
+            justify-content: space-between;
+        }
+        
+        &-start {
+            justify-content: flex-start;
+        }
+    }
+
+    &-row {
+        flex-direction: row;
+    }
+
+    &-wrap {
+        flex-wrap: wrap;
+    }
+}
+
+@mixin flex-gap($selector, $val) {
+    #{$selector} {
+        gap: $val;
+    }
+}
+
+@each $key, $val in $sizes {
+    @include flex-gap('.flex-gap-#{$key}', $val);
+}
+
+@each $screen in map.keys($screens) {
+    @include screen-min($screen) {
+        .#{$screen}\:flex-col {
+            flex-direction: column;
+        }
+
+        .#{$screen}\:flex-row {
+            flex-direction: row;
+        }
+
+        @each $key, $val in $sizes {
+            @include flex-gap('.#{$screen}\\:flex-gap-#{$key}', $val);
+        }
+    }
+}

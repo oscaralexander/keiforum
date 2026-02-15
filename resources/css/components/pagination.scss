@@ -1,0 +1,95 @@
+@use '@css/mixins' as *;
+
+.pagination {
+    align-items: center;
+    color: var(--color-text-lc);
+    display: flex;
+    font-size: var(--fontSize-s);
+    justify-content: space-between;
+
+    &__list {
+        align-items: center;
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        position: relative;
+    }
+
+    &__link {
+        align-items: center;
+        background: transparent;
+        border: 1px solid var(--color-border);
+        border-radius: 0;
+        color: var(--color-link);
+        cursor: pointer;
+        display: flex;
+        font-weight: 500;
+        height: var(--btn-height-s);
+        justify-content: center;
+        min-width: var(--btn-height-s);
+        outline: var(--btn-outline);
+        outline-offset: 2px;
+        padding: 1px 0;
+        text-decoration: none;
+        user-select: none;
+
+        &:not(:first-child) {
+            margin-left: -1px;
+        }
+
+        &:first-child {
+            border-top-left-radius: var(--borderRadius-m);
+            border-bottom-left-radius: var(--borderRadius-m);
+        }
+
+        &:last-child {
+            border-top-right-radius: var(--borderRadius-m);
+            border-bottom-right-radius: var(--borderRadius-m);
+        }
+
+        &:active:not(&--disabled):not(&--active) {
+            padding: 2px 0 0 0;
+        }
+
+        &:focus-visible {
+            outline: var(--btn-outline-focus);
+        }
+
+        &:hover:not(&--disabled):not(&--active) {
+            color: var(--color-link-hover);
+            z-index: 9;
+        }
+
+        &--active {
+            background: var(--btn-primary-color-bg);
+            border-color: var(--btn-primary-color-border);
+            color: var(--btn-primary-color);
+            cursor: default;
+            z-index: 10;
+        }
+
+        &--disabled {
+            cursor: not-allowed;
+            color: var(--color-text-lc);
+            opacity: .5;
+        }
+
+        svg {
+            display: block;
+            height: 1rem;
+            stroke-width: 2;
+            width: 1rem;
+        }
+    }
+
+    @include screen-min(m) {
+        font-size: var(--fontSize-m);
+
+        &__link {
+            height: var(--btn-height);
+            min-width: var(--btn-height);
+        }
+    }
+}
+

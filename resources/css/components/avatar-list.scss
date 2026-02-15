@@ -1,0 +1,28 @@
+.avatarList {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+
+    & > * {
+        &:not(:first-child) {
+            margin-left: -.5em;
+        }
+    }
+
+    &__more {
+        align-items: center;
+        background: var(--color-bg-tint);
+        box-shadow: 0 0 0 2px var(--color-bg);
+        border-radius: 50%;
+        color: var(--color-text);
+        display: flex;
+        flex: 0 0 2rem;
+        font-size: var(--fontSize-xs);
+        font-weight: 500;
+        height: 2rem;
+        justify-content: center;
+        padding-right: .1em;
+        position: relative;
+        z-index: 6;
+    }
+}

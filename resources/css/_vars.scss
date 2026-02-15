@@ -1,0 +1,139 @@
+$grid-columns: 12;
+
+$screens: (
+    's': 768px,
+    'm': 1280px,
+    'l': 1440px,
+);
+
+$sizes: (
+    'xs': .25rem,
+    's': .5rem,
+    'm': 1rem,
+    'l': 1.5rem,
+    'xl': 2rem,
+    'xxl': 3rem,
+);
+
+:root {
+    /* Color */
+    --color-1: #c93020;
+    --color-1-rgb: 201, 48, 32;
+
+    --color-2: #565350;
+    --color-2-rgb: 86, 83, 80;
+
+    --color-bg: #fff;
+    --color-bg-tint: #fff9f6; //f9f6f3;
+
+    --color-bad: rgb(201, 48, 32);
+    --color-bad-border: rgba(201, 48, 32, .35);
+    --color-bad-tint: rgba(201, 48, 32, .075);
+
+    --color-good: #09805f;
+    --color-good-rgb: 9, 128, 95;
+    --color-good-border: rgba(9, 128, 95, .35);
+    --color-good-tint: rgba(9, 128, 95, .1);
+    --color-good-tint-hover: rgba(9, 128, 95, .2);
+
+    --color-text: #565350;
+    --color-text-rgb: 86, 83, 80;
+    --color-text-hc: #161310;
+    --color-text-lc: #a3a09c;
+
+    --color-link: var(--color-1);
+    --color-link-hover: var(--color-text-hc);
+
+    --color-border: #d9d6d3;
+    --color-border-hc: #a9a6a3;
+    --color-border-lc: #e9e6e3;
+
+    /* Layout */
+    --gutter-width: 1rem;
+
+    /* Border radius */
+    --borderRadius-s: .25rem;
+    --borderRadius-m: .5rem;
+    --borderRadius-l: 1rem;
+
+    /* Box shadow */
+    --boxShadow-s: 0 .125rem .125rem rgb(0 0 0 / 5%);
+    --boxShadow-m: 0 .5rem 1.5rem rgb(0 0 0 / 15%);
+    --boxShadow-l: 0 1rem 4rem rgb(0 0 0 / 15%);
+
+    /* Buttons */
+    --btn-height: 2.5rem;
+    --btn-height-s: 2rem;
+    --btn-outline: 3px solid transparent;
+    --btn-outline-focus: 3px solid rgba(var(--color-1-rgb), .25);
+
+    --btn-color: var(--color-text);
+    --btn-color-hover: var(--color-text-hc);
+    --btn-color-bg: transparent;
+    --btn-color-bg-hover: transparent;
+    --btn-color-border: var(--color-border);
+    --btn-color-border-hover: var(--color-border-hc);
+
+    --btn-primary-color: #fff;
+    --btn-primary-color-hover: #fff;
+    --btn-primary-color-bg: var(--color-link);
+    --btn-primary-color-bg-hover: var(--color-link-hover);
+    --btn-primary-color-border: var(--color-1);
+    --btn-primary-color-border-hover: var(--color-link-hover);
+
+    /* Duration */
+    --duration-s: 125ms;
+    --duration-m: 250ms;
+    --duration-l: 500ms;
+
+    /* Font */
+    --font-1: system-ui, sans-serif;
+    --font-2: 'Parkinsans', system-ui, sans-serif;
+
+    /* Font size */
+    --fontSize-xxs: .6875rem;
+    --fontSize-xs: .75rem;
+    --fontSize-s: .875rem;
+    --fontSize-m: 1rem;
+    --fontSize-l: 1.125rem;
+    --fontSize-xl: 1.25rem;
+    --fontSize-xxl: 2rem;
+
+    /* Nav height */
+    --nav-height: 5rem;
+
+    /* Input */
+    --input-border-color: var(--color-border);
+    --input-border-color-focus: var(--color-1);
+    --input-border-radius: var(--borderRadius-m);
+    --input-height: 2.5em;
+    --input-outline: 1px solid transparent;
+    --input-outline-focus: 1px solid var(--color-1);
+
+    /* Options */
+    --option-bg-color-on: var(--color-1);
+    --option-border-color-on: var(--color-1);
+    --option-color-on: #fff;
+    --option-bg-color-off: var(--color-bg-tint);
+    --option-border-color-off: var(--color-border);
+    --option-color-off: #fff;
+
+    /* Line height */
+    --lineHeight-s: 1;
+    --lineHeight-m: 1.25;
+    --lineHeight-l: 1.5;
+
+    /* breakpoint */
+    @each $key, $value in $screens {
+        --breakpoint-#{$key}: #{$value};
+    }
+
+    /* size */
+    @each $key, $value in $sizes {
+        --size-#{$key}: #{$value};
+    }
+
+    @media (min-width: 1024px) {
+        --fontSize-xxl: 2.5rem;
+    }
+}

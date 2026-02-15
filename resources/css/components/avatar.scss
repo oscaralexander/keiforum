@@ -1,0 +1,144 @@
+@keyframes avatar-spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.avatar {
+    aspect-ratio: 1 / 1;
+    position: relative;
+
+    &--s {
+        flex: 0 0 32px;
+        height: 32px;
+        width: 32px;
+    }
+
+    &--m {
+        flex: 0 0 4rem;
+        height: 4rem;
+        width: 4rem;
+    }
+
+    &--l {
+        flex: 0 0 8rem;
+        height: 8rem;
+        width: 8rem;
+    }
+
+    &--online {
+        &::after {
+            background: var(--color-good);
+            content: '';
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px var(--color-bg);
+            height: .5rem;
+            right: 0;
+            bottom: 0;
+            position: absolute;
+            width: .5rem;
+            z-index: 3;
+        }
+    }
+
+    &--premium {
+        &::before {
+            background: linear-gradient(120deg, #ca984c 0%, #e9d680 0%, #ca984c 100%);
+            content: '';
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px var(--color-bg);
+            inset: -4px;
+            position: absolute;
+            z-index: 1;
+        }
+    }
+
+    &__clip {
+        aspect-ratio: 1 / 1;
+        background: #000;
+        border-radius: 50%;
+        overflow: hidden;
+        position: relative;
+
+        img {
+            border-radius: 0;
+        }
+
+        &::after {
+            background: #fff;
+            content: '';
+            inset: 0;
+            mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path opacity=".4" d="M256 64C150 64 64 150 64 256s86 192 192 192c70.1 0 131.3-37.5 164.9-93.6l.1 .1c-6.9 14.9-1.5 32.8 13 41.2c15.3 8.9 34.9 3.6 43.7-11.7c.2-.3 .4-.6 .5-.9l0 0C434.1 460.1 351.1 512 256 512C114.6 512 0 397.4 0 256S114.6 0 256 0c-17.7 0-32 14.3-32 32s14.3 32 32 32z"/><path d="M224 32c0-17.7 14.3-32 32-32C397.4 0 512 114.6 512 256c0 46.6-12.5 90.4-34.3 128c-8.8 15.3-28.4 20.5-43.7 11.7s-20.5-28.4-11.7-43.7c16.3-28.2 25.7-61 25.7-96c0-106-86-192-192-192c-17.7 0-32-14.3-32-32z"/></svg>');
+            mask-size: 1.5rem;
+            mask-position: center;
+            mask-repeat: no-repeat;
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            transition: opacity var(--duration-m);
+            z-index: 2;
+        }
+    }
+
+    img {
+        border-radius: 50%;
+        box-shadow: 0 0 0 2px var(--color-bg);
+        aspect-ratio: 1 / 1;
+        transition: var(--duration-m);
+        position: relative;
+        width: 100%;
+        z-index: 2;
+    }
+
+    &__remove {
+        appearance: none;
+        background: var(--color-bg);
+        border-radius: 50%;
+        border: none;
+        box-shadow: var(--boxShadow-s);
+        color: var(--color-text-lc);
+        display: flex;
+        height: 1.75rem;
+        outline: var(--input-outline);
+        outline-offset: 2px;
+        width: 1.75rem;
+        top: 0;
+        right: 0;
+        position: absolute;
+        transition: var(--duration-m);
+        z-index: 3;
+
+        svg {
+            height: 1rem;
+            margin: auto;
+            stroke-width: 1.75;
+            width: 1rem;
+        }
+
+        &:focus-visible {
+            outline: var(--input-outline-focus);
+        }
+
+        &:hover {
+            color: var(--color-text-hc);
+        }
+    }
+
+    &.is-loading {
+        .avatar__clip {
+            img {
+                filter: grayscale(100%);
+                opacity: 0.5;
+            }
+
+            &::after {
+                animation: avatar-spinner 1s linear infinite;
+                background: #fff;
+                mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path opacity=".4" d="M256 64C150 64 64 150 64 256s86 192 192 192c70.1 0 131.3-37.5 164.9-93.6l.1 .1c-6.9 14.9-1.5 32.8 13 41.2c15.3 8.9 34.9 3.6 43.7-11.7c.2-.3 .4-.6 .5-.9l0 0C434.1 460.1 351.1 512 256 512C114.6 512 0 397.4 0 256S114.6 0 256 0c-17.7 0-32 14.3-32 32s14.3 32 32 32z"/><path d="M224 32c0-17.7 14.3-32 32-32C397.4 0 512 114.6 512 256c0 46.6-12.5 90.4-34.3 128c-8.8 15.3-28.4 20.5-43.7 11.7s-20.5-28.4-11.7-43.7c16.3-28.2 25.7-61 25.7-96c0-106-86-192-192-192c-17.7 0-32-14.3-32-32z"/></svg>');
+                mask-position: center;
+                mask-size: 1.5rem;
+                opacity: 1;
+            }
+        }
+    }
+}

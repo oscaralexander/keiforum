@@ -1,0 +1,183 @@
+@use '@css/mixins' as *;
+
+.nav {
+    align-items: center;
+    background: var(--color-bg);
+    box-shadow: 0 1px 0 0 rgba(var(--color-text-rgb), .2);
+    display: flex;
+    height: var(--nav-height);
+    justify-content: space-between;
+    padding: 0 var(--size-l);
+    position: sticky;
+    top: calc((var(--nav-height) * -1) - 1);
+    z-index: 10;
+    width: 100%;
+
+    &__logo {
+        align-items: center;
+        display: flex;
+        flex: 0 0 auto;
+        text-decoration: none;
+
+        &-icon {
+            aspect-ratio: 1 / 1;
+            height: 2.5rem;
+        }
+
+        &-name {
+            font-family: var(--font-2);
+            font-size: var(--fontSize-xl);
+            font-weight: 700;
+            margin-left: .5em;
+            transition: transform var(--duration-m);
+        }
+
+        &:active,
+        &:hover {
+            color: var(--color-link);
+
+            .nav__logo-name {
+                transform: rotate(-5deg);
+            }
+        }
+    }
+
+    &__menuSearch {
+        align-items: center;
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    &__search {
+        min-width: 240px;
+
+        .input {
+            border-radius: 1.5rem;
+        }
+    }
+
+    &__menu {
+        display: flex;
+    }
+
+    &__menu-link {
+        align-items: center;
+        display: flex;
+        border-radius: var(--input-height);
+        height: var(--input-height);
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0 1em;
+
+        &:hover {
+            color: var(--color-link-hover);
+        }
+
+        &--active,
+        &--active:hover {
+            background: rgba(var(--color-1-rgb), .1);
+            color: var(--color-1);
+        }
+    }
+
+    &__actions {
+        align-items: center;
+        display: flex;
+        gap: .75rem;
+    }
+
+    &__action {
+        align-items: center;
+        background: transparent;
+        border-radius: 50%;
+        display: flex;
+        flex: 0 0 var(--input-height);
+        justify-content: center;
+        height: var(--input-height);
+        position: relative;
+
+        .badge {
+            background: var(--color-1);
+            color: var(--color-bg);
+            font-size: var(--fontSize-xxs);
+            font-weight: 600;
+            line-height: 1rem;
+            border-radius: 2rem;
+            padding: 0 .33rem;
+            position: absolute;
+            top: -.25rem;
+            left: 1.75rem;
+        }
+
+        &:hover,
+        &--active {
+            background: rgba(var(--color-1-rgb), .1);
+            color: var(--color-link);
+        }
+    }
+
+    &__user {
+        align-items: center;
+        aspect-ratio: 1 / 1;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        height: var(--input-height);
+        justify-content: center;
+        position: relative;
+        width: var(--input-height);
+
+        &:hover {
+            background: rgba(var(--color-1-rgb), .1);
+        }
+
+        .avatar {
+            appearance: none;
+            background: transparent;
+            border: none;
+            margin: 0;
+            padding: 0;
+
+            img {
+                box-shadow: none;
+            }
+        }
+
+        &-menu {
+            background: var(--color-bg);
+            box-shadow: var(--boxShadow-m);
+            border-radius: var(--borderRadius-m);
+            position: absolute;
+            padding: var(--size-s) 0;
+            top: 100%;
+            right: 0;
+            width: max-content;
+
+            &-link {
+                align-items: center;
+                appearance: none;
+                background: transparent;
+                border: none;
+                border-radius: 0;
+                color: var(--color-link);
+                display: flex;
+                font-size: var(--fontSize-m);
+                font-weight: 500;
+                gap: .5rem;
+                padding: var(--size-s) var(--size-l);
+                text-decoration: none;
+
+                svg {
+                    flex: 0 0 1.25rem;
+                    height: 1.25rem;
+                    stroke-width: 2;
+                }
+
+                &:hover {
+                    background: rgba(var(--color-1-rgb), .1);
+                    color: var(--color-link);
+                }
+            }
+        }
+    }
+}

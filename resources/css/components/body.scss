@@ -1,0 +1,33 @@
+.body {
+    line-height: var(--lineHeight-l);
+
+    img {
+        display: inline-block;
+        border-radius: var(--borderRadius-s);
+        max-height: 50vh;
+        max-width: 100%;
+    }
+
+    p, ol, ul, div {
+        &:not(:last-child) {
+            margin-bottom: 1em;
+        }
+
+        &:empty {
+            display: none;
+        }
+    }
+
+    &__video {
+        position: relative;
+
+        iframe {
+            aspect-ratio: 16 / 9;
+            border-radius: var(--borderRadius-s);
+            border: none;
+            height: auto;
+            overflow: hidden;
+            width: 100%;
+        }
+    }
+}

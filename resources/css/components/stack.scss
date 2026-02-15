@@ -1,0 +1,17 @@
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    &--center {
+        align-items: center;
+    }
+
+    &--end {
+        align-items: flex-end;
+    }
+
+    &--start {
+        align-items: flex-start;
+    }
+}

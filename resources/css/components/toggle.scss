@@ -1,0 +1,66 @@
+.toggle {
+    align-items: center;
+    display: flex;
+    min-height: var(--input-height);
+    position: relative;
+
+    &__input {
+        appearance: none;
+        height: 0;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 0;
+
+        &:checked ~ .toggle__label::before {
+            background: var(--color-good);
+        }
+
+        &:checked ~ .toggle__label::after {
+            left: .75rem;
+        }
+    }
+
+    &__label {
+        display: block;
+        line-height: var(--lineHeight-l);
+        padding-left: 3rem;
+        position: relative;
+
+        &::before,
+        &::after {
+            border-radius: .75rem;
+            content: '';
+            cursor: pointer;
+            display: block;
+            height: 1.5rem;
+            left: 0;
+            position: absolute;
+            top: calc(50% - .75rem);
+            transition: var(--duration-m);
+            width: 2.25rem;
+        }
+
+        &::before {
+            background: var(--color-border-lc);
+            outline: var(--input-outline);
+            outline-offset: 2px;
+        }
+
+        &::after {
+            background: var(--color-bg);
+            background-clip: content-box;
+            border: 4px solid transparent;
+            width: 1.5rem;
+        }
+    }
+
+    &__description {
+        color: var(--color-text-lc);
+        font-size: var(--fontSize-s);
+    }
+
+    &:has(:focus-visible) &__label::before {
+        outline: var(--input-outline-focus);
+    }
+}

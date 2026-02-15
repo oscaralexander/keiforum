@@ -1,0 +1,57 @@
+@charset 'utf-8';
+
+@use './fonts';
+@use './vars';
+@use './mixins';
+@use './reset';
+
+@use './global';
+
+@use './components/alert';
+@use './components/area-list';
+@use './components/avatar';
+@use './components/avatar-list';
+@use './components/body';
+@use './components/btn';
+@use './components/conversation';
+@use './components/conversations';
+@use './components/conversation-list';
+@use './components/editor';
+@use './components/field';
+@use './components/flex';
+@use './components/formatted';
+@use './components/input';
+@use './components/login';
+@use './components/message';
+@use './components/meta';
+@use './components/multi-select';
+@use './components/nav';
+@use './components/option';
+@use './components/page';
+@use './components/panel';
+@use './components/pagination';
+@use './components/password';
+@use './components/path';
+@use './components/popout';
+@use './components/post';
+@use './components/reply';
+@use './components/prose-mirror';
+@use './components/textarea';
+@use './components/toggle';
+@use './components/topic-list-item';
+@use './components/wrapper';
+
+body {
+    color: var(--color-text);
+    font-family: var(--font-1);
+}
+
+h3 {
+    color: var(--color-text-hc);
+    font-size: var(--fontSize-l);
+    font-weight: 600;
+}
+
+.lucide {
+    stroke-width: 1.75;
+}

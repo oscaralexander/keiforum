@@ -1,0 +1,25 @@
+.formatted {
+    line-height: var(--lineHeight-l);
+
+    b, strong {
+        color: var(--color-text-hc);
+        font-weight: 700;
+    }
+
+    i, em {
+        font-style: italic;
+    }
+
+    ol, p, ul {
+        margin: 1em 0;
+        max-width: 65ch;
+
+        &:first-child {
+            margin-top: 0;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
