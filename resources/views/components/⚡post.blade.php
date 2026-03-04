@@ -92,19 +92,19 @@ new class extends Component
         <div class="post__actions">
             @auth
                 <x-popout>
-                    <x-popout.item
-                        icon="send"
-                        :label="__('ui.private_message')"
-                        :navigate="false"
-                        wire:click="$dispatch('openModal', { component: 'messages.message-modal', arguments: { username: '{{ $post->user->username }}' } })"
-                    />
-                    {{--
                     @if ($post->user_id !== auth()->id())
+                        <x-popout.item
+                            icon="send"
+                            :label="__('ui.private_message')"
+                            :navigate="false"
+                            wire:click="$dispatch('openModal', { component: 'messages.message-modal', arguments: { username: '{{ $post->user->username }}' } })"
+                        />
+                        {{--
                         <x-popout.item icon="reply" :label="__('ui.reply')" />
                         <x-popout.item icon="flag" :label="__('ui.report')" />
+                        --}}
                     @endif
-                    --}}
-                    @if ($post->user_id === auth()->id() || (auth()->check() && auth()->user()->is_admin))
+                    @if ($post->user_id === auth('web')->id() || auth('web')->user()->is_admin)
                         <x-popout.item icon="pencil" :label="__('ui.edit')" wire:click="edit" />
                         <x-popout.item icon="trash" danger :label="__('ui.delete')" wire:click="delete" />
                     @endif
