@@ -90,7 +90,7 @@ new class extends Component
             'author' => [
                 '@type' => 'Person',
                 'name' => $this->topic->user->username,
-                'url' => route('user.show', $this->topic->user),
+                'url' => route('member.show', $this->topic->user),
             ],
             'comment' => $this->posts->skip($skip)->map(function (Post $post) {
                 return [
@@ -100,7 +100,7 @@ new class extends Component
                     'author' => [
                         '@type' => 'Person',
                         'name' => $post->user->username,
-                        'url' => route('user.show', $post->user),
+                        'url' => route('member.show', $post->user),
                     ],
                     'interactionStatistic' => [
                         [
@@ -174,22 +174,13 @@ new class extends Component
 
 <div>
     <x-schema :data="$this->schema" />
-    <header class="page__header">
-        <x-path :items="[
+    <x-header
+        :areas="$topic->areas"
+        :path="[
             ['label' => $topic->forum->name, 'href' => route('forum.show', $topic->forum)],
-        ]" />
-        <h1>{{ $topic->title }}</h1>
-        @if ($topic->areas->isNotEmpty())
-            <div class="areaList">
-                <div class="areaList__icon"><x-icon icon="map-pin" /></div>
-                <div class="areaList__list">
-                    @foreach ($this->topic->areas as $area)
-                        <a class="areaList__list-item" href="{{ route('area.show', $area) }}" wire:navigate>{{ $area->name }}</a>@if(!$loop->last), @endif
-                    @endforeach
-                </div>
-            </div>
-        @endif
-    </header>
+        ]"
+        :title="$topic->title"
+    />
     <div class="flex flex-col flex-gap-l">
         <div class="panel">
             <ol>

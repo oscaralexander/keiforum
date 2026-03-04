@@ -1,0 +1,115 @@
+.modal {
+    inset: 0;
+    overflow: auto;
+    position: fixed;
+    z-index: 1000;
+
+    &__inner {
+        display: flex;
+        left: 0;
+        min-height: 100%;
+        padding: .5rem;
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+
+    &__overlay {
+        background: rgba(0, 0, 0, 0.5);
+        inset: 0;
+        position: absolute;
+
+        &.is-enter {
+            transition: opacity 500ms ease-out;
+
+            &-start {
+                opacity: 0;
+            }
+
+            &-end {
+                opacity: 1;
+            }
+        }
+
+        &.is-enter {
+            transition: opacity 500ms ease-in;
+
+            &-start {
+                opacity: 1;
+            }
+
+            &-end {
+                opacity: 0;
+            }
+        }  
+    }
+
+    &__dialog {
+        background: var(--color-bg);
+        box-shadow: 0 1em 4em rgba(0, 0, 0, .5);
+        border-radius: 0.5em;
+        flex: 1;
+        margin: auto;
+        max-width: 32rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    &__header {
+        align-items: center;
+        background: var(--color-bg);
+        box-shadow: 0 1px 0 0 rgba(var(--color-text-rgb), 0.2);
+        border-radius: 0.5rem 0.5rem 0 0;
+        display: flex;
+        padding: 0 .75rem 0 1.5rem;
+        position: sticky;
+        top: 0;
+        height: 4rem;
+        user-select: none;
+        z-index: 2;
+    }
+
+    &__title {
+        color: var(--color-text-hc);
+        font-weight: 600;
+        flex: 1;
+    }
+
+    &__close {
+        align-items: center;
+        appearance: none;
+        background: transparent;
+        border: none;
+        border-radius: 50%;
+        color: var(--color-text-lc);
+        cursor: pointer;
+        display: flex;
+        height: 2.5rem;
+        justify-content: center;
+        outline: var(--input-outline);
+        outline-offset: 2px;
+        transition: var(--duration-m);
+        flex: 0 0 2.5rem;
+
+        &:focus-visible {
+            outline: var(--input-outline-focus);
+        }
+
+        &:hover {
+            color: var(--color-text);
+        }
+    }
+
+    &__body {
+        padding: 1.5rem;
+        position: relative;
+        z-index: 1;
+
+        .tabs__tabScroller {
+            background: var(--color-bg-tint);
+            margin: -1.5rem -1.5rem 2rem -1.5rem;
+            padding: 1rem 1.5rem 0 1.5rem;
+            gap: 0;
+        }
+    }
+}

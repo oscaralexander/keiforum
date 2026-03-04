@@ -41,7 +41,7 @@ new class extends Component
     {
         return [
             'title' => 'required|string|max:255',
-            'topicAreas' => 'required|array',
+            'topicAreas' => 'nullable|array',
             'topicAreas.*' => 'required|exists:areas,id',
             'body' => 'required|string',
         ];
@@ -58,8 +58,10 @@ new class extends Component
             'user_id' => auth()->id(),
         ]);
 
-        // Attach Areas to Topic
-        $topic->areas()->sync($this->topicAreas);
+        if (!empty($this->topicAreas)) {
+            // Attach Areas to Topic
+            $topic->areas()->sync($this->topicAreas);
+        }
 
         // Create Post
         Post::create([
@@ -74,24 +76,24 @@ new class extends Component
 ?>
 
 <div>
-    <header class="page__header">
-        <x-path :items="[
+    <x-header
+        :path="[
             ['label' => $forum->name, 'href' => route('forum.show', $forum)],
-        ]" />
-        <h1>@lang('topic/create.title')</h1>
-    </header>
+        ]"
+        :title="__('topic/create.title')"
+    />
     <div class="panel panel--padded">
         <form wire:submit="submit">
             <div class="flex flex-col flex-gap-xl">
                 <div class="flex flex-col flex-gap-m">
                     <x-field :label="__('topic/form.title.label')" model="title">
-                        <x-input.text model="title" required />
+                        <x-input.text large model="title" required />
                     </x-field>
                     <div class="flex flex-col flex-gap-m l:flex-gap-m l:flex-row">                    
                         <x-field
                             class="flex-flex"
                             :label="__('topic/form.forum.label')"
-                            model="topicAreas"
+                            model="forum_id"
                         >
                             <x-input.select
                                 model="forum_id"
@@ -105,7 +107,11 @@ new class extends Component
                             :label="__('topic/form.topic_areas.label')"
                             model="topicAreas"
                         >
-                            <x-input.multi-select model="topicAreas" :options="$this->areas" :placeholder="__('topic/form.topic_areas.placeholder')" />
+                            <x-input.multi-select
+                                model="topicAreas"
+                                :options="$this->areas"
+                                :placeholder="__('topic/form.topic_areas.placeholder')"
+                            />
                         </x-field>
                     </div>
                     <x-field :label="__('topic/form.body.label')" model="body">

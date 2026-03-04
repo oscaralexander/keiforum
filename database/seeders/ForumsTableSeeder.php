@@ -35,6 +35,8 @@ class ForumsTableSeeder extends Seeder
 
         foreach ($forums as $forum) {
             DB::table('forums')->insert([
+                'description' => $forum['description'],
+                'icon' => $forum['icon'],
                 'name' => $forum['name'],
                 'slug' => $forum['slug'],
             ]);

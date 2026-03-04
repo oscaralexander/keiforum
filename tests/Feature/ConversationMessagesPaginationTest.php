@@ -132,7 +132,7 @@ class ConversationMessagesPaginationTest extends TestCase
         $conversation = $this->createConversationWithMessageCount($user, 30);
 
         $this->actingAs($user)
-            ->get(route('messages', $conversation))
+            ->get(route('conversations', $conversation))
             ->assertSee(__('messages/index.load_more'));
     }
 
@@ -142,7 +142,7 @@ class ConversationMessagesPaginationTest extends TestCase
         $conversation = $this->createConversationWithMessageCount($user, 10);
 
         $this->actingAs($user)
-            ->get(route('messages', $conversation))
+            ->get(route('conversations', $conversation))
             ->assertDontSee(__('messages/index.load_more'));
     }
 }

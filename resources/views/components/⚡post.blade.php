@@ -78,36 +78,32 @@ new class extends Component
         <div class="post__user">
             <x-avatar :user="$post->user" />
             <div class="post__user-name">
-                <a class="post__username" href="{{ route('user.show', $post->user) }}" wire:navigate>{{ $post->user->username }}</a>
+                <a class="post__username" href="{{ route('member.show', $post->user) }}" wire:navigate>{{ $post->user->username }}</a>
                 @auth
                     <ul class="meta">
+                        <li class="meta__item">{{ $post->user->name }}</li>
                         @if ($post->user->area)
-                            <li class="meta__item">{{ $post->user->name }}</li>
                             <li class="meta__item">{{ $post->user->area->name }}</li>
-                        @else
-                            <li class="meta__item">{{ $post->user->name }}</li>
                         @endif
                     </ul>
                 @endauth
             </div>
         </div>
         <div class="post__actions">
-            <ul class="meta">
-                <li class="meta__item"><time datetime="{{ $post->created_at->toIso8601String() }}">{{ $post->created_at->diffForHumans() }}</time></li>
-                <li class="meta__item">
-                    <a
-                        data-share-title="{{ $post->topic->title }}"
-                        href="{{ $this->postUrl }}"
-                        x-data="share()"
-                    >#{{ $number }}</a>
-                </li>
-            </ul>
             @auth
                 <x-popout>
+                    <x-popout.item
+                        icon="send"
+                        :label="__('ui.private_message')"
+                        :navigate="false"
+                        wire:click="$dispatch('openModal', { component: 'messages.message-modal', arguments: { username: '{{ $post->user->username }}' } })"
+                    />
+                    {{--
                     @if ($post->user_id !== auth()->id())
                         <x-popout.item icon="reply" :label="__('ui.reply')" />
                         <x-popout.item icon="flag" :label="__('ui.report')" />
                     @endif
+                    --}}
                     @if ($post->user_id === auth()->id() || (auth()->check() && auth()->user()->is_admin))
                         <x-popout.item icon="pencil" :label="__('ui.edit')" wire:click="edit" />
                         <x-popout.item icon="trash" danger :label="__('ui.delete')" wire:click="delete" />
@@ -117,9 +113,12 @@ new class extends Component
         </div>
     </header>
     @if ($isEditing)
-        <form wire:submit="submit">
+        <form class="flex flex-col flex-gap-m" wire:submit="submit">
             <x-editor model="body" />
-            <x-btn primary submit>Opslaan</x-btn>
+            <div class="flex flex-gap-s">
+                <x-btn text wire:click="cancel">Annuleren</x-btn>
+                <x-btn primary submit>Opslaan</x-btn>
+            </div>
         </form>
     @else
         <div class="body">{!! $post->body_transformed !!}</div>
@@ -138,5 +137,18 @@ new class extends Component
             @endauth
             <div class="post__like-count">{{ $post->likes->count() }}</div>
         </div>
+        <ul class="meta">
+            <li class="meta__item">
+                <time class="m:hide" datetime="{{ $post->created_at->toIso8601String() }}">{{ time_diff($post->created_at) . ' ' . __('ui.ago') }}</time>
+                <time class="m:show"datetime="{{ $post->created_at->toIso8601String() }}">{{ time_diff($post->created_at, long: true) . ' ' . __('ui.ago') }}</time>
+            </li>
+            <li class="meta__item">
+                <a
+                    data-share-title="{{ $post->topic->title }}"
+                    href="{{ $this->postUrl }}"
+                    x-data="share()"
+                >#{{ $number }}</a>
+            </li>
+        </ul>
     </footer>
 </li>

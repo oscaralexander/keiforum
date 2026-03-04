@@ -7,49 +7,46 @@
 
 <a
     @class([
-        'conversationList__item',
-        'is-active' => $isActive,
+        'conversationListItem',
+        'conversationListItem--active' => $isActive,
     ])
-    href="{{ route('messages', $conversation) }}"
+    href="{{ route('conversations', $conversation) }}"
     wire:navigate
 >
-    <div class="conversationList__item-flex">
-        <div class="conversationList__item-usernames">
-            @php
-                $usernames = $conversation->otherParticipants()->pluck('username');
-                $displayed = $usernames->take(3);
-                $more = $usernames->count() - 3;
-
-                if ($more > 0) {
-                    $displayed->push('+' . $more);
-                }
-            @endphp
-            {{ $displayed->join(', ') }}
-        </div>
-        @php
-            $lastMessage = $conversation->lastMessage;
-        @endphp
-        @if ($conversation->lastMessage)
-            <p class="conversationList__item-lastMessage">
-                {{ Str::limit($conversation->lastMessage->body_plain_text, 40, preserveWords: true) }}
-            </p>
-            <ul class="meta">
-                @if ($conversation->unread_count > 0)
-                    <li class="meta__item">
-                        <span class="conversationList__item-unreadCount">{{ $conversation->unread_count }}</span>
-                    </li>
-                @endif
-                <li class="meta__item">
-                    <time
-                        class="message__time"
-                        datetime="{{ $lastMessage->created_at->toIso8601String() }}"
-                        title="{{ $lastMessage->created_at->translatedFormat('j F Y, H:i') }}"
-                    >{{ time_diff($lastMessage->created_at) }}</time>
-                </li>
-            </ul>
-        @endif
-    </div>
     @if ($conversation->lastMessage)
-        <x-avatar class="conversationList__item-avatar" :size="AvatarSize::S" :user="$conversation->lastMessage->user" />
+        <x-avatar class="conversationListItem__avatar" :size="AvatarSize::S" :user="$conversation->lastMessage->user" />
     @endif
+    <div class="conversationListItem__content">
+        <header class="conversationListItem__flex">
+            <div class="conversationListItem__usernames">
+                @php
+                    $usernames = $conversation->otherParticipants()->pluck('username');
+                    $displayed = $usernames->take(3);
+                    $more = $usernames->count() - 3;
+
+                    if ($more > 0) {
+                        $displayed->push('+' . $more);
+                    }
+                @endphp
+                {{ $displayed->join(', ') }}
+            </div>
+            <time
+                class="conversationListItem__time"
+                datetime="{{ $conversation->lastMessage->created_at->toIso8601String() }}"
+                title="{{ $conversation->lastMessage->created_at->translatedFormat('j F Y, H:i') }}"
+            >{{ time_diff($conversation->lastMessage->created_at) }}</time>
+        </header>
+        <div class="conversationListItem__flex">
+            <div class="conversationListItem__lastMessage">
+                <p class="conversationListItem__lastMessageText">
+                    {{ Str::limit($conversation->lastMessage->body_plain_text, 100, preserveWords: true) }}
+                </p>
+            </div>
+            {{--
+            @if ($conversation->unread_count > 0)
+                <div class="conversationListItem__unreadCount">{{ $conversation->unread_count }}</div>
+            @endif
+            --}}
+        </div>
+    </div>
 </a>

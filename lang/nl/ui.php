@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'coming_soon' => 'Binnenkort beschikbaar.',
+    'ago' => 'geleden',
     'back' => 'Terug',
     'browse' => 'Bladeren…',
     'cancel' => 'Annuleren',
@@ -10,8 +10,10 @@ return [
     'edit' => 'Bewerken',
     'filter' => 'Filteren',
     'login' => 'Inloggen',
+    'login_alt' => 'Aanmelden',
     'logout' => 'Uitloggen',
     'ok' => 'OK',
+    'private_message' => 'Privébericht',
     'register' => 'Registreren',
     'reply' => 'Reageren',
     'report' => 'Melden',

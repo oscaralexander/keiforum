@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Gender;
+use App\Lib\EmbedTransformer;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,9 +33,11 @@ class User extends Authenticatable
 
     public function avatarUrl(int $size = 256): string
     {
+        $initial = strtolower(is_numeric($this->username[0]) ? '0' : $this->username[0]);
+
         return $this->has_avatar
             ? route('img', ['src' => $this->avatar, 'w' => $size, 'h' => $size, 'q' => 80])
-            : '/assets/img/avatar.png';
+            : '/assets/img/avatar/webp/' . $initial . '.webp';
     }
 
     public function getRouteKeyName(): string
@@ -46,10 +49,38 @@ class User extends Authenticatable
      * Attributes
      */
 
+     public function age(): Attribute
+     {
+         return new Attribute(
+             get: fn (): int => $this->birthdate ? $this->birthdate->diffInYears(now()) : 0,
+         );
+     }
+
     public function avatar(): Attribute
     {
         return new Attribute(
             get: fn ($value) => env('APP_PATH_AVATARS') . DIRECTORY_SEPARATOR . $this->username . '.webp',
+        );
+    }
+
+    public function emailName(): Attribute
+    {
+        return new Attribute(
+            get: fn (): string => empty($this->firstName) ? $this->username : $this->firstName,
+        );
+    }
+
+    public function firstName(): Attribute
+    {
+        return new Attribute(
+            get: fn (): string => explode(' ', $this->name)[0],
+        );
+    }
+
+    public function lastName(): Attribute
+    {
+        return new Attribute(
+            get: fn (): string => explode(' ', $this->name)[1],
         );
     }
 

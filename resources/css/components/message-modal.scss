@@ -1,0 +1,23 @@
+.messageModal {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-l);
+
+    &__to {
+        align-items: center;
+        display: flex;
+        gap: .75rem;
+    }
+
+    &__username {
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    &__input {
+        align-items: flex-end;
+        display: flex;
+        gap: var(--size-s);
+        margin-bottom: var(--size-xs);
+    }
+}

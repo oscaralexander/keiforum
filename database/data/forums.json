@@ -1,4 +1,14 @@
 [
-    { "name": "Algemeen", "slug": "algemeen" },
-    { "name": "Vraag & aanbod", "slug": "vraag-aanbod" }
+    {
+        "description": "De online huiskamer van Amersfoort.",
+        "icon": "coffee",
+        "name": "Algemeen",
+        "slug": "algemeen"
+    },
+    {
+        "description": "Vraag en aanbod van spullen en diensten.",
+        "icon": "store",
+        "name": "Hulp & handel",
+        "slug": "hulp-en-handel"
+    }
 ]

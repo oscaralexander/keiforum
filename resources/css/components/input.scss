@@ -1,5 +1,6 @@
 .input {
     align-items: center;
+    background: var(--color-bg);
     border: 1px solid var(--input-border-color);
     border-radius: var(--borderRadius-m);
     display: flex;
@@ -38,6 +39,10 @@
         text-align: left;
         width: 0;
 
+        &::placeholder {
+            color: var(--color-text-lc);
+        }
+
         &[type=date] {
             line-height: calc(var(--input-height) - 2px);
             min-height: calc(var(--input-height) - 2px);
@@ -67,8 +72,13 @@
         display: flex;
         height: calc(var(--input-height) - 2px);
         justify-content: center;
+        margin-right: .25em;
         overflow: hidden;
         padding: 0;
+
+        svg {
+            margin-left: 0;
+        }
 
         input[type=password] ~ & svg:last-child {
             display: none;
@@ -126,6 +136,15 @@
         position: absolute;
         right: 0;
         top: 0;
+    }
+
+    &--large {
+        height: var(--input-height-l);
+    }
+
+    &--large,
+    &--large input {
+        font-size: var(--fontSize-l);
     }
 
     &--small,

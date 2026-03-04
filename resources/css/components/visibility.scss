@@ -1,0 +1,75 @@
+@use '@css/mixins' as *;
+
+.hide {
+    display: none;
+}
+
+.hideEmpty:empty {
+    display: none;
+}
+
+@include screen-max(xs) {
+    .xs\:show {
+        display: none;
+    }
+}
+
+@include screen-min(xs) {
+    .xs\:hide {
+        display: none;
+    }
+}
+
+@include screen-max(s) {
+    .s\:show,
+    .m\:show,
+    .l\:show,
+    .xl\:show {
+        display: none;
+    }
+}
+
+@include screen-min(s) {
+    .s\:hide {
+        display: none;
+    }
+}
+
+@include screen-max(m) {
+    .m\:show,
+    .l\:show,
+    .xl\:show {
+        display: none;
+    }
+}
+
+@include screen-min(m) {
+    .m\:hide {
+        display: none;
+    }
+}
+
+@include screen-max(l) {
+    .l\:show,
+    .xl\:show {
+        display: none;
+    }
+}
+
+@include screen-min(l) {
+    .l\:hide {
+        display: none;
+    }
+}
+
+@include screen-max(xl) {
+    .xl\:show {
+        display: none;
+    }
+}
+
+@include screen-min(xl) {
+    .xl\:hide {
+        display: none;
+    }
+}

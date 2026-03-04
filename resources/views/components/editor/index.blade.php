@@ -1,5 +1,6 @@
 @props([
     'model' => null,
+    'simple' => false,
 ])
 
 <div x-data="editor(@entangle($model))" class="editor" x-ref="editorWrapper">
@@ -11,14 +12,16 @@
                 <button class="editor__toolbar-btn" :class="{ 'is-active': isActive('strikethrough') }" tabindex="-1" title="@lang('editor.strikethrough')" type="button" x-on:click="toggleStrikethrough()"><x-icon icon="strikethrough" /></button>
                 <button class="editor__toolbar-btn" title="@lang('editor.link')" tabindex="-1" type="button" x-on:click="toggleLink()" x-show="!isActive('link')"><x-icon icon="link" /></button>
                 <button class="editor__toolbar-btn" title="@lang('editor.unlink')" tabindex="-1" type="button" x-on:click="unlink()" x-show="isActive('link')"><x-icon icon="unlink" /></button>
-                <button class="editor__toolbar-btn" :class="{ 'is-active': isActive('bullet_list') }" tabindex="-1" title="@lang('editor.bullet_list')" type="button" x-on:click="toggleUnorderedList()"><x-icon icon="list" /></button>
-                <button class="editor__toolbar-btn" :class="{ 'is-active': isActive('ordered_list') }" tabindex="-1" title="@lang('editor.ordered_list')" type="button" x-on:click="toggleOrderedList()"><x-icon icon="list-ordered" /></button> 
-                <button class="editor__toolbar-btn" :class="{ 'is-active': isActive('blockquote') }" tabindex="-1" title="@lang('editor.blockquote')" type="button" x-on:click="toggleBlockquote()"><x-icon icon="text-quote" /></button>
-                <button class="editor__toolbar-btn" tabindex="-1" title="@lang('editor.image')" type="button" x-show="!isUploading">
-                    <x-icon icon="image" />
-                    <input accept="image/heic,image/jpeg,image/png,image/webp" tabindex="-1" type="file" x-ref="imageInput">
-                </button>
-                <div class="editor__toolbar-spinner" x-cloak x-show="isUploading"><x-icon icon="loader-circle" /></div>
+                @unless ($simple)
+                    <button class="editor__toolbar-btn" :class="{ 'is-active': isActive('bullet_list') }" tabindex="-1" title="@lang('editor.bullet_list')" type="button" x-on:click="toggleUnorderedList()"><x-icon icon="list" /></button>
+                    <button class="editor__toolbar-btn" :class="{ 'is-active': isActive('ordered_list') }" tabindex="-1" title="@lang('editor.ordered_list')" type="button" x-on:click="toggleOrderedList()"><x-icon icon="list-ordered" /></button> 
+                    <button class="editor__toolbar-btn" :class="{ 'is-active': isActive('blockquote') }" tabindex="-1" title="@lang('editor.blockquote')" type="button" x-on:click="toggleBlockquote()"><x-icon icon="text-quote" /></button>
+                    <button class="editor__toolbar-btn" tabindex="-1" title="@lang('editor.image')" type="button" x-show="!isUploading">
+                        <x-icon icon="image" />
+                        <input accept="image/heic,image/jpeg,image/png,image/webp" tabindex="-1" type="file" x-ref="imageInput">
+                    </button>
+                    <div class="editor__toolbar-spinner" x-cloak x-show="isUploading"><x-icon icon="loader-circle" /></div>
+                @endunless
             </div>
             <div class="editor__progressBar" style="--progress: 0;" x-cloak x-ref="progressBar" x-show="isUploading"></div>
         </header>

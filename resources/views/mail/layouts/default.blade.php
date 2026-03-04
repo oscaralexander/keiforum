@@ -6,47 +6,58 @@
         <title>@yield('title', config('app.name'))</title>
         <style>
             body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-                line-height: 1.6;
-                color: #1f2937;
                 margin: 0;
-                padding: 2rem;
-                background-color: #f9fafb;
             }
 
-            .mail-container {
-                max-width: 600px;
+            .mail {
+                background-color: #fff9f6;
+                border-radius: 0.5rem;
+                color: #666462;
+                font-family: system-ui, sans-serif;
+                font-size: 16px;
+                line-height: 1.5;
+                margin-bottom: 0.75rem;
+                padding: 32px 16px;
+            }
+
+            .mail__wrapper {
                 margin: 0 auto;
-                background: #ffffff;
-                border-radius: 0.75rem;
-                padding: 2rem;
-                box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+                max-width: 600px;
             }
 
             h1 {
-                font-size: 1.5rem;
-                margin-bottom: 1rem;
-                color: #111827;
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 1.5rem;
+                color: #c93020;
             }
 
             p {
-                margin: 0 0 1rem 0;
+                margin: 0 0 1.5rem 0;
+            }
+            
+            a {
+                color: #c93020;
             }
 
-            a.button {
-                display: inline-block;
-                background: #2563eb;
-                color: #ffffff;
-                text-decoration: none;
-                padding: 0.75rem 1.5rem;
+            a.btn {
+                background: #c93020;
                 border-radius: 0.5rem;
+                display: inline-block;
+                color: #ffffff;
+                font-size: 16px;
                 font-weight: 600;
+                line-height: 1.5;
+                text-decoration: none;
+                padding: 0.5rem 1.25rem;
             }
         </style>
     </head>
     <body>
-        <div class="mail-container">
-            @yield('content')
+        <div class="mail">
+            <div class="mail__wrapper">
+                @yield('content')
+            </div>
         </div>
     </body>
 </html>

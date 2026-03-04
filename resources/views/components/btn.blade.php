@@ -1,3 +1,5 @@
+@blaze(memo: true)
+
 @props([
     'borderless' => false,
     'href' => null,
@@ -15,18 +17,18 @@
 @endphp
 
 <{{ $tag }}
-    @class([
+    {{ $attributes->class([
         'btn',
         'btn--borderless' => $borderless,
         'btn--icon' => $iconOnly,
         'btn--primary' => $primary,
         'btn--small' => $small,
         'btn--text' => $text,
-    ])
+    ]) }}
     @if($href)
         href="{{ $href }}"
         role="button"
-        @if (!$navigate && $attributes->missing('target'))
+        @if ($navigate && $attributes->missing('target'))
             wire:navigate
         @endif
     @else

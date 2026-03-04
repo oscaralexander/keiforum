@@ -1,3 +1,5 @@
+@blaze
+
 @props([
     'accept' => 'image/heic,image/jpeg,image/png,image/webp',
     'model' => null,

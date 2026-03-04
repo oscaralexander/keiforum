@@ -1,4 +1,7 @@
+@blaze
+
 @props([
+    'empty' => null,
     'model' => null,
     'options' => [],
 ])
@@ -8,7 +11,8 @@
         $attributes = $attributes->merge(['wire:model' => $model]);
     }
 
-    $model ??= $attributes->whereStartsWith('wire:model')->first()?->value();
+    $async = $attributes->has('wire:model.blur') || $attributes->whereStartsWith('wire:model.live')->isNotEmpty();
+    $model ??= $attributes->whereStartsWith('wire:model')->first();
     $id = $id ?? ($model ? Str::of($model)->slug() : null);
 @endphp
 
@@ -19,8 +23,16 @@
             aria-invalid="true"
         @enderror
         id="{{ $id }}"
+        @if ($async)
+            wire:loading.class="is-loading"
+            wire:target="{{ $model }}"
+        @endif
         {{ $attributes }}
     >
+        @if ($empty)
+            <option>{{ $empty }}</option>
+            <option disabled>&mdash;</option>
+        @endif
         @foreach ($options as $value => $label)
             <option value="{{ $value }}">{{ $label }}</option>
         @endforeach

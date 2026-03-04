@@ -4,15 +4,21 @@
     background: var(--color-bg);
     border-bottom: 1px solid var(--color-border);
     border-top: 1px solid var(--color-border);
-    margin-left: calc(var(--gutter-width) * -1);
-    margin-right: calc(var(--gutter-width) * -1);
+    margin-left: calc(var(--panel-padding-x) * -1);
+    margin-right: calc(var(--panel-padding-x) * -1);
 
     &--padded {
-        padding: var(--size-xl);
+        padding: var(--panel-padding-y) var(--panel-padding-x);
     }
 
-    &__inner {
-        max-width: 32rem;
+    &__outset {
+        margin-left: calc(var(--panel-padding-x) * -1);
+        margin-right: calc(var(--panel-padding-x) * -1);
+
+        &--padded {
+            padding-left: var(--panel-padding-x);
+            padding-right: var(--panel-padding-x);
+        }
     }
 
     @include screen-min(m) {

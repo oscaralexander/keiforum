@@ -4,6 +4,7 @@ export default () => {
             this.$root.addEventListener('click', this.onClick.bind(this));
         },
         async onClick($event) {
+            console.log($event.currentTarget.dataset);
             $event.preventDefault();
 
             const data = {

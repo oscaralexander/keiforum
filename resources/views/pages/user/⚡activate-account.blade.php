@@ -38,6 +38,7 @@ new class extends Component
     public function render()
     {
         return $this->view()
+            ->layout('layouts.simple')
             ->title($this->success
                 ? __('user/activate_account.success_title')
                 : __('user/activate_account.error_title')
@@ -46,18 +47,28 @@ new class extends Component
 };
 ?>
 
-<div class="flex flex-col flex-gap-xl">
-    <div class="panel flex flex-col flex-gap-m">
-        @if ($success)
-            <h1>@lang('user/activate_account.success_title')</h1>
-            <p class="formatted">
-                @lang('user/activate_account.success_text')
-            </p>
-        @else
-            <h1>@lang('user/activate_account.error_title')</h1>
-            <p class="formatted">
-                @lang('user/activate_account.error_text')
-            </p>
-        @endif
-    </div>
+<div>
+    @if ($success)
+        <x-header
+            center
+            :intro="__('user/activate_account.success_text')"
+            hide-path
+            :title="__('user/activate_account.success_title')"
+        />
+        <div class="flex flex-gap-s flex-justify-center">
+            <x-btn primary href="{{ route('home') }}">@lang('user/activate_account.btn_home')</x-btn>
+            <x-btn icon="mail" href="mailto:info@keiforum.nl">@lang('user/activate_account.btn_help')</x-btn>
+        </div>
+    @else
+        <x-header
+            center
+            :intro="__('user/activate_account.error_text')"
+            hide-path
+            :title="__('user/activate_account.error_title')"
+        />
+        <div class="flex flex-gap-s flex-justify-center">
+            <x-btn primary href="{{ route('home') }}">@lang('user/activate_account.btn_home')</x-btn>
+            <x-btn icon="mail" href="mailto:info@keiforum.nl" :navigate="false">@lang('user/activate_account.btn_help')</x-btn>
+        </div>
+    @endif
 </div>

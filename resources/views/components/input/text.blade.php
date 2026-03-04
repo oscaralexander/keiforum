@@ -1,5 +1,8 @@
+@blaze
+
 @props([
     'autocomplete' => 'off',
+    'large' => false,
     'model' => null,
     'small' => false,
     'type' => 'text',
@@ -19,6 +22,7 @@
     @class([
         'input',
         'input--small' => $small,
+        'input--large' => $large,
     ])
     @if ($async)
         wire:loading.class="is-loading"

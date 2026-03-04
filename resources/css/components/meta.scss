@@ -1,17 +1,22 @@
 @use '@css/mixins' as *;
 
 .meta {
-    align-items: center;
     color: var(--color-text-lc);
-    display: flex;
-    flex-wrap: wrap;
-    font-size: var(--fontSize-xs);
-    gap: .35em;
+    font-size: var(--fontSize-s);
+
+    &::after {
+        content: '';
+        clear: both;
+        display: block;
+    }
 
     &__item {
+        float: left;
         align-items: center;
-        display: flex;
+        display: inline-flex;
         gap: .35em;
+        margin-right: .35em;
+        white-space: nowrap;
 
         &:not(:last-child) {
             &::after {
@@ -39,7 +44,17 @@
         }
     }
 
+    &--large {
+        font-size: var(--fontSize-s);
+        color: var(--color-text);
+    }
+
     @include screen-min(m) {
         font-size: var(--fontSize-s);
+
+        &--large {
+            color: var(--color-text);
+            font-size: var(--fontSize-m);
+        }
     }
 }

@@ -1,36 +1,62 @@
+@use '@css/mixins' as *;
+
 .conversation {
     display: flex;
     flex: 1;
     flex-direction: column;
+    height: 100%;
     position: relative;
 
     &__header {
-        padding: var(--size-m) var(--size-l);
+        align-items: center;
         box-shadow: 0 1px 0 rgba(var(--color-text-rgb), .2);
+        display: flex;
+        gap: var(--size-s);
+        height: var(--nav-height);
+        padding: 0 var(--gutter-width) 0 calc(var(--gutter-width) - 10px);
         z-index: 2;
+    }
 
-        &-inner {
-            align-items: center;
-            display: flex;
-            gap: var(--size-m);
-            justify-content: space-between;
-            min-height: var(--btn-height);
+    &__back {
+        color: var(--color-link);
+        display: flex;
+        height: var(--btn-height);
+        padding: 0;
+        width: var(--btn-height);
+
+        svg {
+            height: 1.5rem;
+            margin: auto;
+            width: 1.5rem;
         }
     }
 
     &__participants {
         display: flex;
+        flex: 1;
         flex-wrap: wrap;
         gap: var(--size-m);
     }
 
     &__participant {
         align-items: center;
-        color: var(--color-text-dark);
         display: flex;
-        font-weight: 600;
-        gap: var(--size-s);
+        gap: var(--size-m);
         text-decoration: none;
+
+        &-text {
+            line-height: var(--lineHeight-m);
+        }
+
+        &-username {
+            color: var(--color-text-hc);
+            font-weight: 600;
+        }
+
+        &-lastSeen {
+            color: var(--color-text-lc);
+            font-size: var(--fontSize-s);
+        }
     }
 
     &__messages {
@@ -99,6 +125,16 @@
             margin: auto;
             max-width: 56rem;
             width: 100%;
+        }
+    }
+
+    @include screen-min(m) {
+        &__header {
+            padding: 0 var(--gutter-width);
+        }
+
+        &__back {
+            display: none;
         }
     }
 }

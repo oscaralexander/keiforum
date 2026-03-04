@@ -3,7 +3,7 @@
 use Carbon\CarbonInterface;
 
 if (! function_exists('time_diff')) {
-    function time_diff(CarbonInterface $date, ?CarbonInterface $other = null): string
+    function time_diff(CarbonInterface $date, ?CarbonInterface $other = null, bool $long = false): string
     {
         $other ??= now();
 
@@ -21,7 +21,7 @@ if (! function_exists('time_diff')) {
             $value = abs($value);
 
             if ($value >= 1 || $unit === 's') {
-                return ($value ?: 1) . __('time_diff.' . $unit);
+                return ($value ?: 1) . __('time_diff.' . $unit . ($long ? '_long' : ''));
             }
         }
 

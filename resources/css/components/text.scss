@@ -1,0 +1,29 @@
+.text {
+    &-color {
+        &-hc {
+            color: var(--color-text-hc);
+        }
+
+        &-lc {
+            color: var(--color-text-lc);
+        }
+    }
+
+    &-size {   
+        &-xs {
+            font-size: var(--fontSize-xs);
+        }
+        
+        &-s {
+            font-size: var(--fontSize-s);
+        }
+
+        &-l {
+            font-size: var(--fontSize-l);
+        }
+
+        &-xl {
+            font-size: var(--fontSize-xl);
+        }
+    }
+}

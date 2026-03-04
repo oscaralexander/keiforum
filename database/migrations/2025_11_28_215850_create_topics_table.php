@@ -14,6 +14,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->string('title');
             $table->boolean('is_locked')->default(false);
+            $table->boolean('is_pinned')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

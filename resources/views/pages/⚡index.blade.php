@@ -25,18 +25,18 @@ new class extends Component
 ?>
 
 <div>
-    <h1>Hallo Amersfoort!</h1>
-    <div class="formatted">
-        <p>
-            Welkom op Keiforum – het digitale dorpsplein van Amersfoort!
-            Hier ontmoet je mede-Amersfoorters, deel je ideeën en blijf je op de hoogte van wat er leeft in de stad.
-            Van buurtinitiatieven tot lokale tips, van actuele discussies tot creatieve plannen: Keiforum is de plek waar Amersfoort samenkomt.
-        </p>
+    <x-header hide-path :title="__('home.title')" />
+    <div class="panel">
+        <ul class="topicList">
+            @foreach ($this->forums as $forum)
+                <li class="topicListItem">
+                    <div class="topicListItem__text">
+                        <a class="topicListItem__title" href="{{ route('forum.show', $forum->slug) }}" wire:navigate>{{ $forum->name }}</a>
+                        <div class="topicListItem__description">{{ $forum->description }}</div>
+                    </div>
+                    <div class="topicListItem__count">{{ trans_choice('forum/index.topics', $forum->topics_count, ['count' => $forum->topics_count]) }}</div>
+                </li>
+            @endforeach
+        </ul>
     </div>
-    @foreach ($this->forums as $forum)
-        <div>
-            <a href="{{ route('forum.show', $forum->slug) }}" wire:navigate>{{ $forum->name }}</a>
-            <span>{{ $forum->topics_count }} topics</span>
-        </div>
-    @endforeach
 </div>

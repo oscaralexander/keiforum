@@ -35,8 +35,8 @@ class MessagesIndexRedirectTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get(route('messages'))
-            ->assertRedirect(route('messages', $newer));
+            ->get(route('conversations'))
+            ->assertRedirect(route('conversations', $newer));
     }
 
     public function testShowsNewConversationFormWhenNoConversationsExist(): void
@@ -44,7 +44,7 @@ class MessagesIndexRedirectTest extends TestCase
         $user = User::factory()->create();
 
         $this->actingAs($user)
-            ->get(route('messages'))
+            ->get(route('conversations'))
             ->assertOk();
     }
 
@@ -61,7 +61,7 @@ class MessagesIndexRedirectTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get(route('messages', $conversation))
+            ->get(route('conversations', $conversation))
             ->assertOk();
     }
 

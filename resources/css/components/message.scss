@@ -1,7 +1,9 @@
+@use '@css/mixins' as *;
+
 .message {
     display: flex;
     gap: var(--size-s);
-    padding-right: 15%;
+    padding-right: 10%;
     margin: 0 auto;
     max-width: 56rem;
     width: 100%;
@@ -9,7 +11,7 @@
     &--own {
         flex-direction: row-reverse;
         padding-right: 0;
-        padding-left: 15%;
+        padding-left: 10%;
     }
 
     &__avatar {
@@ -38,6 +40,10 @@
         }
     }
 
+    &__body {
+        font-size: var(--fontSize-s);
+    }
+
     &__author {
         font-weight: 600;
         text-decoration: none;
@@ -63,6 +69,12 @@
 
         &:hover {
             color: var(--color-text);
+        }
+    }
+
+    @include screen-min(m) {
+        &__body {
+            font-size: var(--fontSize-m);
         }
     }
 }

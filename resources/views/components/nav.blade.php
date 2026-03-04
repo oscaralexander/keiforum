@@ -1,10 +1,36 @@
 @use('App\Enums\AvatarSize')
 
-<nav class="nav">
-    <a href="{{ route('home') }}" class="nav__logo" wire:navigate>
-        <img alt="Keiforum" class="nav__logo-icon" src="{{ asset('assets/img/keiforum.svg') }}">
-        <span class="nav__logo-name">Keiforum</span>
-    </a>
+<nav
+    class="nav"
+    x-bind:class="{ 'is-menuOpen': isMenuOpen }"
+    x-data="{ isMenuOpen: false }"
+>
+    <div
+        class="nav__mobileMenuOverlay"
+        x-cloak
+        x-on:click="isMenuOpen = false"
+        x-show="isMenuOpen"
+        x-transition.opacity.duration.250ms
+    ></div>
+    <div class="nav__mobileMenu" id="navMobileMenu">
+        <x-mobile-menu />
+    </div>
+    <div class="nav__menuToggleLogo">
+        <button
+            aria-controls="navMobileMenu"
+            aria-expanded="false"
+            class="nav__menuToggle"
+            type="button"
+            x-bind:aria-expanded="isMenuOpen"
+            x-on:click="isMenuOpen = !isMenuOpen"
+        >
+            <div></div>
+        </button>
+        <a href="{{ route('home') }}" class="logo" wire:navigate>
+            <img alt="Keiforum" class="logo__icon" src="{{ asset('assets/img/keiforum.svg') }}">
+            <span class="logo__name">Keiforum</span>
+        </a>
+    </div>
     <div class="nav__menuSearch">
         <ul class="nav__menu">
             @php
@@ -66,10 +92,10 @@
                     'nav__action',
                     'nav__action--active' => $isConversations,
                 ])
-                href="{{ route('messages') }}"
+                href="{{ route('conversations') }}"
             >
                 <x-icon icon="inbox" />
-                <span class="badge">8</span>
+                {{-- <span class="badge">8</span> --}}  
             </a>
             <div
                 class="nav__user"
@@ -109,8 +135,8 @@
                 </ul>
             </div>
         @else
-            <x-btn :href="route('register')" icon="user" primary small>@lang('ui.register')</x-btn>
-            <x-btn :href="route('login')" icon="user" small>@lang('ui.login')</x-btn>
+            <x-btn class="m:hide" :href="route('login')" primary small>@lang('ui.login_alt')</x-btn>
+            <x-btn class="m:show" :href="route('login')" primary>@lang('ui.login_alt')</x-btn>
         @endauth
     </div>
 </nav>

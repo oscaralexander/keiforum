@@ -34,6 +34,7 @@ new class extends Component
     public function render()
     {
         return $this->view()
+            ->layout('layouts.simple')
             ->title(__('user/login.title'));
     }
 
@@ -61,16 +62,29 @@ new class extends Component
 ?>
 
 <div>
-    <div class="panel flex flex-col flex-gap-xl"">
-        <h1>@lang('user/login.title')</h1>
+    <x-header
+        center
+        hide-path
+        :intro="__('user/login.text', ['register_url' => route('register')])"
+        :title="__('user/login.title')"
+    />
+    <div class="flex flex-col flex-gap-l">
         <form class="flex flex-col flex-gap-m" wire:submit="submit">
             <fieldset class="login">
-                <x-input.text autocomplete="username" model="identifier" :placeholder="__('user/login.form.identifier.placeholder')" required />
-                <x-input.text model="password" :placeholder="__('user/login.form.password.placeholder')" required type="password" />
+                <x-input.text
+                    autocomplete="username"
+                    large
+                    model="identifier"
+                    :placeholder="__('user/login.form.identifier.placeholder')"
+                    required
+                />
+                <x-input.text
+                    large
+                    model="password"
+                    :placeholder="__('user/login.form.password.placeholder')"
+                    required
+                type="password" />
             </fieldset>
-            <x-field model="terms">
-                <x-input.toggle :label="__('user/login.form.remember.label')" model="remember" />
-            </x-field>
             @error('password')
                 <div class="alert alert--bad">
                     <x-icon icon="circle-alert" />
@@ -79,10 +93,15 @@ new class extends Component
                     </div>
                 </div>
             @enderror
-            <div class="flex flex-gap-m flex-justify-spaceBetween">
+            <div class="flex flex-gap-m flex-align-center flex-justify-spaceBetween">
+                <x-field model="terms">
+                    <x-input.toggle :label="__('user/login.form.remember.label')" model="remember" />
+                </x-field>
                 <x-btn primary submit>@lang('user/login.form.submit')</x-btn>
-                <x-btn href="#" text>@lang('user/login.forgot_password')</x-btn>
             </div>
         </form>
+        <div class="flex flex-justify-center">
+            <x-btn href="#" text>@lang('user/login.forgot_password')</x-btn>
+        </div>
     </div>
 </div>

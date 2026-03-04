@@ -2,6 +2,7 @@
 
 return [
     'attempt_failed' => 'Loginpoging mislukt.',
+    'text' => 'Nog geen account? <a href=":register_url" wire:navigate>Registreer je hier.</a>',
     'title' => 'Inloggen',
     'form' => [
         'identifier' => [

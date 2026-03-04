@@ -18,6 +18,8 @@ new class extends Component
 
     public string $email;
 
+    public bool $activationEmailSent = false;
+
     public Gender $gender;
 
     public string $name;
@@ -52,7 +54,8 @@ new class extends Component
     public function render()
     {
         return $this->view()
-            ->title('Aanmelden');
+            ->layout('layouts.simple')
+            ->title(__('user/register.title'));
     }
 
     public function rules()
@@ -84,7 +87,9 @@ new class extends Component
             'username' => $this->username,
         ]);
 
-        Mail::to('mail@keiforum.nl')->send(new ActivateAccount($user));
+        Mail::to($this->email)->send(new ActivateAccount($user));
+
+        $this->activationEmailSent = true;
     }
 
     public function updatedUsername($value)
@@ -96,13 +101,39 @@ new class extends Component
 };
 ?>
 
-<div class="flex flex-col flex-gap-xl">
-    <div class="panel">
-        <h1>Aanmelden</h1>
+<div>
+    @if ($activationEmailSent)
+        <x-header center hide-path :title="__('user/register.activation_email_sent_title')" />
+        <div class="callout callout--success">
+            <x-icon class="callout__icon" icon="mail" />
+            <div class="callout__content">
+                @lang('user/register.activation_email_sent_callout')
+            </div>
+        </div>
+    @else
+        <x-header
+            center
+            hide-path
+            :intro="__('user/register.text', ['login_url' => route('login')])"
+            :title="__('user/register.title')"
+        />
         <form class="flex flex-col flex-gap-xl" wire:submit="submit">
             <fieldset class="flex flex-col flex-gap-m">
                 <x-field :label="__('user/register.form.email.label')" model="email">
                     <x-input.text autocomplete="email" model="email" required type="email" />
+                </x-field>
+                <x-field
+                    :description="__('user/register.form.username.description')"
+                    :label="__('user/register.form.username.label')"
+                    model="username"
+                >
+                    <x-input.text autocomplete="username" wire:model.live="username" required style="text-transform: lowercase;" />
+                    @if ($usernameAvailable)
+                        <div class="field__success">
+                            <x-icon icon="check" />
+                            @lang('validation.username.available')
+                        </div>
+                    @endif
                 </x-field>
                 <x-field class="flex-flex" :label="__('user/register.form.password.label')" model="password">
                     <x-input.password autocomplete="new-password" model="password" required />
@@ -115,33 +146,17 @@ new class extends Component
                     <x-input.text autocomplete="name" model="name" required />
                 </x-field>
                 <x-field
-                    :description="__('user/register.form.username.description')"
-                    :label="__('user/register.form.username.label')"
-                    model="username"
+                    :description="__('user/register.form.area_id.description')"
+                    :label="__('user/register.form.area_id.label')"
+                    model="area_id"
                 >
-                    <x-input.text autocomplete="username" required  style="text-transform: lowercase;" wire:model.blur="username" />
-                    @if($usernameAvailable)
-                        <div class="field__success">
-                            <x-icon icon="check" />
-                            @lang('validation.username.available')
-                        </div>
-                    @endif
+                    <x-input.select
+                        :empty="__('user/register.form.area_id.empty')"
+                        model="area_id"
+                        :options="$this->areas->pluck('name', 'id')"
+                    />
                 </x-field>
                 <div class="flex flex-col flex-gap-m l:flex-gap-m l:flex-row">
-                    <x-field
-                        class="flex-flex"
-                        :description="__('user/register.form.area_id.description')"
-                        :label="__('user/register.form.area_id.label')"
-                        model="area_id"
-                    >
-                        <x-input.select model="area_id">
-                            <option>{{ __('user/register.form.area_id.empty') }}</option>
-                            <option disabled>&mdash;</option>
-                            @foreach ($this->areas as $area)
-                                <option value="{{ $area->id }}">{{ $area->name }}</option>
-                            @endforeach
-                        </x-input.select>
-                    </x-field>
                     <x-field
                         class="flex-flex"
                         :description="__('user/register.form.birthdate.description')"
@@ -156,28 +171,26 @@ new class extends Component
                             type="date"
                         />
                     </x-field>
+                    <x-field
+                        class="flex-flex"
+                        :description="__('user/register.form.gender.description')"
+                        :label="__('user/register.form.gender.label')"
+                        model="gender"
+                    >
+                        <x-input.select
+                            :empty="__('user/register.form.gender.empty')"
+                            model="gender"
+                            :options="Gender::options()"
+                        />
+                    </x-field>
                 </div>
-                <x-field
-                    :description="__('user/register.form.gender.description')"
-                    :label="__('user/register.form.gender.label')"
-                    model="gender"
-                >
-                    <x-input.select model="gender">
-                        <option>{{ __('user/register.form.gender.empty') }}</option>
-                        <option disabled>&mdash;</option>
-                        @foreach (Gender::options() as $value => $label)
-                            <option value="{{ $value }}">{{ $label }}</option>
-                        @endforeach
-                    </x-input.select>
-                </x-field>
                 <x-field model="terms">
                     <x-input.toggle :label="__('user/register.form.terms.label')" model="terms" />
                 </x-field>
             </fieldset>
             <div class="flex flex-gap-m">
                 <x-btn primary submit>@lang('user/register.form.submit')</x-btn>
-                <x-btn text>@lang('ui.cancel')</x-btn>
             </div>
         </form>
-    </div>
+    @endif
 </div>

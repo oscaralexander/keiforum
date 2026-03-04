@@ -1,3 +1,5 @@
+@blaze
+
 @props([
     'description' => null,
     'model' => null,

@@ -10,6 +10,8 @@ return new class extends Migration
     {
         Schema::create('forums', function (Blueprint $table) {
             $table->id();
+            $table->string('icon');
+            $table->string('description')->nullable();
             $table->string('name');
             $table->string('slug')->unique();
             $table->boolean('is_locked')->default(false);

@@ -52,7 +52,7 @@ new class extends Component
         <header class="message__header">
             <ul class="meta">
                 <li class="meta__item">
-                    <a class="message__author" href="{{ route('user.show', $message->user) }}" wire:navigate>{{ $message->user->username }}</a>
+                    <a class="message__author" href="{{ route('member.show', $message->user) }}" wire:navigate>{{ $message->user->username }}</a>
                 </li>
                 <li class="meta__item">
                     <time

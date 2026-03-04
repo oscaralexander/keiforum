@@ -1,10 +1,21 @@
 <?php
 
 use App\Models\User;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Illuminate\Database\Eloquent\Collection;
 
 new class extends Component
 {
+    #[Computed]
+    public function members(): Collection
+    {
+        return User::query()
+            ->with('area')
+            ->orderBy('username', 'asc')
+            ->get();
+    }
+
     public function memberCount (): int
     {
         return User::count();
@@ -13,31 +24,40 @@ new class extends Component
     public function render()
     {
         return $this->view()
-            ->title(__('members/title.title'));
+            ->title(__('members/index.title'));
     }
 };
 ?>
 
 <div>
-    <header class="page__header">
-        <x-path />
-        <h1>@lang('members/title.title')</h1>
-    </header>
+    <x-header hide-path :title="__('members/index.title')" />
     <div class="panel panel--padded">
         <div class="flex flex-col flex-gap-l">
-            <h2>Wordt aan gewerkt</h2>
             <div class="formatted">
                 <p>
-                    Keiforum is nog volop in ontwikkeling en ik vind het geweldig dat je nu al komt kijken!
-                    Op deze pagina vind je straks een handig, doorzoekbaar overzicht van alle Amersfoorters die zich hier hebben aangemeld.
-                    Op dit moment kan ik je alleen vertellen dat het er <b>{{ $this->memberCount() }}</b> zijn en daar ben ik al heel trots op 😌
+                    Keiforum is nog volop in ontwikkeling en ook dit onderdeel is nog lang niet klaar,
+                    maar leuk dat je al even komt kijken!
                 </p>
-                <p>
-                    Help vooral mee om meer Amersfoorters op Keiforum te krijgen!
-                </p>
-                <p>
-                    — <a href="{{  route('user.show', 'keiforum') }}">Alexander</a>
-                </p>
+            </div>
+            <div class="panel__outset panel__outset--padded">
+                <div class="members">
+                    @foreach ($this->members as $member)
+                        <div class="memberGrid__item member">
+                            <x-avatar :user="$member" />
+                            <div class="member__content">
+                                <a class="member__name" href="{{ route('member.show', $member) }}">{{ $member->username }}</a>
+                                <ul class="meta">
+                                    @auth
+                                        <li class="meta__item">{{ $member->name }}</li>
+                                        @if ($member->area)
+                                            <li class="meta__item">{{ $member->area->name }}</li>
+                                        @endif
+                                    @endauth
+                                </ul>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>

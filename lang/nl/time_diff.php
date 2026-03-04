@@ -1,12 +1,20 @@
 <?php
 
 return [
-    'now' => 'nu',
+    'now' => 'Nu',
     'seconds' => 's',
+    'seconds_long' => ' seconden',
     'minutes' => 'm',
-    'hours' => 'h',
+    'minutes_long' => ' minuten',
+    'hours' => 'u',
+    'hours_long' => ' uur',
     'days' => 'd',
+    'days_long' => ' dagen',
     'weeks' => 'w',
+    'weeks_long' => ' weken',
     'months' => 'mnd',
-    'years' => 'jr',
+    'months_long' => ' maanden',
+    'years' => 'j',
+    'years_long' => ' jaar',
 ];
+    

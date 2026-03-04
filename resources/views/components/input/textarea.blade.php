@@ -1,3 +1,5 @@
+@blaze
+
 @props([
     'maxRows' => null,
     'model' => null,

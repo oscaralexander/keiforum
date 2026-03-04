@@ -18,8 +18,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::livewire('berichten/nieuw', 'pages::messages.index')->name('messages.create');
-    Route::livewire('berichten/{conversation?}', 'pages::messages.index')->name('messages');
+    Route::livewire('berichten/{conversation_id?}', 'pages::conversations.index')->name('conversations');
     Route::livewire('instellingen', 'pages::user.settings')->name('settings');
     Route::livewire('profiel', 'pages::user.profile')->name('profile');
     Route::post('uitloggen', App\Http\Controllers\User\LogoutController::class)->name('logout');
@@ -28,8 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::livewire('{forum}/nieuw', 'pages::topic.create')->name('topic.create');
 });
 
-// User
-Route::livewire('@{username}', 'pages::user.show')->name('user.show');
+// Member
+Route::livewire('@{user}', 'pages::members.show')->name('member.show');
 
 // Forum
 Route::livewire('{forum}', 'pages::forum.show')->name('forum.show');

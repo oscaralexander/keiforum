@@ -1,5 +1,7 @@
 @use('App\Enums\AvatarSize')
 
+@blaze(memo: true)
+
 @props([
     'imgOnly' => false,
     'size' => AvatarSize::S,
@@ -7,12 +9,12 @@
 ])
 
 <div
-    @class([
+    {{ $attributes->class([
         'avatar',
         'avatar--' . strtolower($size->name),
         'avatar--online' => !$imgOnly && $user->is_online,
         'avatar--premium' => !$imgOnly && $user->is_premium,
-    ])
+    ]) }}
     title="{{ $user->username }}"
     {{ $attributes }}
 >

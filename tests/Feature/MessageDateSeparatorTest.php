@@ -36,7 +36,7 @@ class MessageDateSeparatorTest extends TestCase
         $conversation = $this->createConversationWithMessages($user, [now()]);
 
         $this->actingAs($user)
-            ->get(route('messages', $conversation))
+            ->get(route('conversations', $conversation))
             ->assertSee(__('messages/index.today'));
     }
 
@@ -46,7 +46,7 @@ class MessageDateSeparatorTest extends TestCase
         $conversation = $this->createConversationWithMessages($user, [now()->subDay()]);
 
         $this->actingAs($user)
-            ->get(route('messages', $conversation))
+            ->get(route('conversations', $conversation))
             ->assertSee(__('messages/index.yesterday'));
     }
 
@@ -61,7 +61,7 @@ class MessageDateSeparatorTest extends TestCase
         $conversation = $this->createConversationWithMessages($user, [$date]);
 
         $this->actingAs($user)
-            ->get(route('messages', $conversation))
+            ->get(route('conversations', $conversation))
             ->assertSee($date->translatedFormat('l'));
     }
 
@@ -72,7 +72,7 @@ class MessageDateSeparatorTest extends TestCase
         $conversation = $this->createConversationWithMessages($user, [$date]);
 
         $this->actingAs($user)
-            ->get(route('messages', $conversation))
+            ->get(route('conversations', $conversation))
             ->assertSee($date->translatedFormat('j F Y'));
     }
 
@@ -86,7 +86,7 @@ class MessageDateSeparatorTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get(route('messages', $conversation))
+            ->get(route('conversations', $conversation))
             ->assertSee(now()->subWeeks(2)->translatedFormat('j F Y'))
             ->assertSee(__('messages/index.yesterday'))
             ->assertSee(__('messages/index.today'));
@@ -103,7 +103,7 @@ class MessageDateSeparatorTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-            ->get(route('messages', $conversation));
+            ->get(route('conversations', $conversation));
 
         $content = $response->getContent();
         $this->assertEquals(1, substr_count($content, 'conversation__date'));

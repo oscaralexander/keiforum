@@ -1,7 +1,16 @@
+@use '@css/vars' as *;
+@use '@css/mixins' as *;
+@use 'sass:map';
+
+@mixin stack-gap($selector, $val) {
+    #{$selector} {
+        gap: $val;
+    }
+}
+
 .stack {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
 
     &--center {
         align-items: center;
@@ -13,5 +22,17 @@
 
     &--start {
         align-items: flex-start;
+    }
+}
+
+@each $key, $val in $sizes {
+    @include stack-gap('.stack-gap-#{$key}', $val);
+}
+
+@each $screen in map.keys($screens) {
+    @include screen-min($screen) {
+        @each $key, $val in $sizes {
+            @include stack-gap('.#{$screen}\\:stack-gap-#{$key}', $val);
+        }
     }
 }

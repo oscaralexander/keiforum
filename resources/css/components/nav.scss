@@ -2,50 +2,131 @@
 
 .nav {
     align-items: center;
-    background: var(--color-bg);
-    box-shadow: 0 1px 0 0 rgba(var(--color-text-rgb), .2);
     display: flex;
-    height: var(--nav-height);
     justify-content: space-between;
-    padding: 0 var(--size-l);
+    height: var(--nav-height);
+    padding: 0 var(--gutter-width) 0 calc(var(--gutter-width) - 10px);
     position: sticky;
-    top: calc((var(--nav-height) * -1) - 1);
+    top: 0; // calc((var(--nav-height) * -1) - 1);
     z-index: 10;
     width: 100%;
 
-    &__logo {
+    &::before {
+        content: '';
+        height: var(--nav-height);
+        background: var(--color-bg);
+        box-shadow: 0 1px 0 0 rgba(var(--color-text-rgb), .2);
+        left: 0;
+        position: absolute;
+        width: 100%;
+        top: 0;
+        z-index: 3;
+    }
+
+    &__menuToggleLogo {
         align-items: center;
         display: flex;
-        flex: 0 0 auto;
-        text-decoration: none;
+        gap: var(--size-s);
+        position: relative;
+        z-index: 4;
+    }
 
-        &-icon {
-            aspect-ratio: 1 / 1;
-            height: 2.5rem;
+    &__menuToggle {
+        background: transparent;
+        border-radius: var(--border-radius-m);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 var(--btn-height);
+        height: var(--btn-height);
+        width: var(--btn-height);
+        z-index: 4;
+
+        div {
+            background: var(--color-link);
+            height: 2px;
+            position: relative;
+            transition: 0ms 125ms ease;
+            width: 20px;
+
+            &::before,
+            &::after {
+                background: var(--color-link);
+                content: '';
+                display: block;
+                height: 2px;
+                position: absolute;
+                transition: top 125ms 125ms ease,
+                    transform 125ms ease;
+                width: 20px;
+            }
+
+            &::before {
+                top: -6px;
+            }
+
+            &::after {
+                top: 6px;
+            }
         }
 
-        &-name {
-            font-family: var(--font-2);
-            font-size: var(--fontSize-xl);
-            font-weight: 700;
-            margin-left: .5em;
-            transition: transform var(--duration-m);
-        }
+        &[aria-expanded=true] {
+            div {
+                background: transparent;
 
-        &:active,
-        &:hover {
-            color: var(--color-link);
+                &::before,
+                &::after {
+                    transition: top 125ms ease,
+                        transform 125ms 125ms ease;
+                }
 
-            .nav__logo-name {
-                transform: rotate(-5deg);
+                &::before {
+                    top: 0;
+                    transform: rotate(45deg);
+                }
+
+                &::after {
+                    top: 0;
+                    transform: rotate(-45deg);
+                }
             }
         }
     }
 
+    &__mobileMenuOverlay {
+        background: rgba(0, 0, 0, .35);
+        inset: 0;
+        position: fixed;
+        z-index: 1;
+    }
+
+    &__mobileMenu {
+        background: var(--color-bg);
+        display: flex;
+        flex-direction: column;
+        height: 100svh;
+        left: 0;
+        max-width: 24rem;
+        padding-top: var(--nav-height);
+        position: fixed;
+        top: 0;
+        transform: translate3d(-100%, 0, 0);
+        transition: transform var(--duration-m) ease-in-out;
+        width: 85%;
+        z-index: 2;
+
+        .nav.is-menuOpen & {
+            box-shadow: var(--boxShadow-m);
+            transform: translate3d(0, 0, 0);
+        }
+    }
+    
     &__menuSearch {
         align-items: center;
-        display: flex;
+        display: none;
         gap: 1.5rem;
+        position: relative;
+        z-index: 4;
     }
 
     &__search {
@@ -67,7 +148,8 @@
         height: var(--input-height);
         text-decoration: none;
         font-weight: 600;
-        padding: 0 1em;
+        padding: 0 1rem;
+        position: relative;
 
         &:hover {
             color: var(--color-link-hover);
@@ -84,6 +166,9 @@
         align-items: center;
         display: flex;
         gap: .75rem;
+        transition: opacity var(--duration-m) ease;
+        position: relative;
+        z-index: 5;
     }
 
     &__action {
@@ -178,6 +263,17 @@
                     color: var(--color-link);
                 }
             }
+        }
+    }
+
+    @include screen-min(m) {
+        &__mobileMenu,
+        &__menuToggle {
+            display: none;
+        }
+
+        &__menuSearch {
+            display: flex;
         }
     }
 }

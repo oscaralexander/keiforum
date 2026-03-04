@@ -2,7 +2,7 @@ $grid-columns: 12;
 
 $screens: (
     's': 768px,
-    'm': 1280px,
+    'm': 1024px,
     'l': 1440px,
 );
 
@@ -36,10 +36,11 @@ $sizes: (
     --color-good-tint: rgba(9, 128, 95, .1);
     --color-good-tint-hover: rgba(9, 128, 95, .2);
 
-    --color-text: #565350;
-    --color-text-rgb: 86, 83, 80;
-    --color-text-hc: #161310;
-    --color-text-lc: #a3a09c;
+    --color-text: #666462;
+    --color-text-rgb: 102, 100, 98;
+    --color-text-hc: #1A1919;
+    --color-text-lc: #B2AEAC;
+    --color-text-placeholder: #D9D4D1;
 
     --color-link: var(--color-1);
     --color-link-hover: var(--color-text-hc);
@@ -49,7 +50,9 @@ $sizes: (
     --color-border-lc: #e9e6e3;
 
     /* Layout */
-    --gutter-width: 1rem;
+    --gutter-width: 1.25rem;
+    --panel-padding-x: 1.25rem;
+    --panel-padding-y: 2rem;
 
     /* Border radius */
     --borderRadius-s: .25rem;
@@ -69,8 +72,8 @@ $sizes: (
 
     --btn-color: var(--color-text);
     --btn-color-hover: var(--color-text-hc);
-    --btn-color-bg: transparent;
-    --btn-color-bg-hover: transparent;
+    --btn-color-bg: #fff;
+    --btn-color-bg-hover: #fff;
     --btn-color-border: var(--color-border);
     --btn-color-border-hover: var(--color-border-hc);
 
@@ -97,16 +100,18 @@ $sizes: (
     --fontSize-m: 1rem;
     --fontSize-l: 1.125rem;
     --fontSize-xl: 1.25rem;
-    --fontSize-xxl: 2rem;
+    --fontSize-xxl: 1.5rem;
 
     /* Nav height */
-    --nav-height: 5rem;
+    --nav-height: 4rem;
 
     /* Input */
     --input-border-color: var(--color-border);
     --input-border-color-focus: var(--color-1);
     --input-border-radius: var(--borderRadius-m);
+    --input-height-s: 2.5em;
     --input-height: 2.5em;
+    --input-height-l: 3em;
     --input-outline: 1px solid transparent;
     --input-outline-focus: 1px solid var(--color-1);
 
@@ -134,6 +139,10 @@ $sizes: (
     }
 
     @media (min-width: 1024px) {
+        --nav-height: 5rem;
+        --gutter-width: 3rem;
+        --panel-padding-x: 1.5rem;
+        --panel-padding-y: 2rem;
         --fontSize-xxl: 2.5rem;
     }
 }

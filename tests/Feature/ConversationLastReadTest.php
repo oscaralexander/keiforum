@@ -30,7 +30,7 @@ class ConversationLastReadTest extends TestCase
 
         $this->freezeTime(function () use ($user, $conversation) {
             $this->actingAs($user)
-                ->get(route('messages', $conversation))
+                ->get(route('conversations', $conversation))
                 ->assertOk();
 
             $this->assertEquals(
@@ -53,7 +53,7 @@ class ConversationLastReadTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get(route('messages', $conversation))
+            ->get(route('conversations', $conversation))
             ->assertOk();
 
         $this->assertNull(

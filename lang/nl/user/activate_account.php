@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'btn_home' => 'Naar homepage',
+    'btn_help' => 'Help!',
     'error_cta' => 'Link opnieuw versturen',
     'error_text' => 'Deze activatielink is ongeldig. Mogelijk is je account al geactiveerd.',
     'error_title' => 'Hmm…',

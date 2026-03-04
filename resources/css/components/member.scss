@@ -1,0 +1,10 @@
+.member {
+    align-items: center;
+    display: flex;
+    gap: .75rem;
+
+    &__name {
+        font-weight: 600;
+        text-decoration: none;
+    }
+}

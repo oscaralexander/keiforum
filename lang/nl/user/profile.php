@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Profiel',
+    'title' => 'Profiel bewerken',
     'form' => [
         'area_id' => [
             'description' => 'Alleen zichtbaar voor leden.',

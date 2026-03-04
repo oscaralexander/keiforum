@@ -1,0 +1,33 @@
+@use '@css/mixins' as *;
+
+.footer {
+    color: var(--color-text-lc);
+    font-size: var(--fontSize-xs);
+    line-height: var(--lineHeight-l);
+    padding: var(--size-l) 0;
+
+    &__heart {
+        color: var(--color-1);
+    }
+
+    &__inner {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    &__legal {
+        display: flex;
+        gap: var(--size-m);
+    }
+
+    @include screen-min(m) {
+        font-size: var(--fontSize-s);
+
+        &__inner {
+            flex-direction: row;
+            justify-content: space-between;
+        }
+    }
+}
