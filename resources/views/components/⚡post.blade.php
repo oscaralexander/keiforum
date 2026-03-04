@@ -93,7 +93,7 @@ new class extends Component
             <!--
                 {{ $post->user_id }}
                 {{ auth('web')->id() }}
-                {{ $post->user_id  === auth('web')->id() ? 'true' : 'false' }}
+                {{ $post->user_id == auth('web')->id() ? 'true' : 'false' }}
             -->
             @auth
                 <x-popout>
@@ -109,7 +109,7 @@ new class extends Component
                         <x-popout.item icon="flag" :label="__('ui.report')" />
                         --}}
                     @endif
-                    @if ($post->user_id === auth('web')->id() || auth('web')->user()->is_admin)
+                    @if ($post->user_id == auth('web')->id() || auth('web')->user()->is_admin)
                         <x-popout.item icon="pencil" :label="__('ui.edit')" wire:click="edit" />
                         <x-popout.item icon="trash" danger :label="__('ui.delete')" wire:click="delete" />
                     @endif
