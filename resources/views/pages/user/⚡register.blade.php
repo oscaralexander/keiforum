@@ -132,7 +132,7 @@ new class extends Component
                     :label="__('user/register.form.username.label')"
                     model="username"
                 >
-                    <x-input.text autocomplete="username" maxlength="16" required wire:model.live="username" />
+                    <x-input.text autocomplete="username" maxlength="16" required style="text-transform: lowercase;" wire:model.live="username" />
                     @if ($usernameAvailable)
                         <div class="field__success">
                             <x-icon icon="check" />
