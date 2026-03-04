@@ -1,4 +1,5 @@
 .textarea {
+    background: var(--color-bg);
     border: 1px solid var(--input-border-color);
     border-radius: var(--borderRadius-m);
     display: grid;
@@ -12,7 +13,6 @@
 
     textarea,
     &::after {
-        background: var(--color-bg);
         border: none;
         color: var(--color-text);
         font-size: var(--fontSize-m);
