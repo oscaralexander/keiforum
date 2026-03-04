@@ -16,12 +16,13 @@ class Topic extends Model
 {
     use SoftDeletes;
 
-    public const PAGINATE_COUNT = 2;
+    public const PAGINATE_COUNT = 25;
 
     protected $guarded = ['id'];
 
     protected $casts = [
         'is_locked' => 'boolean',
+        'is_pinned' => 'boolean',
     ];
 
     protected $with = ['user'];

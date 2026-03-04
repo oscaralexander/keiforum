@@ -22,7 +22,7 @@ new class extends Component
     public function topics(): LengthAwarePaginator
     {
         return $this->forum->topics()
-            ->with(['areas', 'latestPost', 'posts.user'])
+            ->with(['areas', 'latestPost.user'])
             ->withCount('posts')
             ->latest()
             ->paginate(Topic::PAGINATE_COUNT, pageName: 'p')
@@ -53,11 +53,11 @@ new class extends Component
                             $topicUser = $topic->postUsers()->first(fn ($postUser) => $postUser['user']->id === $topic->user_id);
                         @endphp
                         <li class="topicListItem">
-                            @if ($topicUser)
+                            @if ($topic->latestPost->user)
                                 <x-avatar
                                     img-only
-                                    :title="'@' . $topicUser['user']->username . ' · ' . trans_choice('forum/show.posts', $topicUser['post_count'], ['count' => $topicUser['post_count']])"
-                                    :user="$topicUser['user']"
+                                    :title="'@' . $topic->latestPost->user->username"
+                                    :user="$topic->latestPost->user"
                                 />
                             @endif
                             <div class="topicListItem__text">

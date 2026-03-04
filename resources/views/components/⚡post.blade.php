@@ -90,11 +90,6 @@ new class extends Component
             </div>
         </div>
         <div class="post__actions">
-            <!--
-                {{ $post->user_id }}
-                {{ auth('web')->id() }}
-                {{ $post->user_id == auth('web')->id() ? 'true' : 'false' }}
-            -->
             @auth
                 <x-popout>
                     @if ($post->user_id !== auth()->id())
