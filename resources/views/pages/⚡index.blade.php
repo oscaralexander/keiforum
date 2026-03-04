@@ -27,14 +27,19 @@ new class extends Component
 <div>
     <x-header hide-path :title="__('home.title')" />
     <div class="panel">
-        <ul class="topicList">
+        <ul class="forumList">
             @foreach ($this->forums as $forum)
-                <li class="topicListItem">
-                    <div class="topicListItem__text">
-                        <a class="topicListItem__title" href="{{ route('forum.show', $forum->slug) }}" wire:navigate>{{ $forum->name }}</a>
-                        <div class="topicListItem__description">{{ $forum->description }}</div>
+                <li class="forumListItem">
+                    <div class="forumListItem__icon">
+                        <x-icon icon="{{ $forum->icon }}" />
                     </div>
-                    <div class="topicListItem__count">{{ trans_choice('forum/index.topics', $forum->topics_count, ['count' => $forum->topics_count]) }}</div>
+                    <div class="forumListItem__text">
+                        <div class="forumListItem__nameCount">
+                            <a class="forumListItem__name" href="{{ route('forum.show', $forum->slug) }}" wire:navigate>{{ $forum->name }}</a>
+                            <div class="forumListItem__count">{{ trans_choice('forum/index.topics', $forum->topics_count, ['count' => $forum->topics_count]) }}</div>
+                        </div>
+                        <div class="forumListItem__description">{{ $forum->description }}</div>
+                    </div>
                 </li>
             @endforeach
         </ul>

@@ -56,10 +56,10 @@ new class extends Component
             </div>
             <div class="profile__main">
                 <section class="profile__section">
-                    @auth
-                        <header class="profile__header">
-                            <x-avatar class="profile__header-avatar" img-only :size="AvatarSize::L" :user="$user" />
-                            <div class="profile__header-content">
+                    <header class="profile__header">
+                        <x-avatar class="profile__header-avatar" img-only :size="AvatarSize::L" :user="$user" />
+                        <div class="profile__header-content">
+                            @auth
                                 <div class="profile__header-details">
                                     <h2 class="profile__header-name">{{ $user->name }}</h2>
                                     <ul class="meta meta--large">
@@ -83,15 +83,17 @@ new class extends Component
                                         <x-btn class="m:show" icon="send" primary wire:click="$dispatch('openModal', { component: 'messages.message-modal', arguments: { username: '{{ $user->username }}' } })">@lang('ui.private_message')</x-btn>
                                     @endif
                                 </div>
-                            </div>
-                        </header>
+                            @else
+                                <div class="text-color-lc">Details alleen zichtbaar voor leden.</div>
+                            @endauth
+                        </div>
+                    </header>
+                    @auth
                         @if (!empty($user->bio))
                             <div class="formatted profile__bio">
                                 <p>{{ nl2br($user->bio) }}</p>
                             </div>
                         @endif
-                    @else
-                        <div>🔒 Details alleen zichtbaar voor leden.</div>
                     @endauth
                 </section>
                 <section class="profile__section">

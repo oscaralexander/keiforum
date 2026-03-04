@@ -1,3 +1,5 @@
+@use '@css/mixins' as *;
+
 [x-cloak] {
     display: none !important;
 }
@@ -57,7 +59,7 @@ h2 {
 
 h3 {
     color: var(--color-text-hc);
-    font-size: var(--fontSize-l);
+    font-size: var(--fontSize-m);
     font-weight: 600;
 }
 
@@ -76,4 +78,10 @@ ul, ol {
     list-style-type: none;
     margin: 0;
     padding: 0;
+}
+
+@include screen-min(m) {
+    h3 {
+        font-size: var(--fontSize-l);
+    }
 }

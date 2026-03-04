@@ -49,6 +49,10 @@
         color: var(--color-text);
     }
 
+    &--small {
+        font-size: var(--fontSize-xs);
+    }
+
     @include screen-min(m) {
         font-size: var(--fontSize-s);
 

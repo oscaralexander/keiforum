@@ -2,7 +2,7 @@
     <div class="wrapper">
         <div class="footer__inner">
             <p>&copy; {{ now()->year }}, Keiforum. Met <span class="footer__heart">♥︎</span> gemaakt in Amersfoort.</p>
-            <ul class="meta">
+            <ul class="meta meta--small">
                 <li class="meta__item">
                     <a href="/privacy">Privacy</a>
                 </li>
