@@ -30,7 +30,13 @@
         {{ $attributes }}
     >
         @if ($empty)
-            <option>{{ $empty }}</option>
+            @if (is_array($empty))
+                @foreach ($empty as $emptyItem)
+                    <option>{{ $emptyItem }}</option>
+                @endforeach
+            @else
+                <option>{{ $empty }}</option>
+            @endif
             <option disabled>&mdash;</option>
         @endif
         @foreach ($options as $value => $label)

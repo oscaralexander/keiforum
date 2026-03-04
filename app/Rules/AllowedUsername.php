@@ -59,6 +59,12 @@ class AllowedUsername implements ValidationRule
 
         $username = strtolower($value);
 
+        // Check for invalid characters
+        if (!preg_match('/^[a-z0-9_]+$/', $username)) {
+            $fail(__('validation.allowed_username.invalid_characters'));
+            return;
+        }
+
         // Check for reserved usernames
         if (in_array($username, array_map('strtolower', $this->reservedUsernames))) {
             $fail(__('validation.allowed_username.reserved'));

@@ -1,8 +1,11 @@
 <?php
 
 return [
+    'max' => [
+        'string' => 'Dit veld mag maximaal :min tekens bevatten.',
+    ],
     'min' => [
-        'string' => 'Dit veld moet minimaal :min karakters bevatten.',
+        'string' => 'Dit veld moet minimaal :min tekens bevatten.',
     ],
     'required' => 'Dit veld is verplicht.',
 
@@ -11,6 +14,7 @@ return [
         'unique' => 'Aan dit e-mailadres is al een account gekoppeld.',
     ],
     'allowed_username' => [
+        'invalid_characters' => 'Alleen kleine letters, cijfers en underscores (_) zijn toegestaan.',
         'reserved' => 'Deze gebruikersnaam is niet toegestaan.',
         'profane' => 'Deze gebruikersnaam is niet toegestaan.',
     ],

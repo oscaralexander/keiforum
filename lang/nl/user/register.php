@@ -6,7 +6,8 @@ return [
     'form' => [
         'area_id' => [
             'description' => 'Alleen zichtbaar voor leden.',
-            'empty' => 'Ik woon niet in Amersfoort',
+            'empty_1' => 'Deel ik liever niet',
+            'empty_2' => 'Ik woon niet in Amersfoort',
             'label' => 'In welke buurt woon je?',
         ],
         'birthdate' => [
@@ -18,7 +19,7 @@ return [
         ],
         'gender' => [
             'description' => 'Alleen zichtbaar voor leden.',
-            'empty' => 'Zeg ik liever niet',
+            'empty' => 'Deel ik liever niet',
             'label' => 'Geslacht',
         ],
         'name' => [
@@ -33,7 +34,7 @@ return [
             'label' => 'Ik ga akkoord met de <a href=":terms_url" target="_blank">algemene voorwaarden</a>',
         ],
         'username' => [
-            'description' => 'Zichtbaar voor iedereen.',
+            'description' => 'Alleen kleine letters, cijfers en underscores.',
             'label' => 'Gebruikersnaam',
         ],
     ],

@@ -68,7 +68,12 @@ new class extends Component
             'name' => ['required'],
             'password' => ['required', Password::defaults()],
             'terms' => ['required', 'accepted'],
-            'username' => ['required', 'unique:users,username', new AllowedUsername()],
+            'username' => [
+                'required',
+                'max:16',
+                'unique:users,username',
+                new AllowedUsername()
+            ],
         ];
     }
 
@@ -84,7 +89,7 @@ new class extends Component
             'gender' => $this->gender ?? null,
             'name' => $this->name,
             'password' => Hash::make($this->password),
-            'username' => $this->username,
+            'username' => strtolower($this->username),
         ]);
 
         Mail::to($this->email)->send(new ActivateAccount($user));
@@ -127,7 +132,7 @@ new class extends Component
                     :label="__('user/register.form.username.label')"
                     model="username"
                 >
-                    <x-input.text autocomplete="username" wire:model.live="username" required style="text-transform: lowercase;" />
+                    <x-input.text autocomplete="username" maxlength="16" required wire:model.live="username" />
                     @if ($usernameAvailable)
                         <div class="field__success">
                             <x-icon icon="check" />
@@ -151,7 +156,7 @@ new class extends Component
                     model="area_id"
                 >
                     <x-input.select
-                        :empty="__('user/register.form.area_id.empty')"
+                        :empty="[__('user/register.form.area_id.empty_1'), __('user/register.form.area_id.empty_2')]"
                         model="area_id"
                         :options="$this->areas->pluck('name', 'id')"
                     />
