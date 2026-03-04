@@ -106,7 +106,13 @@ new class extends Component
                         </div>
                         <div class="flex flex-col flex-flex flex-gap-xs">
                             <h4>@lang('members/show.last_seen')</h4>
-                            <p>{{ time_diff($user->last_seen_at, long: true) }} @lang('ui.ago')</p>
+                            <p>
+                                @if ($user->last_seen_at)
+                                    {{ time_diff($user->last_seen_at, long: true) }} @lang('ui.ago')
+                                @else
+                                    <span class="text-color-lc">—</span>
+                                @endif
+                            </p>
                         </div>
                     </div>
                 </section>
