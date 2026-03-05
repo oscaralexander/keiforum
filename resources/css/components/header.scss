@@ -30,7 +30,7 @@
         text-align: center;
     }
 
-    @include screen-min('m') {
+    @include screen-min(m) {
         align-items: center;
         flex-direction: row;
         gap: var(--size-m);

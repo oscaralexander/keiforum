@@ -156,12 +156,6 @@ new class extends Component
 
 @push('meta')
     <meta property="og:description" content="{{ $this->firstPost?->bodyPlainText }}">
-    <meta property="og:image" content="{{ $topic->image }}">
-    <meta property="og:locale" content="nl_NL">
-    <meta property="og:site_name" content="Keiforum">
-    <meta property="og:title" content="{{ $topic->title }}">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ route('topic.show', [$topic->forum, $topic, $topic->slug]) }}">
     @if ($this->posts->hasPages())
         @if (!$this->posts->onFirstPage())
             <link href="{{ $this->posts->previousPageUrl() }}" rel="prev">
@@ -176,6 +170,7 @@ new class extends Component
     <x-schema :data="$this->schema" />
     <x-header
         :areas="$topic->areas"
+        :home="__('nav.forums')"
         :path="[
             ['label' => $topic->forum->name, 'href' => route('forum.show', $topic->forum)],
         ]"
@@ -192,8 +187,8 @@ new class extends Component
                     />
                 @endforeach
             </ol>
-            @auth
-                <section class="reply">
+            <section class="reply">
+                @auth
                     <div class="flex flex-col flex-gap-m">
                         <h3>@lang('topic/show.reply')</h3>
                         <form class="flex flex-col flex-gap-m" wire:submit="submit">
@@ -203,8 +198,12 @@ new class extends Component
                             </div>
                         </form>
                     </div>
-                </section>
-            @endauth
+                @else
+                    <p class="text-align-center text-color-lc">
+                        🔒 @lang('topic/show.reply_login')
+                    </p>
+                @endauth
+            </section>
         </div>
         {{ $this->posts->links() }}
     </div>

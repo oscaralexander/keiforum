@@ -1,4 +1,18 @@
 .text {
+    &-align {
+        &-center {
+            text-align: center;
+        }
+
+        &-end {
+            text-align: end;
+        }
+
+        &-start {
+            text-align: start;
+        }
+    }
+
     &-color {
         &-hc {
             color: var(--color-text-hc);

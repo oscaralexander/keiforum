@@ -38,7 +38,7 @@ new class extends Component
 ?>
 
 <div>
-    <x-header :intro="$forum->description" :title="$forum->name">
+    <x-header :home="__('nav.forums')" :intro="$forum->description" :title="$forum->name">
         <x-slot:actions>
             <x-btn class="m:hide" :href="route('topic.create', $forum)" icon="plus" primary small>@lang('forum/show.new_topic')</x-btn>
             <x-btn class="m:show" :href="route('topic.create', $forum)" icon="plus" primary>@lang('forum/show.new_topic')</x-btn>

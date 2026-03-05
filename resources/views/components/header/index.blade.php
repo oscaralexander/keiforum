@@ -4,6 +4,7 @@
     'areas' => collect(),
     'center' => false,
     'hidePath' => false,
+    'home' => 'Home',
     'intro' => null,
     'path' => null,
     'title' => null,
@@ -17,7 +18,7 @@
 >
     <div class="header__text">
         @unless ($hidePath)
-            <x-path :items="$path" />
+            <x-path :home="$home" :items="$path" />
         @endunless
         <div class="header__titleIntro">
             <h1>{{ $title }}</h1>

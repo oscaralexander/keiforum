@@ -68,7 +68,7 @@ new class extends Component
         :intro="__('user/login.text', ['register_url' => route('register')])"
         :title="__('user/login.title')"
     />
-    <div class="flex flex-col flex-gap-l">
+    <div class="flex flex-col flex-gap-l" style="margin: 0 auto; max-width: 400px;">
         <form class="flex flex-col flex-gap-m" wire:submit="submit">
             <fieldset class="login">
                 <x-input.text

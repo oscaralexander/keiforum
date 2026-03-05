@@ -97,18 +97,18 @@ new class extends Component
                     @endauth
                 </section>
                 <section class="profile__section">
-                    <div class="profile__stats flex flex-gap-l">
-                        <div class="flex flex-col flex-flex flex-gap-xs">
-                            <h4>@lang('members/show.member_since')</h4>
-                            <p>{{ $user->created_at->translatedFormat('j F Y') }}</p>
+                    <div class="profile__stats">
+                        <div class="profile__stat">
+                            <h4 class="profile__stat-title">@lang('members/show.member_since')</h4>
+                            <p class="profile__stat-value">{{ $user->created_at->translatedFormat('j F Y') }}</p>
                         </div>
-                        <div class="flex flex-col flex-flex flex-gap-xs">
-                            <h4>@lang('members/show.posts_count')</h4>
-                            <p>{{ $user->posts_count }}</p>
+                        <div class="profile__stat">
+                            <h4 class="profile__stat-title">@lang('members/show.posts_count')</h4>
+                            <p class="profile__stat-value">{{ $user->posts_count }}</p>
                         </div>
-                        <div class="flex flex-col flex-flex flex-gap-xs">
-                            <h4>@lang('members/show.last_seen')</h4>
-                            <p>
+                        <div class="profile__stat">
+                            <h4 class="profile__stat-title">@lang('members/show.last_seen')</h4>
+                            <p class="profile__stat-value">
                                 @if ($user->last_seen_at)
                                     {{ time_diff($user->last_seen_at, long: true) }} @lang('ui.ago')
                                 @else

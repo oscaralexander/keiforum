@@ -20,11 +20,49 @@ new class extends Component
         return $this->view()
             ->title('Hallo Amersfoort!');
     }
+
+    #[Computed]
+    public function schema(): array
+    {
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            'about' => [
+                '@type' => 'Place',
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'addressLocality' => 'Amersfoort',
+                    'addressCountry' => 'NL',
+                ],
+                'geo' => [
+                    '@type' => 'GeoCoordinates',
+                    'latitude' => 52.156111,
+                    'longitude' => 5.387827,
+                ],
+                'name' => 'Amersfoort',
+            ],
+            'description' => 'De online huiskamer van Amersfoort.',
+            'headline' => 'De online huiskamer van Amersfoort.',
+            'name' => config('app.name'),
+            'url' => url('/'),
+            'publisher' => [
+                '@type' => 'Organization',
+                'logo' => [
+                    '@type' => 'ImageObject',
+                    'url' => asset('assets/img/keiforum-logo.svg'),
+                ],
+                'name' => config('app.name'),
+            ],
+        ];
+    }
 };
 
 ?>
 
+@stack('head')
+
 <div>
+    <x-schema :data="$this->schema" />
     <x-header hide-path :title="__('home.title')" />
     <div class="panel">
         <ul class="forumList">
