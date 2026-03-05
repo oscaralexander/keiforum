@@ -3,16 +3,17 @@
 namespace App\Models;
 
 use App\Lib\EmbedTransformer;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class Post extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     public const PAGINATE_COUNT = 10;
 
@@ -24,7 +25,7 @@ class Post extends Model
     {
         $bodyPlainText = preg_replace('/<\/([ol|p|ul])>/', "<$1>\n\n", $this->body);
         $bodyPlainText = trim(strip_tags($bodyPlainText));
-        
+
         // $bodyPlainText = Str::of($this->body)->replaceMatches('/<\/([ol|p|ul])>/', function (array $matches) {
         //     return "{$matches[0]}\n\n";
         // })->stripTags()->trim();
@@ -44,7 +45,6 @@ class Post extends Model
     /**
      * Relationships
      */
-
     public function forum(): BelongsTo
     {
         return $this->through('topic')->belongsTo(Forum::class);
@@ -65,4 +65,3 @@ class Post extends Model
         return $this->belongsTo(User::class);
     }
 }
-

@@ -7,6 +7,7 @@ Route::livewire('leden', 'pages::members.index')->name('members');
 Route::livewire('agenda', 'pages::agenda.index')->name('agenda');
 
 Route::get('img', App\Http\Controllers\ImageProxyController::class)->name('img');
+Route::get('sitemap.xml', App\Http\Controllers\SitemapController::class)->name('sitemap');
 
 // API
 Route::match(['get', 'post'], 'api/users/search', App\Http\Controllers\Api\User\SearchController::class)->name('users.search');
