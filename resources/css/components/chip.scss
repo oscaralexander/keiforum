@@ -1,0 +1,32 @@
+.chip {
+    align-items: center;
+    border: 1px solid var(--color-border);
+    border-radius: 1rem;
+    color: var(--color-text-lc);
+    cursor: pointer;
+    display: flex;
+    font-weight: 500;
+    gap: .25rem;
+    height: 2rem;
+    padding: 0 1rem 0 .75rem;
+    position: relative;
+    user-select: none;
+
+    input {
+        height: 0;
+        position: absolute;
+        width: 0;
+    }
+
+    .icon {
+        flex: 0 0 1rem;
+        height: 1rem;
+        width: 1rem;
+    }
+    
+    &:has(input:checked) {
+        background: var(--color-1);
+        border-color: transparent;
+        color: var(--color-bg);
+    }
+}

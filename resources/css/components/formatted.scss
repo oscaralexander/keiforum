@@ -10,16 +10,37 @@
         font-style: italic;
     }
 
-    ol, p, ul {
-        margin: 1em 0;
-        max-width: 65ch;
+    img {
+        display: inline-block;
+        border-radius: var(--borderRadius-s);
+        max-height: 50vh;
+        max-width: 100%;
+    }
 
-        &:first-child {
-            margin-top: 0;
+    p, ol, ul {
+        max-width: 75ch;
+    }
+
+    p, ol, ul, div {
+        &:not(:last-child) {
+            margin-bottom: 1em;
         }
 
-        &:last-child {
-            margin-bottom: 0;
+        &:empty {
+            display: none;
+        }
+    }
+
+    &__video {
+        position: relative;
+
+        iframe {
+            aspect-ratio: 16 / 9;
+            border-radius: var(--borderRadius-s);
+            border: none;
+            height: auto;
+            overflow: hidden;
+            width: 100%;
         }
     }
 }

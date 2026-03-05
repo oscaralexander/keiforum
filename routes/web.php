@@ -31,10 +31,11 @@ Route::middleware('auth')->group(function () {
 // Member
 Route::livewire('@{user}', 'pages::members.show')->name('member.show');
 
+// Area
+Route::livewire('in/{area}', 'pages::area.show')->name('area.show');
+
 // Forum
 Route::livewire('{forum}', 'pages::forum.show')->name('forum.show');
 
 // Topic
 Route::livewire('{forum}/{topic}/{slug?}', 'pages::topic.show')->name('topic.show');
-
-Route::livewire('in/{area}', 'pages::area.show')->name('area.show');
