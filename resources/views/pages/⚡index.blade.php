@@ -18,7 +18,7 @@ new class extends Component
     public function render()
     {
         return $this->view()
-            ->title('Hallo Amersfoort!');
+            ->title('De online huiskamer van Amersfoort');
     }
 
     #[Computed]
