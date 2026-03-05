@@ -5,7 +5,7 @@ return [
     'form' => [
         'area_id' => [
             'description' => 'Alleen zichtbaar voor leden.',
-            'empty' => 'Ik woon niet in Amersfoort',
+            'empty' => 'Deel ik liever niet',
             'label' => 'In welke buurt woon je?',
         ],
         'avatar' => [
