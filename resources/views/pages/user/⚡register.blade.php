@@ -156,7 +156,7 @@ new class extends Component
                     model="area_id"
                 >
                     <x-input.select
-                        :empty="[__('user/register.form.area_id.empty_1'), __('user/register.form.area_id.empty_2')]"
+                        :empty="__('user/register.form.area_id.empty')"
                         model="area_id"
                         :options="$this->areas->pluck('name', 'id')"
                     />
