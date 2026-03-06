@@ -27,6 +27,7 @@
         display: flex;
         flex-direction: column;
         flex: 1;
+        gap: var(--size-xs);
     }
 
     &__nameCount {
@@ -48,12 +49,20 @@
         font-size: var(--fontSize-s);
     }
 
+    &__description {
+        font-size: var(--fontSize-s);
+    }
+
     @include screen-min(m) {
         &__name {
             font-size: var(--fontSize-xl);
         }
 
         &__count {
+            font-size: var(--fontSize-m);
+        }
+
+        &__description {
             font-size: var(--fontSize-m);
         }
     }

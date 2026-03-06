@@ -3,7 +3,7 @@
 ])
 
 <div class="areaList">
-    <div class="areaList__icon"><x-icon icon="map-pin" /></div>
+    <x-icon class="areaList__icon" icon="map-pin" />
     <div class="areaList__list">
         @foreach ($areas as $area)
             <a class="areaList__list-item" href="{{ route('area.show', $area) }}" wire:navigate>{{ $area->name }}</a>@if(!$loop->last), @endif

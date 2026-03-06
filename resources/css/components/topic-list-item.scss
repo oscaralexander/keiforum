@@ -10,7 +10,19 @@
     }
 
     &__text {
+        display: flex;
         flex: 1;
+        flex-direction: column;
+        gap: var(--size-xs);
+    }
+
+    &__icon {
+        display: inline-block;
+        color: var(--color-1);
+        height: 1rem;
+        position: relative;
+        top: .175em;
+        width: 1rem;
     }
 
     &__title {

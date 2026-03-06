@@ -1,11 +1,23 @@
 .areaList {
-    color: var(--color-1);
+    align-items: center;
+    color: rgba(var(--color-1-rgb), .75);
     display: flex;
     flex-wrap: wrap;
     font-size: var(--fontSize-l);
     gap: .35em;
 
+    &__icon {
+        flex: 0 0 1.25rem;
+        height: 1.25rem;
+        width: 1.25rem;
+    }
+
     a {
+        color: rgba(var(--color-1-rgb), .75);
         text-decoration: none;
+
+        &:hover {
+            color: var(--color-1);
+        }
     }
 }

@@ -24,6 +24,7 @@ new class extends Component
         return $this->forum->topics()
             ->with(['areas', 'latestPost.user'])
             ->withCount('posts')
+            ->orderByDesc('is_pinned')
             ->latest()
             ->paginate(Topic::PAGINATE_COUNT, pageName: 'p')
             ->setPath(route('forum.show', $this->forum));
@@ -61,7 +62,15 @@ new class extends Component
                                 />
                             @endif
                             <div class="topicListItem__text">
-                                <a class="topicListItem__title" href="{{ route('topic.show', [$forum, $topic, $topic->slug]) }}" wire:navigate>{{ $topic->title }}</a>
+                                <div>
+                                    @if ($topic->is_locked)
+                                        <x-icon class="topicListItem__icon" icon="lock" />
+                                    @endif
+                                    @if ($topic->is_pinned)
+                                        <x-icon class="topicListItem__icon" icon="pin" />
+                                    @endif
+                                    <a class="topicListItem__title" href="{{ route('topic.show', [$forum, $topic, $topic->slug]) }}" wire:navigate>{{ $topic->title }}</a>
+                                </div>
                                 <ul class="meta">
                                     @if ($topic->areas->isNotEmpty())
                                         <li class="meta__item">
