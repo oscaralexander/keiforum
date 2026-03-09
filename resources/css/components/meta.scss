@@ -3,6 +3,7 @@
 .meta {
     color: var(--color-text-lc);
     font-size: var(--fontSize-s);
+    line-height: var(--lineHeight-l);
 
     &::after {
         content: '';

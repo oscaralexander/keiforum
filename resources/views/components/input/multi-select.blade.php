@@ -50,10 +50,10 @@
         x-transition:leave-start="multiSelect__dropdown--leaveStart"
     >
         <template x-for="(option, index) in options" :key="option.value">
-            <div class="multiSelect__option option option--checkbox" :title="option.label">
-                <input :id="`option-${option.value}`" type="checkbox" :value="option.value" x-model="model">
-                <label :for="`option-${option.value}`" x-text="option.label"></label>
-            </div>
+            <label class="multiSelect__option option option--checkbox" :title="option.label">
+                <input type="checkbox" :value="option.value" x-model="model">
+                <span x-text="option.label"></span>
+            </label>
         </template>
     </div>
 </div>

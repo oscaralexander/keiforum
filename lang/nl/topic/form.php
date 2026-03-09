@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'ad_type' => [
+        'label' => 'Advertentietype',
+    ],
     'body' => [
         'label' => 'Bericht',
     ],

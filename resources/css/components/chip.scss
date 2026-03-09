@@ -1,3 +1,5 @@
+@use '@css/mixins' as *;
+
 .chip {
     align-items: center;
     border: 1px solid var(--color-border);
@@ -5,6 +7,7 @@
     color: var(--color-text-lc);
     cursor: pointer;
     display: flex;
+    font-size: var(--fontSize-s);
     font-weight: 500;
     gap: .25rem;
     height: 2rem;
@@ -28,5 +31,9 @@
         background: var(--color-1);
         border-color: transparent;
         color: var(--color-bg);
+    }
+
+    @include screen-min(m) {
+        font-size: var(--fontSize-m);
     }
 }

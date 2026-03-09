@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AdType;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +23,7 @@ class Topic extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
+        'ad_type' => AdType::class,
         'is_locked' => 'boolean',
         'is_pinned' => 'boolean',
     ];

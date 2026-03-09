@@ -1,3 +1,5 @@
+@use '@css/mixins' as *;
+
 .topicListItem {
     align-items: center;
     display: flex;
@@ -14,6 +16,31 @@
         flex: 1;
         flex-direction: column;
         gap: var(--size-xs);
+    }
+
+    &__adType {
+        border-radius: 2rem;
+        display: inline-block;
+        font-size: var(--fontSize-xs);
+        font-weight: 500;
+        line-height: 1.25rem;
+        margin-left: .15rem;
+        padding: 0 .5rem;
+
+        &--offered {
+            background: rgba(var(--color-good-rgb), .1);
+            color: var(--color-good);
+        }
+
+        &--wanted {
+            background: rgba(var(--color-1-rgb), .1);
+            color: var(--color-1);
+        }
+
+        &--pending {
+            background: rgba(var(--color-text-rgb), .1);
+            color: var(--color-text);
+        }
     }
 
     &__icon {
@@ -42,5 +69,11 @@
 
     .avatar img {
         background: var(--color-bg);
+    }
+
+    @include screen-min(m) {
+        &__title {
+            font-size: var(--fontSize-l);
+        }
     }
 }

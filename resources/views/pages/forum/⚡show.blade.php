@@ -2,14 +2,19 @@
 
 use App\Models\Forum;
 use App\Models\Topic;
+use App\Enums\AdType;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\Attributes\Computed;
 use Livewire\WithPagination;
 
 new class extends Component
 {
     use WithPagination;
+
+    #[Url('ad_types')]
+    public array $adTypes = [AdType::OFFERED->value, AdType::WANTED->value];
 
     public Forum $forum;
 
@@ -23,6 +28,10 @@ new class extends Component
     {
         return $this->forum->topics()
             ->with(['areas', 'latestPost.user'])
+            ->when(
+                $this->forum->is_marketplace && !empty($this->adTypes),
+                fn ($q) => $q->whereIn('ad_type', $this->adTypes)
+            )
             ->withCount('posts')
             ->orderByDesc('is_pinned')
             ->latest()
@@ -46,6 +55,24 @@ new class extends Component
         </x-slot:actions>
     </x-header>
     <div class="flex flex-col flex-gap-l">
+        @if ($forum->is_marketplace)
+            <ul class="flex flex-gap-s">
+                @foreach (AdType::options() as $value => $label)
+                    <li>
+                        <label class="chip" for="ad-type-{{ $value }}">
+                            <input
+                                id="ad-type-{{ $value }}"
+                                type="checkbox"
+                                value="{{ $value }}"
+                                wire:model.live="adTypes"
+                            />
+                            <x-icon icon="check" />
+                            {{ $label }}
+                        </label>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
         @if ($this->topics->isNotEmpty())
             <div class="panel">
                 <ul class="topicList">
@@ -70,6 +97,9 @@ new class extends Component
                                         <x-icon class="topicListItem__icon" icon="pin" />
                                     @endif
                                     <a class="topicListItem__title" href="{{ route('topic.show', [$forum, $topic, $topic->slug]) }}" wire:navigate>{{ $topic->title }}</a>
+                                    @if ($topic->ad_type) 
+                                        <span class="topicListItem__adType topicListItem__adType--{{ $topic->ad_type->value }}">{{ $topic->ad_type->label() }}</span>
+                                    @endif
                                 </div>
                                 <ul class="meta">
                                     @if ($topic->areas->isNotEmpty())

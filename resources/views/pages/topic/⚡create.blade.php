@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\AdType;
 use App\Models\Area;
 use App\Models\Forum;
 use App\Models\Post;
@@ -9,6 +10,8 @@ use Livewire\Attributes\Computed;
 
 new class extends Component
 {   
+    public ?AdType $ad_type = null;
+
     public string $body;
 
     public Forum $forum;
@@ -35,6 +38,10 @@ new class extends Component
     {
         $this->forum = $forum;
         $this->forum_id = $forum->id;
+
+        if ($forum->id === 2) {
+            $this->ad_type = AdType::OFFERED;
+        }
     }
 
     public function rules()
@@ -53,6 +60,7 @@ new class extends Component
 
         // Create Topic
         $topic = Topic::create([
+            'ad_type' => $this->ad_type,
             'title' => $this->title,
             'forum_id' => $this->forum->id,
             'user_id' => auth()->id(),
@@ -114,6 +122,19 @@ new class extends Component
                             />
                         </x-field>
                     </div>
+                    <x-field :label="__('topic/form.ad_type.label')" model="ad_type" x-cloak x-show="$wire.forum_id == 2">
+                        <div class="flex flex-gap-m">
+                            @foreach (AdType::options() as $value => $label)
+                                <x-input.option
+                                    :label="$label"
+                                    model="ad_type"
+                                    name="ad_type"
+                                    :value="$value"
+                                    type="radio"
+                                />
+                            @endforeach
+                        </div>
+                    </x-field>
                     <x-field :label="__('topic/form.body.label')" model="body">
                         <x-editor model="body" required />
                     </x-field>
