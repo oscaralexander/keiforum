@@ -1,3 +1,5 @@
+@blaze
+
 @use('App\Enums\AvatarSize')
 
 <nav

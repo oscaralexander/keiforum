@@ -40,8 +40,9 @@ new class extends Component
         $this->forum = $forum;
         $this->forum_id = $forum->id;
 
-        if ($forum->id === 2) {
+        if ($forum->is_marketplace) {
             $this->ad_type = AdType::OFFERED;
+            $this->topicAreas = array_filter([auth()->user()->area_id]);
         }
     }
 
