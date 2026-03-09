@@ -9,6 +9,7 @@
     cursor: pointer;
     display: flex;
     gap: .5em;
+    min-height: var(--input-height);
     position: relative;
     user-select: none;
 

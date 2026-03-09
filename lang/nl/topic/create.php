@@ -1,5 +1,6 @@
 <?php
 
 return [
-    'title' => 'Nieuw onderwerp starten',
+    'title_ad' => 'Nieuwe advertentie plaatsen',
+    'title_topic' => 'Nieuw onderwerp starten',
 ];

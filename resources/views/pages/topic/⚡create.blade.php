@@ -5,6 +5,7 @@ use App\Models\Area;
 use App\Models\Forum;
 use App\Models\Post;
 use App\Models\Topic;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 
@@ -44,14 +45,26 @@ new class extends Component
         }
     }
 
+    public function render()
+    {
+        return $this->view()
+            ->title(__('topic/create.title_' . ($this->forum->is_marketplace ? 'ad' : 'topic')));
+    }
+
     public function rules()
     {
-        return [
-            'title' => 'required|string|max:255',
-            'topicAreas' => 'nullable|array',
+        $rules = [
+            'title' => ['required', 'max:255'],
+            'topicAreas' => ['nullable', 'array'],
             'topicAreas.*' => 'required|exists:areas,id',
             'body' => 'required|string',
         ];
+
+        if ($this->forum->is_marketplace) {
+            $rules['ad_type'] = ['nullable', Rule::enum(AdType::class)];
+        }
+
+        return $rules;
     }
 
     public function submit()
@@ -88,7 +101,7 @@ new class extends Component
         :path="[
             ['label' => $forum->name, 'href' => route('forum.show', $forum)],
         ]"
-        :title="__('topic/create.title')"
+        :title="__('topic/create.title_' . ($forum->is_marketplace ? 'ad' : 'topic'))"
     />
     <div class="panel panel--padded">
         <form wire:submit="submit">
@@ -129,10 +142,19 @@ new class extends Component
                                     :label="$label"
                                     model="ad_type"
                                     name="ad_type"
-                                    :value="$value"
                                     type="radio"
+                                    :value="$value"
                                 />
                             @endforeach
+                            @if (auth('web')->id() == 1)
+                                <x-input.option
+                                    :label="__('topic/form.ad_type.null')"
+                                    model="ad_type"
+                                    name="ad_type"
+                                    type="radio"
+                                    value=""
+                                />
+                            @endif
                         </div>
                     </x-field>
                     <x-field :label="__('topic/form.body.label')" model="body">
@@ -140,7 +162,7 @@ new class extends Component
                     </x-field>
                 </div>
                 <div class="flex flex-align-center flex-gap-m">
-                    <x-btn primary submit>@lang('ui.save')</x-btn>
+                    <x-btn primary submit>@lang('ui.post')</x-btn>
                     <x-btn text href="{{ route('forum.show', $forum) }}">@lang('ui.cancel')</x-btn>
                 </div>
             </div>

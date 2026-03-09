@@ -3,6 +3,7 @@
 return [
     'ad_type' => [
         'label' => 'Advertentietype',
+        'null' => 'Geen',
     ],
     'body' => [
         'label' => 'Bericht',

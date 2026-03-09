@@ -16,8 +16,7 @@ new class extends Component
 
     public Area $area;
 
-    /** @var array<int> */
-    #[Url]
+    #[Url('forums')]
     public array $selectedForumIds = [];
 
     #[Computed]

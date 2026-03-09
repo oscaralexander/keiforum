@@ -13,6 +13,7 @@ return [
     'login_alt' => 'Aanmelden',
     'logout' => 'Uitloggen',
     'ok' => 'OK',
+    'post' => 'Plaatsen',
     'private_message' => 'Privébericht',
     'register' => 'Registreren',
     'reply' => 'Reageren',

@@ -18,7 +18,7 @@
     $id = $id ?? ($model ? Str::of($model)->slug() : null);
 @endphp
 
-<div
+<label
     @class([
         'input',
         'input--small' => $small,
@@ -65,4 +65,4 @@
             <x-icon icon="eye-off" />
         </button>
     @endif
-</div>
+</label>

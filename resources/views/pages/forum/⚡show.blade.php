@@ -30,7 +30,10 @@ new class extends Component
             ->with(['areas', 'latestPost.user'])
             ->when(
                 $this->forum->is_marketplace && !empty($this->adTypes),
-                fn ($q) => $q->whereIn('ad_type', $this->adTypes)
+                fn ($q) => $q->where(function ($query) {
+                    $query->whereIn('ad_type', $this->adTypes)
+                          ->orWhereNull('ad_type');
+                })
             )
             ->withCount('posts')
             ->orderByDesc('is_pinned')
@@ -50,8 +53,8 @@ new class extends Component
 <div>
     <x-header :home="__('nav.forums')" :intro="$forum->description" :title="$forum->name">
         <x-slot:actions>
-            <x-btn class="m:hide" :href="route('topic.create', $forum)" icon="plus" primary small>@lang('forum/show.new_topic')</x-btn>
-            <x-btn class="m:show" :href="route('topic.create', $forum)" icon="plus" primary>@lang('forum/show.new_topic')</x-btn>
+            <x-btn class="m:hide" :href="route('topic.create', $forum)" icon="plus" primary small>{{ __('forum/show.new_' . ($forum->is_marketplace ? 'ad' : 'topic')) }}</x-btn>
+            <x-btn class="m:show" :href="route('topic.create', $forum)" icon="plus" primary>{{ __('forum/show.new_' . ($forum->is_marketplace ? 'ad' : 'topic')) }}</x-btn>
         </x-slot:actions>
     </x-header>
     <div class="flex flex-col flex-gap-l">
