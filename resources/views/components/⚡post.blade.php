@@ -17,6 +17,11 @@ new class extends Component
 
     public Post $post;
 
+    public function cancelEdit()
+    {
+        $this->isEditing = false;
+    }
+
     public function edit()
     {
         $this->isEditing = true;
@@ -115,13 +120,13 @@ new class extends Component
     @if ($isEditing)
         <form class="flex flex-col flex-gap-m" wire:submit="submit">
             <x-editor model="body" />
-            <div class="flex flex-gap-s">
-                <x-btn text wire:click="cancel">Annuleren</x-btn>
+            <div class="flex flex-gap-m">
                 <x-btn primary submit>Opslaan</x-btn>
+                <x-btn text wire:click="cancelEdit">Annuleren</x-btn>
             </div>
         </form>
     @else
-        <div class="body">{!! $post->body_transformed !!}</div>
+        <div class="formatted">{!! $post->body_transformed !!}</div>
     @endif
     <footer class="post__footer">
         <div @class([

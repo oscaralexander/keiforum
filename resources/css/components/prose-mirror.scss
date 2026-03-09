@@ -1,8 +1,8 @@
 .ProseMirror {
+    line-height: var(--lineHeight-l);
     position: relative;
     outline: none;
     overflow-wrap: break-word;
-    outline: none;
     padding: .75rem;
     white-space: pre-wrap;
 
@@ -85,6 +85,11 @@
         word-break: break-all;
     }
 
+    b, strong {
+        color: var(--color-text-hc);
+        font-weight: 600;
+    }
+
     blockquote {
         border-left: 3px solid var(--color-border);
         font-style: italic;
@@ -92,27 +97,24 @@
         padding-left: 1em;
     }
 
-    p,
-    ol,
-    ul {
-        margin: 1em 0;
-
-        &:first-child {
-            margin-top: 0;
+    p, ol, ul, div {
+        &:not(:last-child) {
+            margin-bottom: 1em;
         }
 
-        &:last-child {
-            margin-bottom: 0;
+        &:empty {
+            display: none;
         }
     }
 
     ol,
     ul {
-        padding-left: 2em;
-    }
-    
-    ol {
         list-style-type: decimal;
+        margin: 2em 0 2em 1.5em !important;
+
+        li:not(:last-child) {
+            margin-bottom: .75em;
+        }
     }
 
     ul {
