@@ -28,7 +28,7 @@ new class extends Component
         $conversation = Conversation::with(['users'])
             ->findOrFail($this->conversation_id);
 
-        if (!$conversation->users->contains(auth('web')->id())) {
+        if (!$conversation->users->contains(auth()->id())) {
             abort(403);
         }
 

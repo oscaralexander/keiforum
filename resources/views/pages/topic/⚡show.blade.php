@@ -1,5 +1,6 @@
 <?php
 
+use App\Constants\Event;
 use App\Models\Area;
 use App\Models\Forum;
 use App\Models\Topic;
@@ -7,6 +8,7 @@ use App\Models\Post;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\WithPagination;
 
 new class extends Component
@@ -29,6 +31,7 @@ new class extends Component
     public function posts(): LengthAwarePaginator
     {
         return $this->topic->posts()
+            ->withTrashed()
             ->with(['likes', 'likes.user', 'user', 'user.area'])
             ->withCount('likes')
             ->paginate(Post::PAGINATE_COUNT, pageName: 'p')
@@ -37,9 +40,8 @@ new class extends Component
 
     public function mount(Topic $topic)
     {
-        $this->topic = $topic;
         $this->topic->loadCount(['posts']);
-        $this->topic->loadMissing(['forum']);
+        $this->topic->loadMissing(['firstPost', 'forum']);
 
         if ($postId = request()->query('post')) {
             $this->paginateToPost((int) $postId);
@@ -64,6 +66,7 @@ new class extends Component
         }
     }
 
+    #[On(Event::TOPIC_UPDATED)]
     public function render()
     {
         return $this->view()
@@ -180,11 +183,16 @@ new class extends Component
         <div class="panel">
             <ol>
                 @foreach ($this->posts as $post)
-                    <livewire:post
-                        :number="(($this->posts->currentPage() - 1) * Post::PAGINATE_COUNT) + ($loop->index + 1)"
-                        :post="$post"
-                        wire:key="post-{{ $post->id }}"
-                    />
+                    @if (!$post->trashed())
+                        <livewire:post
+                            :is-first-post="$post->id === $topic->firstPost?->id"
+                            :number="(($this->posts->currentPage() - 1) * Post::PAGINATE_COUNT) + ($loop->index + 1)"
+                            :post="$post"
+                            wire:key="post-{{ $post->id }}"
+                        />
+                    @else
+                        <x-deleted-post :post="$post" />
+                    @endif
                 @endforeach
             </ol>
             <section class="reply">

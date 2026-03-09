@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\Gender;
-use App\Lib\EmbedTransformer;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,9 +16,12 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $casts = [
+        'banned_until' => 'datetime',
         'birthdate' => 'date',
         'email_verified_at' => 'datetime',
         'gender' => Gender::class,
+        'has_avatar' => 'boolean',
+        'is_admin' => 'boolean',
         'last_seen_at' => 'datetime',
         'password' => 'hashed',
     ];
@@ -37,7 +39,7 @@ class User extends Authenticatable
 
         return $this->has_avatar
             ? route('img', ['src' => $this->avatar, 'w' => $size, 'h' => $size, 'q' => 80])
-            : '/assets/img/avatar/webp/' . $initial . '.webp';
+            : '/assets/img/avatar/webp/'.$initial.'.webp';
     }
 
     public function getRouteKeyName(): string
@@ -48,18 +50,17 @@ class User extends Authenticatable
     /**
      * Attributes
      */
-
-     public function age(): Attribute
-     {
-         return new Attribute(
-             get: fn (): int => $this->birthdate ? $this->birthdate->diffInYears(now()) : 0,
-         );
-     }
+    public function age(): Attribute
+    {
+        return new Attribute(
+            get: fn (): int => $this->birthdate ? $this->birthdate->diffInYears(now()) : 0,
+        );
+    }
 
     public function avatar(): Attribute
     {
         return new Attribute(
-            get: fn ($value) => env('APP_PATH_AVATARS') . DIRECTORY_SEPARATOR . $this->username . '.webp',
+            get: fn ($value) => env('APP_PATH_AVATARS').DIRECTORY_SEPARATOR.$this->username.'.webp',
         );
     }
 
@@ -74,6 +75,13 @@ class User extends Authenticatable
     {
         return new Attribute(
             get: fn (): string => explode(' ', $this->name)[0],
+        );
+    }
+
+    public function isBanned(): Attribute
+    {
+        return new Attribute(
+            get: fn (): bool => $this->banned_until && $this->banned_until->isAfter(now()),
         );
     }
 
@@ -110,7 +118,6 @@ class User extends Authenticatable
     /**
      * Relationships
      */
-
     public function area(): BelongsTo
     {
         return $this->belongsTo(Area::class);

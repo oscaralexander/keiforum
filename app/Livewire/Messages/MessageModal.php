@@ -36,11 +36,11 @@ class MessageModal extends ModalComponent
     {
         $this->validate();
 
-        $conversation = Conversation::firstOrCreateForParticipants([auth('web')->id(), $this->user->id]);
+        $conversation = Conversation::firstOrCreateForParticipants([auth()->id(), $this->user->id]);
 
         $conversation->messages()->create([
             'body' => $this->body,
-            'user_id' => auth('web')->id(),
+            'user_id' => auth()->id(),
         ]);
 
         $this->dispatch('message-sent');

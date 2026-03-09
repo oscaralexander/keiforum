@@ -1,9 +1,14 @@
 <?php
 
+use App\Constants\Event;
 use App\Events\PostLiked;
+use App\Models\Area;
 use App\Models\Post;
+use App\Models\Topic;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 
 new class extends Component
 {
@@ -11,29 +16,65 @@ new class extends Component
 
     public string $body;
 
+    #[Locked]
     public bool $isEditing = false;
 
+    #[Locked]
+    public bool $isFirstPost = false;
+
+    #[Locked]
     public bool $isLiked = false;
 
     public Post $post;
+
+    public string $topic_title;
+
+    public array $topicAreas = [];
+
+    #[Computed]
+    public function areas()
+    {
+        return Area::all();
+    }
 
     public function cancelEdit()
     {
         $this->isEditing = false;
     }
 
+    public function delete()
+    {
+        Gate::authorize('delete', $this->post);
+
+        $this->post->update([
+            'deleted_at' => now(),
+            'deleted_by' => auth()->id(),
+        ]);
+
+        if ($this->isFirstPost && !$this->topic->has_replies) {
+            $forum = $this->topic->forum;
+            $this->topic->delete();
+            return redirect()->route('forum.show', ['forum' => $forum]);
+        }
+    }
+
     public function edit()
     {
+        Gate::authorize('update', $this->post);
+
+        if ($this->isFirstPost) {
+            $this->topic_title = $this->topic->title;
+            $this->topicAreas = $this->topic->areas->pluck('id')->toArray();
+        }
+
         $this->isEditing = true;
     }
 
-    public function mount(Post $post)
+    public function mount()
     {
-        $this->post = $post;
-        $this->post->loadMissing('likes', 'likes.user');
-
-        $this->body = $post->body;
-        $this->isLiked = $post->likes->contains('user_id', auth()->id());
+        $this->post->loadMissing('likes.user');
+        $this->body = $this->post->body;
+        $this->isLiked = $this->post->likes->contains('user_id', auth()->id());
     }
 
     #[Computed]
@@ -48,20 +89,41 @@ new class extends Component
     }
 
     public function rules() {
-        return [
+        $rules = [
             'body' => 'required|string',
         ];
+
+        if ($this->isFirstPost) {
+            $rules['topic_title'] = ['required', 'max:255'];
+            $rules['topicAreas'] = ['required', 'array'];
+            $rules['topicAreas.*'] = ['required', 'exists:areas,id'];
+        }
+
+        return $rules;
     }
 
     public function submit()
     {
+        Gate::authorize('update', $this->post);
+
         $this->validate();
 
         $this->post->update([
             'body' => $this->body,
         ]);
 
+        if ($this->isFirstPost) {
+            $this->topic->update([
+                'title' => $this->topic_title,
+            ]);
+            $this->topic->areas()->sync($this->topicAreas);
+        }
+
         $this->isEditing = false;
+
+        if ($this->isFirstPost) {
+            $this->dispatch(Event::TOPIC_UPDATED);
+        }
     }
 
     public function toggleLike()
@@ -74,6 +136,12 @@ new class extends Component
         }
 
         $this->isLiked = !$this->isLiked;
+    }
+
+    #[Computed]
+    public function topic(): Topic
+    {
+        return $this->post->topic->load(['areas', 'forum']);
     }
 };
 ?>
@@ -109,9 +177,15 @@ new class extends Component
                         <x-popout.item icon="flag" :label="__('ui.report')" />
                         --}}
                     @endif
-                    @if ($post->user_id == auth('web')->id() || auth('web')->user()->is_admin)
+                    @if ($post->user_id == auth()->id() || auth()->user()->is_admin)
                         <x-popout.item icon="pencil" :label="__('ui.edit')" wire:click="edit" />
-                        <x-popout.item icon="trash" danger :label="__('ui.delete')" wire:click="delete" />
+                        <x-popout.item
+                            icon="trash"
+                            danger
+                            :label="__('ui.delete')"
+                            wire:click="delete"
+                            wire:confirm="{{ __('post/show.confirm_delete' . ($isFirstPost ? '_topic' : '')) }}"
+                        />
                     @endif
                 </x-popout>
             @endauth
@@ -119,11 +193,29 @@ new class extends Component
     </header>
     @if ($isEditing)
         <form class="flex flex-col flex-gap-m" wire:submit="submit">
+            @if ($isFirstPost)
+                <x-field>
+                    <x-input.text large model="topic_title" required />
+                </x-field>
+                <x-field
+                    class="flex-flex"
+                    :label="__('topic/form.topic_areas.label')"
+                    model="topicAreas"
+                >
+                    <x-input.multi-select
+                        model="topicAreas"
+                        :options="$this->areas"
+                        :placeholder="__('topic/form.topic_areas.placeholder')"
+                    />
+                </x-field>
+            @endif
             <x-editor model="body" />
-            <div class="flex flex-gap-m">
-                <x-btn primary submit>Opslaan</x-btn>
-                <x-btn text wire:click="cancelEdit">Annuleren</x-btn>
-            </div>
+            <x-actions class="flex-justify-spaceBetween">
+                <x-actions>
+                    <x-btn primary submit>Opslaan</x-btn>
+                    <x-btn text wire:click="cancelEdit">Annuleren</x-btn>
+                </x-actions>
+            </x-actions>
         </form>
     @else
         <div class="formatted">{!! $post->body_transformed !!}</div>

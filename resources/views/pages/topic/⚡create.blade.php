@@ -147,7 +147,7 @@ new class extends Component
                                     :value="$value"
                                 />
                             @endforeach
-                            @if (auth('web')->id() == 1)
+                            @if (auth()->id() == 1)
                                 <x-input.option
                                     :label="__('topic/form.ad_type.null')"
                                     model="ad_type"

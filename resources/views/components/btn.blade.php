@@ -2,6 +2,7 @@
 
 @props([
     'borderless' => false,
+    'danger' => false,
     'href' => null,
     'icon' => null,
     'navigate' => false,
@@ -17,14 +18,6 @@
 @endphp
 
 <{{ $tag }}
-    {{ $attributes->class([
-        'btn',
-        'btn--borderless' => $borderless,
-        'btn--icon' => $iconOnly,
-        'btn--primary' => $primary,
-        'btn--small' => $small,
-        'btn--text' => $text,
-    ]) }}
     @if($href)
         href="{{ $href }}"
         role="button"
@@ -34,7 +27,15 @@
     @else
         type="{{ $submit ? 'submit' : 'button' }}"
     @endif
-    {{ $attributes }}
+    {{ $attributes->class([
+        'btn',
+        'btn--borderless' => $borderless,
+        'btn--danger' => $danger,
+        'btn--icon' => $iconOnly,
+        'btn--primary' => $primary,
+        'btn--small' => $small,
+        'btn--text' => $text,
+    ]) }}
 >
     @if($icon)
         <x-icon :icon="$icon" />

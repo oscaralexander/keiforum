@@ -1,3 +1,5 @@
+@blaze(memo: true)
+
 <footer class="footer">
     <div class="wrapper">
         <div class="footer__inner">

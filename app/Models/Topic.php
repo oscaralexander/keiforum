@@ -46,6 +46,13 @@ class Topic extends Model
     /**
      * Attributes
      */
+    public function hasReplies(): Attribute
+    {
+        return new Attribute(
+            get: fn () => $this->posts()->count() > 1,
+        );
+    }
+
     public function slug(): Attribute
     {
         return new Attribute(
@@ -56,6 +63,11 @@ class Topic extends Model
     /**
      * Relationships
      */
+    public function firstPost(): HasOne
+    {
+        return $this->hasOne(Post::class)->oldestOfMany();
+    }
+
     public function forum(): BelongsTo
     {
         return $this->belongsTo(Forum::class);

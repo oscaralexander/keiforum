@@ -1,3 +1,5 @@
+@blaze(memo: true)
+
 <div class="mobileMenu">
     <div class="mobileMenu__main">
         <form

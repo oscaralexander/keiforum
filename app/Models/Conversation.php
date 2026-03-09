@@ -17,7 +17,6 @@ class Conversation extends Model
     /**
      * Relationships
      */
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -70,7 +69,8 @@ class Conversation extends Model
      */
     public function otherParticipants(?User $user = null): Collection
     {
-        $user ??= auth('web')->user();
+        $user ??= auth()->user();
+
         return $this->users->where('id', '!=', $user->id)->values();
     }
 }
