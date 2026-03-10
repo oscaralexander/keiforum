@@ -48,13 +48,12 @@ new class extends Component
 
         $this->post->update([
             'deleted_at' => now(),
-            'deleted_by' => auth()->id(),
+            'deleted_by_id' => auth()->id(),
         ]);
 
-        if ($this->isFirstPost && !$this->topic->has_replies) {
-            $forum = $this->topic->forum;
-            $this->topic->delete();
-            return redirect()->route('forum.show', ['forum' => $forum]);
+        if ($this->isFirstPost && !$this->post->topic->has_replies) {
+            $this->post->topic->delete();
+            return redirect()->route('forum.show', ['forum' => $this->post->topic->forum]);
         }
     }
 
@@ -63,8 +62,8 @@ new class extends Component
         Gate::authorize('update', $this->post);
 
         if ($this->isFirstPost) {
-            $this->topic_title = $this->topic->title;
-            $this->topicAreas = $this->topic->areas->pluck('id')->toArray();
+            $this->topic_title = $this->post->topic->title;
+            $this->topicAreas = $this->post->topic->areas->pluck('id')->toArray();
         }
 
         $this->isEditing = true;
@@ -90,13 +89,13 @@ new class extends Component
 
     public function rules() {
         $rules = [
-            'body' => 'required|string',
+            'body' => ['required', 'string'],
         ];
 
         if ($this->isFirstPost) {
             $rules['topic_title'] = ['required', 'max:255'];
-            $rules['topicAreas'] = ['required', 'array'];
-            $rules['topicAreas.*'] = ['required', 'exists:areas,id'];
+            $rules['topicAreas'] = ['nullable', 'array'];
+            $rules['topicAreas.*'] = ['exists:areas,id'];
         }
 
         return $rules;
@@ -113,10 +112,8 @@ new class extends Component
         ]);
 
         if ($this->isFirstPost) {
-            $this->topic->update([
-                'title' => $this->topic_title,
-            ]);
-            $this->topic->areas()->sync($this->topicAreas);
+            $this->post->topic->update(['title' => $this->topic_title]);
+            $this->post->topic->areas()->sync($this->topicAreas);
         }
 
         $this->isEditing = false;
@@ -136,12 +133,6 @@ new class extends Component
         }
 
         $this->isLiked = !$this->isLiked;
-    }
-
-    #[Computed]
-    public function topic(): Topic
-    {
-        return $this->post->topic->load(['areas', 'forum']);
     }
 };
 ?>

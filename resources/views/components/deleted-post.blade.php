@@ -21,7 +21,11 @@
     </header>
     <div class="post__body">
         <p class="text-color-lc">
-            @lang('post/show.deleted_by_user', ['username' => $post->deletedBy->username])
+            @if ($post->deleted_by_id == $post->user_id)
+                @lang('post/show.deleted_by_author')
+            @else
+                @lang('post/show.deleted_by_admin')
+            @endif
         </p>
     </div>
 </li>

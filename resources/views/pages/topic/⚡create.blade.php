@@ -57,8 +57,8 @@ new class extends Component
         $rules = [
             'title' => ['required', 'max:255'],
             'topicAreas' => ['nullable', 'array'],
-            'topicAreas.*' => 'required|exists:areas,id',
-            'body' => 'required|string',
+            'topicAreas.*' => ['exists:areas,id'],
+            'body' => ['required'],
         ];
 
         if ($this->forum->is_marketplace) {

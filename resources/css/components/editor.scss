@@ -15,10 +15,11 @@
     &__header {
         align-items: center;
         background: var(--color-bg-tint);
+        box-shadow: 0 1px 0 0 rgba(var(--color-text-rgb), .2);
         display: flex;
         padding-right: .75rem;
         position: sticky;
-        top: 0;
+        top: var(--nav-height);
         z-index: 2;
     }
 

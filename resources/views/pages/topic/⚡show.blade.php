@@ -30,12 +30,18 @@ new class extends Component
     #[Computed]
     public function posts(): LengthAwarePaginator
     {
-        return $this->topic->posts()
+        $paginator = $this->topic->posts()
             ->withTrashed()
-            ->with(['likes', 'likes.user', 'user', 'user.area'])
+            ->with(['likes.user', 'user.area'])
             ->withCount('likes')
             ->paginate(Post::PAGINATE_COUNT, pageName: 'p')
             ->setPath(route('topic.show', [$this->topic->forum, $this->topic, $this->topic->slug]));
+
+        foreach ($paginator->items() as $post) {
+            $post->setRelation('topic', $this->topic);
+        }
+
+        return $paginator;
     }
 
     public function mount(Topic $topic)

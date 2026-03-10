@@ -94,9 +94,15 @@
     }
 
     &--deleted {
-        .avatar {
-            filter: grayscale(100%);
-            opacity: .5;
+        .post__user {
+            .avatar {
+                filter: grayscale(100%);
+                opacity: .5;
+            }
+
+            .meta {
+                opacity: .5;
+            }
         }
 
         .post__username {
