@@ -12,7 +12,7 @@
                     autofocus
                     max-rows="3"
                     model="body"
-                    placeholder="{{ __('conversations/index.form.reply') }}"
+                    placeholder="{{ __('conversations/modal.reply') }}"
                     required
                     x-on:keydown.enter="if (!$event.shiftKey) { $event.preventDefault(); $wire.submit(); }"
                 />
