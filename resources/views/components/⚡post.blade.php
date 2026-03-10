@@ -71,7 +71,7 @@ new class extends Component
 
     public function mount()
     {
-        $this->post->loadMissing('likes.user');
+        $this->post->loadMissing('likes');
         $this->body = $this->post->body;
         $this->isLiked = $this->post->likes->contains('user_id', auth()->id());
     }

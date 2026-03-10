@@ -6,6 +6,7 @@ use App\Models\Forum;
 use App\Models\Topic;
 use App\Models\Post;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -24,7 +25,7 @@ new class extends Component
     #[Computed]
     public function firstPost(): ?Post
     {
-        return $this->topic->posts()->first() ?: null;
+        return $this->topic->firstPost;
     }
 
     #[Computed]
@@ -32,7 +33,7 @@ new class extends Component
     {
         $paginator = $this->topic->posts()
             ->withTrashed()
-            ->with(['likes.user', 'user.area'])
+            ->with(['likes', 'user.area'])
             ->withCount('likes')
             ->paginate(Post::PAGINATE_COUNT, pageName: 'p')
             ->setPath(route('topic.show', [$this->topic->forum, $this->topic, $this->topic->slug]));
@@ -47,7 +48,7 @@ new class extends Component
     public function mount(Topic $topic)
     {
         $this->topic->loadCount(['posts']);
-        $this->topic->loadMissing(['firstPost', 'forum']);
+        $this->topic->loadMissing(['areas', 'firstPost', 'forum']);
 
         if ($postId = request()->query('post')) {
             $this->paginateToPost((int) $postId);
@@ -150,6 +151,8 @@ new class extends Component
 
     public function submit()
     {
+        Gate::authorize('create', Post::class);
+
         $this->validate();
 
         $post = Post::create([
