@@ -1,8 +1,8 @@
 <div>
-    <x-modal.header>@lang('messages/modal.title')</x-modal.header>
+    <x-modal.header>@lang('conversations/modal.title')</x-modal.header>
     <x-modal.body class="messageModal">
         <div class="messageModal__to">
-            <div>@lang('messages/modal.to')</div>
+            <div>@lang('conversations/modal.to')</div>
             <x-avatar :user="$user" />
             <a class="messageModal__username" href="{{ route('member.show', $user) }}" wire:navigate>{{ $user->username }}</a>
         </div>
@@ -12,7 +12,7 @@
                     autofocus
                     max-rows="3"
                     model="body"
-                    placeholder="{{ __('messages/index.form.reply') }}"
+                    placeholder="{{ __('conversations/index.form.reply') }}"
                     required
                     x-on:keydown.enter="if (!$event.shiftKey) { $event.preventDefault(); $wire.submit(); }"
                 />
@@ -20,7 +20,7 @@
             </div>
             <x-input.toggle
                 model="redirect"
-                :label="__('messages/modal.redirect')"
+                :label="__('conversations/modal.redirect')"
             />
         </form>
     </x-modal.body>
