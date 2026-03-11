@@ -19,7 +19,7 @@
 
     img {
         border-radius: var(--borderRadius-s);
-        display: inline-block;
+        display: block;
         max-height: 75vh;
         max-width: 100%;
     }
@@ -41,7 +41,7 @@
     ol,
     ul {
         list-style-type: decimal;
-        margin: 2em 0 2em 1.5em !important;
+        margin: 1.5em 0 1.5em 1.5em !important;
 
         li:not(:last-child) {
             margin-bottom: .75em;
