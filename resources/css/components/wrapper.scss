@@ -3,4 +3,8 @@
     max-width: 56rem;
     padding: 0 var(--panel-padding-x);
     width: 100%;
+
+    &--narrow {
+        max-width: 32rem;
+    }
 }

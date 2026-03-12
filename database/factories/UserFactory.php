@@ -62,4 +62,16 @@ class UserFactory extends Factory
             'banned_until' => $until ?? now()->addWeek(),
         ]);
     }
+
+    /**
+     * Indicate that the user authenticated via Google.
+     */
+    public function google(string $googleId = '123456789'): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'google_id' => $googleId,
+            'password' => null,
+            'email_verified_at' => now(),
+        ]);
+    }
 }

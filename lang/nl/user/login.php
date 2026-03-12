@@ -17,4 +17,5 @@ return [
         'submit' => 'Inloggen',
     ],
     'forgot_password' => 'Wachtwoord vergeten?',
+    'google' => 'Inloggen met Google',
 ];

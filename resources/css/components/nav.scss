@@ -165,9 +165,8 @@
     &__actions {
         align-items: center;
         display: flex;
-        flex: 1;
+        flex-shrink: 0;
         gap: .75rem;
-        justify-content: flex-end;
         transition: opacity var(--duration-m) ease;
         position: relative;
         z-index: 5;
@@ -182,6 +181,7 @@
         justify-content: center;
         height: var(--input-height);
         position: relative;
+        width: var(--input-height);
 
         .badge {
             background: var(--color-1);

@@ -44,7 +44,7 @@
             </div>
             <main class="page__main">
                 <div class="page__main-inner">
-                    <div class="wrapper">
+                    <div class="wrapper wrapper--narrow">
                         {{ $slot }}
                     </div>
                 </div>

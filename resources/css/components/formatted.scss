@@ -13,6 +13,10 @@
         padding-left: 1em;
     }
 
+    h3, h4 {
+        margin-bottom: .25rem;
+    }
+    
     i, em {
         font-style: italic;
     }
@@ -30,7 +34,7 @@
 
     p, ol, ul, div {
         &:not(:last-child) {
-            margin-bottom: 1em;
+            margin-bottom: 1.25em;
         }
 
         &:empty {

@@ -37,10 +37,13 @@
         'btn--text' => $text,
     ]) }}
 >
-    @if($icon)
+    @if ($icon)
         <x-icon :icon="$icon" />
     @endif
-    @if($slot->isNotEmpty())
+    @if (!empty($iconSlot))
+        {{ $iconSlot }}
+    @endif
+    @if ($slot->isNotEmpty())
         <span>{{ $slot }}</span>
     @endif
 </{{ $tag }}>

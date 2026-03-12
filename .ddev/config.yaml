@@ -1,24 +1,26 @@
 name: keiforum
 type: laravel
 docroot: public
-php_version: "8.3"
+php_version: '8.3'
 webserver_type: nginx-fpm
 xdebug_enabled: false
 additional_hostnames: []
 additional_fqdns: []
 database:
-  type: mariadb
-  version: "10.11"
+    type: mariadb
+    version: '10.11'
 use_dns_when_possible: true
-composer_version: "2"
+composer_version: '2'
 web_environment: []
 corepack_enable: false
 web_extra_exposed_ports:
-  - name: vite
-    container_port: 5173
-    http_port: 5172
-    https_port: 5173
+    - name: vite
+      container_port: 5173
+      http_port: 5172
+      https_port: 5173
 ngrok_args: --authtoken 2HaOoezS7c09rGOJMp2oOgqNWzL_2TPDw7RYbcx3vQntxkFJd --domain keiforum.ngrok.app
+upload_dirs:
+    - storage/app/public
 # Key features of DDEV's config.yaml:
 
 # name: <projectname> # Name of the project, automatically provides

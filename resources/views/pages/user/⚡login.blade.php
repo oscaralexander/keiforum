@@ -69,6 +69,10 @@ new class extends Component
         :title="__('user/login.title')"
     />
     <div class="flex flex-col flex-gap-l" style="margin: 0 auto; max-width: 400px;">
+        <x-btn :href="route('auth.google')" icon="google">
+            @lang('user/login.google')
+        </x-btn>
+        <div class="or">@lang('ui.or')</div>
         <form class="flex flex-col flex-gap-m" wire:submit="submit">
             <fieldset class="login">
                 <x-input.text

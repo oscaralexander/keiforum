@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 
 Route::livewire('/', 'pages::index')->name('home');
+Route::livewire('algemene-voorwaarden', 'pages::terms')->name('terms');
+Route::livewire('privacy', 'pages::privacy')->name('privacy');
 Route::livewire('leden', 'pages::members.index')->name('members');
 Route::livewire('agenda', 'pages::agenda.index')->name('agenda');
 
@@ -15,8 +17,13 @@ Route::match(['get', 'post'], 'api/users/search', App\Http\Controllers\Api\User\
 Route::middleware('guest')->group(function () {
     Route::livewire('inloggen', 'pages::user.login')->name('login');
     Route::livewire('registreren', 'pages::user.register')->name('register');
+    Route::livewire('registreren/google', 'pages::user.register-oauth')->name('register-oauth');
     Route::livewire('account-activeren/{token}', 'pages::user.activate-account')->name('activate-account');
 });
+
+// Google OAuth
+Route::get('auth/google', [App\Http\Controllers\User\GoogleAuthController::class, 'redirect'])->name('auth.google');
+Route::get('auth/google/callback', [App\Http\Controllers\User\GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 
 Route::middleware('auth')->group(function () {
     Route::livewire('berichten/{conversation_id?}', 'pages::conversations.index')->name('conversations');

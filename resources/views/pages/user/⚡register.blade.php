@@ -132,7 +132,13 @@ new class extends Component
                     :label="__('user/register.form.username.label')"
                     model="username"
                 >
-                    <x-input.text autocomplete="username" maxlength="16" required style="text-transform: lowercase;" wire:model.live="username" />
+                    <x-input.text
+                        autocomplete="username"
+                        maxlength="16"
+                        required
+                        style="text-transform: lowercase;"
+                        wire:model.live.debounce.250ms="username"
+                    />
                     @if ($usernameAvailable)
                         <div class="field__success">
                             <x-icon icon="check" />
@@ -190,7 +196,7 @@ new class extends Component
                     </x-field>
                 </div>
                 <x-field model="terms">
-                    <x-input.toggle :label="__('user/register.form.terms.label')" model="terms" />
+                    <x-input.toggle :label="__('user/register.form.terms.label', ['terms_url' => route('terms')])" model="terms" />
                 </x-field>
             </fieldset>
             <div class="flex flex-gap-m">

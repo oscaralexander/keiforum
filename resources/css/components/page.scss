@@ -109,6 +109,8 @@
     @include screen-min(l) {
         &__intro {
             font-size: var(--fontSize-l);
+            margin: 0 auto;
+            max-width: 75%;
         }
 
         &__main {

@@ -1,0 +1,15 @@
+.or {
+    align-items: center;
+    color: var(--color-text-lc);
+    display: flex;
+    font-size: var(--fontSize-s);
+    gap: var(--size-s);
+
+    &::before,
+    &::after {
+        background: var(--color-border);
+        content: '';
+        flex: 1 1 auto;
+        height: 1px;
+    }
+}
