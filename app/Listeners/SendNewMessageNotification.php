@@ -7,9 +7,9 @@ use App\Mail\NewMessageReceived;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 
-class SendNewMessageNotification implements ShouldQueue
+class SendNewMessageNotification // implements ShouldQueue
 {
-    public $queue = 'notifications';
+    // public $queue = 'notifications';
 
     public function handle(MessageCreated $event): void
     {
