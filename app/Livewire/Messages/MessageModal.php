@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Messages;
 
+use App\Events\MessageCreated;
 use App\Models\Conversation;
+use App\Models\Message;
 use App\Models\User;
 use Illuminate\View\View;
 use LivewireUI\Modal\ModalComponent;
@@ -36,14 +38,14 @@ class MessageModal extends ModalComponent
     {
         $this->validate();
 
-        $conversation = Conversation::firstOrCreateForParticipants([auth()->id(), $this->user->id]);
-
-        $conversation->messages()->create([
+        $conversation = Conversation::firstOrCreateForParticipants([auth('web')->id(), $this->user->id]);
+        $message = Message::create([
+            'conversation_id' => $conversation->id,
+            'user_id' => auth('web')->id(),
             'body' => $this->body,
-            'user_id' => auth()->id(),
         ]);
 
-        $this->dispatch('message-sent');
+        MessageCreated::dispatch($message);
 
         if ($this->redirect) {
             $this->redirect(route('conversations', $conversation->id), navigate: true);

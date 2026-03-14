@@ -14,6 +14,7 @@ return [
             'label' => 'Geboortedatum',
         ],
         'email' => [
+            'description' => 'Zichtbaar voor niemand.',
             'label' => 'Email',
         ],
         'gender' => [

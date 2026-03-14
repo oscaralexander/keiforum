@@ -34,25 +34,6 @@ new class extends Component
                 return;
             }
         }
-
-        // $this->isComposing = request()->routeIs('messages.create');
-
-        // if (!$this->isComposing && !$conversation) {
-        //     $latest = $this->latestConversation();
-
-        //     if ($latest) {
-        //         $this->redirect(route('conversations', $latest), navigate: true);
-        //         return;
-        //     }
-
-        //     $this->isComposing = true;
-        // }
-
-        // $this->conversation_id = $conversation?->id;
-
-        // if ($conversation && !$this->conversation) {
-        //     abort(404);
-        // }
     }
 
     private function latestConversation(): ?Conversation

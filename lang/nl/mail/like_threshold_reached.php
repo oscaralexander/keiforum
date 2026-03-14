@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'subject' => '🎉 Je bericht kreeg :count likes!',
+    'subject' => 'Je bericht kreeg :count likes!',
 ];

@@ -17,7 +17,9 @@ new class extends Component
 
     public ?string $birthdate = null;
 
-    public ?string $gender = null;
+    public ?Gender $gender = null;
+
+    public ?string $name = null;
 
     public string $username = '';
 
@@ -41,12 +43,7 @@ new class extends Component
             return;
         }
 
-        $emailUsername = strstr($oauthData['email'], '@', true);
-
-        if ($emailUsername && !User::where('username', $emailUsername)->exists()) {
-            $this->username = $emailUsername;
-        }
-
+        $this->name = $oauthData['name'] ?? '';
         $this->oauthData = $oauthData;
     }
 
@@ -70,6 +67,7 @@ new class extends Component
             'area_id' => ['nullable', 'exists:areas,id'],
             'birthdate' => ['nullable', 'date'],
             'gender' => ['nullable', Rule::enum(Gender::class)],
+            'name' => ['nullable', 'string', 'max:255'],
             'username' => [
                 'required',
                 'max:16',
@@ -152,8 +150,8 @@ new class extends Component
     <form class="flex flex-col flex-gap-xl" wire:submit="submit">
         <fieldset class="flex flex-col flex-gap-m">
             <x-field
-                :description="__('user/register-oauth.form.username.description')"
-                :label="__('user/register-oauth.form.username.label')"
+                :description="__('user/register.form.username.description')"
+                :label="__('user/register.form.username.label')"
                 model="username"
             >
                 <x-input.text
@@ -169,6 +167,13 @@ new class extends Component
                         @lang('validation.username.available')
                     </div>
                 @endif
+            </x-field>
+            <x-field
+                :description="__('user/register.form.name.description')"
+                :label="__('user/register.form.name.label')"
+                model="name"
+            >
+                <x-input.text autocomplete="name" model="name" required />
             </x-field>
             <x-field
                 :description="__('user/register.form.area_id.description')"
@@ -209,6 +214,9 @@ new class extends Component
                     />
                 </x-field>
             </div>
+            <x-field model="terms">
+                <x-input.toggle :label="__('user/register.form.terms.label', ['terms_url' => route('terms')])" model="terms" />
+            </x-field>
         </fieldset>
         <div class="flex flex-gap-m">
             <x-btn primary submit>@lang('user/register-oauth.form.submit')</x-btn>

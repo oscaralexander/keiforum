@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\PostLiked;
-use App\Mail\PostThresholdReached;
+use App\Mail\LikeThresholdReached;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 

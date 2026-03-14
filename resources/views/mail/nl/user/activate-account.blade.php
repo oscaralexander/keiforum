@@ -1,6 +1,6 @@
 @extends('mail.layouts.default')
 
-@section('title', 'Activeer je account')
+@section('title', __('mail/activate_account.subject'))
 
 @section('content')
     <h1>Activeer je account</h1>

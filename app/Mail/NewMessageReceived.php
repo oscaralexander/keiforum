@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class NewMessageReceived extends Mailable implements ShouldQueue
+class NewMessageReceived extends Mailable
 {
     public $message;
 

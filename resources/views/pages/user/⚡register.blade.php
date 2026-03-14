@@ -124,8 +124,17 @@ new class extends Component
         />
         <form class="flex flex-col flex-gap-xl" wire:submit="submit">
             <fieldset class="flex flex-col flex-gap-m">
-                <x-field :label="__('user/register.form.email.label')" model="email">
-                    <x-input.text autocomplete="email" model="email" required type="email" />
+                <x-field
+                    :description="__('user/register.form.email.description')"
+                    :label="__('user/register.form.email.label')"
+                    model="email"
+                >
+                    <x-input.text
+                        autocomplete="email"
+                        model="email"
+                        required
+                        type="email"
+                    />
                 </x-field>
                 <x-field
                     :description="__('user/register.form.username.description')"
