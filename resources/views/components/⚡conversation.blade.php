@@ -55,6 +55,12 @@ new class extends Component
     public function mount(int $conversationId): void
     {
         $this->conversation_id = $conversationId;
+        $this->markAsRead();
+    }
+
+    private function markAsRead(): void
+    {
+        Conversation::find($this->conversation_id)?->users()->updateExistingPivot(auth('web')->id(), ['last_read_at' => now()]);
     }
 
     #[Computed]
@@ -86,7 +92,7 @@ new class extends Component
 
         $message = Message::create([
             'conversation_id' => $this->conversation_id,
-            'user_id' => auth()->id(),
+            'user_id' => auth('web')->id(),
             'body' => $this->body,
         ]);
 
@@ -94,6 +100,7 @@ new class extends Component
 
         $this->body = '';
         $this->dispatch('message-sent');
+        $this->markAsRead();
     }
 };
 ?>

@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class LikeThresholdReached extends Mailable implements ShouldQueue
+class LikeThresholdReached extends Mailable
 {
     public $count;
     public $post;

@@ -16,7 +16,7 @@ class NewMessageNotificationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testNotificationIsSentToOtherParticipants(): void
+    public function test_notification_is_sent_to_other_participants(): void
     {
         Mail::fake();
 
@@ -33,12 +33,12 @@ class NewMessageNotificationTest extends TestCase
         $listener = new SendNewMessageNotification;
         $listener->handle(new MessageCreated($message));
 
-        Mail::assertQueued(NewMessageReceived::class, function ($mail) use ($recipient) {
+        Mail::assertSent(NewMessageReceived::class, function ($mail) use ($recipient) {
             return $mail->hasTo($recipient->email);
         });
     }
 
-    public function testNotificationIsNotSentToMessageAuthor(): void
+    public function test_notification_is_not_sent_to_message_author(): void
     {
         Mail::fake();
 
@@ -55,12 +55,12 @@ class NewMessageNotificationTest extends TestCase
         $listener = new SendNewMessageNotification;
         $listener->handle(new MessageCreated($message));
 
-        Mail::assertNotQueued(NewMessageReceived::class, function ($mail) use ($sender) {
+        Mail::assertNotSent(NewMessageReceived::class, function ($mail) use ($sender) {
             return $mail->hasTo($sender->email);
         });
     }
 
-    public function testNotificationIsNotSentWhenAlreadyNotifiedAndNotRead(): void
+    public function test_notification_is_not_sent_when_already_notified_and_not_read(): void
     {
         Mail::fake();
 
@@ -82,10 +82,10 @@ class NewMessageNotificationTest extends TestCase
         $listener = new SendNewMessageNotification;
         $listener->handle(new MessageCreated($message));
 
-        Mail::assertNotQueued(NewMessageReceived::class);
+        Mail::assertNotSent(NewMessageReceived::class);
     }
 
-    public function testNotificationIsSentWhenUserReadSinceLastNotification(): void
+    public function test_notification_is_sent_when_user_read_since_last_notification(): void
     {
         Mail::fake();
 
@@ -107,12 +107,12 @@ class NewMessageNotificationTest extends TestCase
         $listener = new SendNewMessageNotification;
         $listener->handle(new MessageCreated($message));
 
-        Mail::assertQueued(NewMessageReceived::class, function ($mail) use ($recipient) {
+        Mail::assertSent(NewMessageReceived::class, function ($mail) use ($recipient) {
             return $mail->hasTo($recipient->email);
         });
     }
 
-    public function testLastNotifiedAtIsUpdatedAfterSending(): void
+    public function test_last_notified_at_is_updated_after_sending(): void
     {
         Mail::fake();
 
@@ -135,7 +135,7 @@ class NewMessageNotificationTest extends TestCase
         });
     }
 
-    public function testNotificationIsNotSentWhenNotifiedAndNeverRead(): void
+    public function test_notification_is_not_sent_when_notified_and_never_read(): void
     {
         Mail::fake();
 
@@ -157,6 +157,6 @@ class NewMessageNotificationTest extends TestCase
         $listener = new SendNewMessageNotification;
         $listener->handle(new MessageCreated($message));
 
-        Mail::assertNotQueued(NewMessageReceived::class);
+        Mail::assertNotSent(NewMessageReceived::class);
     }
 }

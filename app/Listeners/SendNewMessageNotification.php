@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Mail;
 
 class SendNewMessageNotification // implements ShouldQueue
 {
-    // public $queue = 'notifications';
+    public $queue = 'notifications';
 
     public function handle(MessageCreated $event): void
     {

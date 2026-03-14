@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'subject' => 'Nieuw bericht van :user',
+    'subject' => 'Nieuw bericht van @:user',
 ];

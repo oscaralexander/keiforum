@@ -1,14 +1,14 @@
 @extends('mail.layouts.default')
 
-@section('title', __('mail/new_message.subject', ['user' => $message->user->username]))
+@section('title', __('mail/new_message.subject', ['user' => $msg->user->username]))
 
 @section('content')
-    <h1>{{ $message->user->username }} heeft je een bericht gestuurd:</h1>
-    <p>
-        {{ Str::limit($message->body_plain_text, 200) }}
+    <h1>{{ '@' . $msg->user->username }} heeft je een bericht gestuurd:</h1>
+    <p style="background-color: #ffffff; padding: 1.5em; border: 1px solid #d9d6d3; border-radius: 1em;">
+        {{ Str::limit($msg->body_plain_text, 200) }}
     </p>
     <p>
-        <a class="btn" href="{{ route('conversations', $message->conversation) }}">Ga naar berichten</a>
+        <a class="btn" href="{{ route('conversations', $msg->conversation) }}">Ga naar berichten</a>
     </p>
     <p>
         Tot snel!<br>

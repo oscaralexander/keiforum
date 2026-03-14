@@ -3,25 +3,24 @@
 namespace App\Mail;
 
 use App\Models\Message;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class NewMessageReceived extends Mailable // implements ShouldQueue
+class NewMessageReceived extends Mailable
 {
-    public $message;
+    public $msg;
 
-    public function __construct(Message $message)
+    public function __construct(Message $msg)
     {
-        $this->message = $message;
-        $this->message->loadMissing(['conversation', 'user']);
+        $this->msg = $msg;
+        $this->msg->loadMissing(['conversation', 'user']);
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: __('mail/new_message.subject', ['user' => $this->message->user->username]),
+            subject: __('mail/new_message.subject', ['user' => $this->msg->user->username]),
         );
     }
 
