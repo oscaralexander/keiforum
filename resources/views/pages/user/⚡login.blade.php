@@ -56,7 +56,7 @@ new class extends Component
             return $this->redirect(route('home'), navigate: true);
         }
 
-        $this->addError('password', __('validation.failed'));
+        $this->addError('password', __('user/login.attempt_failed'));
     }
 };
 ?>
