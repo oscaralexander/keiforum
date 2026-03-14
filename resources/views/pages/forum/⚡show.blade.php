@@ -4,6 +4,7 @@ use App\Models\Forum;
 use App\Models\Topic;
 use App\Enums\AdType;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\Computed;
@@ -37,7 +38,9 @@ new class extends Component
             )
             ->withCount('posts')
             ->orderByDesc('is_pinned')
-            ->latest()
+            ->orderByDesc(
+                DB::raw('(SELECT MAX(p.id) FROM posts p WHERE p.topic_id = topics.id)')
+            )
             ->paginate(Topic::PAGINATE_COUNT, pageName: 'p')
             ->setPath(route('forum.show', $this->forum));
     }
