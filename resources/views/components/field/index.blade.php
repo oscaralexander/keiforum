@@ -10,7 +10,7 @@
 @endphp
 
 <div {{ $attributes->class(['field']) }}>
-    @if($label || $description)
+    @if ($label || $description)
         <div>
             @if($label)
                 <label class="field__label" for="{{ $id }}">{{ $label }}</label>
@@ -21,7 +21,7 @@
         </div>
     @endif
     {{ $slot }}
-    @error($model)
+    @error ($model)
         <div class="field__error">{{ $message }}</div>
     @enderror
 </div>

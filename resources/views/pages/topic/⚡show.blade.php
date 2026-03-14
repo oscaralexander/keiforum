@@ -209,7 +209,9 @@ new class extends Component
                     <div class="flex flex-col flex-gap-m">
                         <h3>@lang('topic/show.reply')</h3>
                         <form class="flex flex-col flex-gap-m" wire:submit="submit">
-                            <x-editor model="body" />
+                            <x-field model="body">
+                                <x-editor model="body" />
+                            </x-field>
                             <div class="flex">
                                 <x-btn primary submit>@lang('post/create.reply')</x-btn>
                             </div>
