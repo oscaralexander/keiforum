@@ -23,7 +23,7 @@
         <div class="header__titleIntro">
             <h1>{{ $title }}</h1>
             @if (!empty($intro))
-                <p class="page__intro">{!! $intro !!}</p>
+                <p class="header__intro">{!! $intro !!}</p>
             @endif
             @if ($areas->isNotEmpty())
                 <x-header.area-list :areas="$areas" />

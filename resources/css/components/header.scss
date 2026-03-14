@@ -20,6 +20,10 @@
         gap: var(--size-m);
     }
 
+    &__intro {
+        font-size: var(--fontSize-l);
+    }
+
     &__actions {
         display: flex;
         gap: var(--size-m);
@@ -36,5 +40,12 @@
         gap: var(--size-m);
         margin-bottom: var(--size-xxl);
         width: 100%;
+
+        &--center {
+            .header__intro {
+                margin: 0 auto;
+                max-width: 75%;
+            }
+        }
     }
 }
