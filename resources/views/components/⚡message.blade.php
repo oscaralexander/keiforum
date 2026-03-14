@@ -43,7 +43,7 @@ new class extends Component
 <div
     @class([
         'message',
-        'message--own' => $message->user_id === auth()->id(),
+        'message--own' => $message->user_id == auth('web')->id(),
     ])
     id="message-{{ $message->id }}"
 >
