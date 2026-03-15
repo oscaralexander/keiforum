@@ -42,11 +42,9 @@
                     {{ Str::limit($conversation->lastMessage->body_plain_text, 100, preserveWords: true) }}
                 </p>
             </div>
-            {{--
             @if ($conversation->unread_count > 0)
                 <div class="conversationListItem__unreadCount">{{ $conversation->unread_count }}</div>
             @endif
-            --}}
         </div>
     </div>
 </a>

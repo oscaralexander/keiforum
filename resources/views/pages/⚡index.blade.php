@@ -7,12 +7,33 @@ use Illuminate\Database\Eloquent\Collection;
 
 new class extends Component
 {
+    public string $title;
+
     #[Computed]
     public function forums(): Collection
     {
         return Forum::query()
             ->withCount('topics')
             ->get();
+    }
+
+    public function mount(): void
+    {
+        $hour = now()->hour;
+
+        if ($hour < 12) {
+            $greeting = __('home.greeting_morning');
+        } else if ($hour < 18) {
+            $greeting = __('home.greeting_afternoon');
+        } else {
+            $greeting = __('home.greeting_evening');
+        }
+
+        if (auth()->check()) {
+            $this->title = $greeting . ' ' . auth()->user()->first_name;
+        } else {
+            $this->title = __('home.title', ['greeting' => $greeting]);
+        }
     }
 
     public function render()
@@ -63,7 +84,7 @@ new class extends Component
 
 <div>
     <x-schema :data="$this->schema" />
-    <x-header hide-path :title="__('home.title')" />
+    <x-header hide-path :intro="__('home.intro')" :title="$title" />
     <div class="panel">
         <ul class="forumList">
             @foreach ($this->forums as $forum)

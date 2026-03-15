@@ -50,6 +50,7 @@ class User extends Authenticatable
     /**
      * Attributes
      */
+
     public function age(): Attribute
     {
         return new Attribute(
@@ -85,6 +86,13 @@ class User extends Authenticatable
         );
     }
 
+    public function isOnline(): Attribute
+    {
+        return new Attribute(
+            get: fn (): bool => $this->last_seen_at && $this->last_seen_at->isAfter(now()->subMinutes(5)),
+        );
+    }
+
     public function lastName(): Attribute
     {
         return new Attribute(
@@ -92,9 +100,9 @@ class User extends Authenticatable
         );
     }
 
-    public function unreadMessages(): Attribute
+    public function unreadMessagesCount(): Attribute
     {
-        return new Attribute(
+        $attribute = new Attribute(
             get: fn (): int => Message::join('conversation_user', function ($join) {
                 $join->on('messages.conversation_id', '=', 'conversation_user.conversation_id')
                     ->where('conversation_user.user_id', $this->id);
@@ -104,15 +112,10 @@ class User extends Authenticatable
                     $query->whereNull('conversation_user.last_read_at')
                         ->orWhereColumn('messages.created_at', '>', 'conversation_user.last_read_at');
                 })
-                ->count(),
+                ->count()
         );
-    }
 
-    public function isOnline(): Attribute
-    {
-        return new Attribute(
-            get: fn (): bool => $this->last_seen_at && $this->last_seen_at->isAfter(now()->subMinutes(5)),
-        );
+        return $attribute->shouldCache();
     }
 
     /**

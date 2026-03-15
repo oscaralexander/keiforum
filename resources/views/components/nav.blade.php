@@ -97,7 +97,9 @@
                 href="{{ route('conversations') }}"
             >
                 <x-icon icon="inbox" />
-                {{-- <span class="badge">8</span> --}}  
+                @if (auth()->user()->unread_messages_count > 0)
+                    <span class="badge">{{ auth()->user()->unread_messages_count }}</span>
+                @endif
             </a>
             <div
                 class="nav__user"

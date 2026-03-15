@@ -36,6 +36,22 @@ new class extends Component
     }
 
     #[Computed]
+    public function conversationMessages(): Collection
+    {
+        if (!$this->conversation) {
+            return collect();
+        }
+
+        return Message::query()
+            ->where('conversation_id', $this->conversation->id)
+            ->latest()
+            ->limit(Message::PAGINATE_COUNT)
+            ->get()
+            ->reverse()
+            ->values();
+    }
+
+    #[Computed]
     public function hasMoreMessages(): bool
     {
         if (!$this->conversation) {
@@ -52,31 +68,15 @@ new class extends Component
         $this->limit += Message::PAGINATE_COUNT;
     }
 
-    public function mount(int $conversationId): void
-    {
-        $this->conversation_id = $conversationId;
-        $this->markAsRead();
-    }
-
     private function markAsRead(): void
     {
         Conversation::find($this->conversation_id)?->users()->updateExistingPivot(auth('web')->id(), ['last_read_at' => now()]);
     }
 
-    #[Computed]
-    public function conversationMessages(): Collection
+    public function mount(int $conversationId): void
     {
-        if (!$this->conversation) {
-            return collect();
-        }
-
-        return Message::query()
-            ->where('conversation_id', $this->conversation->id)
-            ->latest()
-            ->limit(Message::PAGINATE_COUNT)
-            ->get()
-            ->reverse()
-            ->values();
+        $this->conversation_id = $conversationId;
+        $this->markAsRead();
     }
 
     public function rules()
