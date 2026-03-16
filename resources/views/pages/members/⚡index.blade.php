@@ -16,9 +16,26 @@ new class extends Component
             ->get();
     }
 
-    public function memberCount (): int
+    #[Computed]
+    public function totalMembers(): int
     {
         return User::count();
+    }
+
+    #[Computed]
+    public function newMembersCount(): int
+    {
+        return User::query()
+            ->where('created_at', '>=', now()->subDays(7))
+            ->count();
+    }
+
+    #[Computed]
+    public function latestMember(): ?User
+    {
+        return User::query()
+            ->latest()
+            ->first();
     }
 
     public function render()
@@ -33,6 +50,26 @@ new class extends Component
     <x-header hide-path :title="__('members/index.title')" />
     <div class="panel panel--padded">
         <div class="flex flex-col flex-gap-l">
+            <div class="stats">
+                <div class="stats__stat">
+                    <h4 class="stats__stat-title">@lang('members/index.stats.members_count')</h4>
+                    <p class="stats__stat-value">{{ $this->totalMembers }}</p>
+                </div>
+                <div class="stats__stat">
+                    <h4 class="stats__stat-title">@lang('members/index.stats.members_count_week')</h4>
+                    <p class="stats__stat-value">+{{ $this->newMembersCount }}</p>
+                </div>
+                <div class="stats__stat">
+                    <h4 class="stats__stat-title">@lang('members/index.stats.latest_member')</h4>
+                    <p class="stats__stat-value">
+                        @if ($this->latestMember)
+                            <a href="{{ route('member.show', $this->latestMember) }}">{{ $this->latestMember->username }}</a>
+                        @else
+                            <span class="text-color-lc">—</span>
+                        @endif
+                    </p>
+                </div>
+            </div>
             <div class="formatted">
                 <p>
                     Keiforum is nog volop in ontwikkeling en ook dit onderdeel is nog lang niet klaar,

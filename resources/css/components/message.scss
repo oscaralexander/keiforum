@@ -3,15 +3,14 @@
 .message {
     display: flex;
     gap: var(--size-s);
-    padding-right: 5%;
     margin: 0 auto;
     max-width: 56rem;
+    padding: 0 5% 0 0;
     width: 100%;
 
     &--own {
         flex-direction: row-reverse;
-        padding-right: 0;
-        padding-left: 5%;
+        padding: 0 0 0 5%;
     }
 
     &__avatar {
@@ -73,10 +72,10 @@
     }
 
     @include screen-min(m) {
-        padding-right: 15%;
+        padding: 0 10% 0 0;
 
         &--own {
-            padding-left: 15%;
+            padding: 0 0 0 10%;
         }
 
         &__body {
