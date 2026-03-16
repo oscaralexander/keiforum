@@ -12,8 +12,13 @@ class EmbedTransformer
             function ($matches) {
                 $videoId = $matches[2];
 
+                // If the matched <a> tag does not have 'data-embed' attribute, return original match
+                if (stripos($matches[0], 'data-embed') === false) {
+                    return $matches[0];
+                }
+
                 return sprintf(
-                    '<div class="body__video"><iframe width="560" height="315" src="https://www.youtube.com/embed/%s" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>',
+                    '<div class="formatted__video"><iframe width="560" height="315" src="https://www.youtube.com/embed/%s" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>',
                     htmlspecialchars($videoId, ENT_QUOTES, 'UTF-8')
                 );
             },
@@ -37,6 +42,4 @@ class EmbedTransformer
 
         return $html;
     }
-
-
 }
