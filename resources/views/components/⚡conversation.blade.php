@@ -1,5 +1,6 @@
 <?php
 
+use App\Constants\Event;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Enums\AvatarSize;
@@ -107,7 +108,7 @@ new class extends Component
 
 <div class="conversation">
     <header class="conversation__header">
-        <button class="conversation__back" x-on:click="$dispatch('conversation-closed')">
+        <button class="conversation__back" x-on:click="$dispatch('{{ Event::CONVERSATION_CLOSED }}')">
             <x-icon icon="chevron-left" />
         </button>
         <div class="conversation__participants">
@@ -169,7 +170,6 @@ new class extends Component
     <form class="conversation__reply" wire:submit="submit">
         <div class="conversation__reply-inner">
             <x-input.textarea
-                autofocus
                 max-rows="3"
                 model="body"
                 placeholder="{{ __('conversations/show.reply') }}"

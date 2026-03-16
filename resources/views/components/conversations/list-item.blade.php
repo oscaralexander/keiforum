@@ -10,8 +10,7 @@
         'conversationListItem',
         'conversationListItem--active' => $isActive,
     ])
-    href="{{ route('conversations', $conversation) }}"
-    wire:navigate
+    wire:click.prevent="setConversationId({{ $conversation->id }})"
 >
     @if ($conversation->lastMessage)
         <x-avatar class="conversationListItem__avatar" :size="AvatarSize::S" :user="$conversation->lastMessage->user" />

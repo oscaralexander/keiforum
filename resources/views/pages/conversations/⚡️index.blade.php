@@ -1,5 +1,6 @@
 <?php
 
+use App\Constants\Event;
 use App\Enums\AvatarSize;
 use App\Events\MessageCreated;
 use App\Models\Conversation;
@@ -15,35 +16,6 @@ new class extends Component
     use WithPagination;
 
     public ?int $conversation_id = null;
-
-    public bool $isComposing = false;
-
-    // public string $body = '';
-
-    public array $selectedMembers = [];
-
-    public function mount(?int $conversation_id = null): void
-    {
-        $this->conversation_id = $conversation_id;
-
-        if (!$conversation_id) {
-            $latest = $this->latestConversation();
-
-            if ($latest) {
-                $this->redirect(route('conversations', $latest), navigate: true);
-                return;
-            }
-        }
-    }
-
-    private function latestConversation(): ?Conversation
-    {
-        return auth()->user()->conversations()
-            ->orderByDesc(
-                DB::raw('(SELECT COALESCE(MAX(m.created_at), conversations.updated_at) FROM messages m WHERE m.conversation_id = conversations.id)')
-            )
-            ->first();
-    }
 
     #[Computed]
     public function conversations(): LengthAwarePaginator
@@ -84,6 +56,31 @@ new class extends Component
         return $paginator;
     }
 
+    private function latestConversation(): ?Conversation
+    {
+        return auth()->user()->conversations()
+            ->orderByDesc(
+                DB::raw('(SELECT COALESCE(MAX(m.created_at), conversations.updated_at) FROM messages m WHERE m.conversation_id = conversations.id)')
+            )
+            ->first();
+    }
+
+    public function mount(?int $conversation_id = null): void
+    {
+        $this->conversation_id = $conversation_id;
+
+        if (!$conversation_id) {
+            $this->conversation_id = $this->latestConversation()->id;
+            // $latest = $this->latestConversation();
+
+            // if ($latest) {
+            //     $this->redirect(route('conversations', $latest), navigate: true);
+            //     return;
+            // }
+        }
+    }
+
+    #[On(Event::CONVERSATION_OPENED)]
     public function render()
     {
         return $this->view()
@@ -91,27 +88,10 @@ new class extends Component
             ->title(__('conversations/index.title'));
     }
 
-    public function submit(): void
+    public function setConversationId(int $conversation_id): void
     {
-        $this->validate([
-            'selectedMembers' => 'required|array|min:1',
-            'selectedMembers.*.id' => 'required|exists:users,id',
-            'body' => 'required|string',
-        ]);
-
-        $participantIds = collect($this->selectedMembers)->pluck('id')->push(auth()->id())->unique()->values()->all();
-
-        $conversation = Conversation::firstOrCreateForParticipants($participantIds, auth()->id());
-
-        $message = Message::create([
-            'conversation_id' => $conversation->id,
-            'user_id' => auth()->id(),
-            'body' => $this->body,
-        ]);
-
-        MessageCreated::dispatch($message);
-
-        $this->redirect(route('conversations', $conversation));
+        $this->conversation_id = $conversation_id;
+        $this->dispatch(Event::CONVERSATION_OPENED);
     }
 };
 ?>
@@ -130,15 +110,18 @@ new class extends Component
             </div> --}}
             <div class="conversationList">
                 @forelse ($this->conversations as $conversation)
-                    <x-conversations.list-item :conversation="$conversation" :isActive="$conversation->id === $this->conversation_id" />
+                    <x-conversations.list-item
+                        :conversation="$conversation"
+                        :isActive="$conversation->id === $this->conversation_id"
+                    />
                 @empty
                     <div class="conversationList__empty">@lang('conversations/index.empty')</div>
                 @endforelse
             </div>
         </div>
         <div class="conversations__main">
-            @if ($this->conversation_id)
-                <livewire:conversation :conversation-id="$this->conversation_id" />
+            @if ($conversation_id)
+                <livewire:conversation :conversation-id="$conversation_id" :wire:key="'conversation-' . $conversation_id" />
             @else
                 <p class="conversations__empty">@lang('conversations/index.not_found')</p>
             @endif
