@@ -28,6 +28,10 @@
             @endif
         </div>
         <ul class="meta">
+            <li class="meta__item">
+                <x-icon icon="message-circle" />
+                {{  $topic->posts_count }}
+            </li>
             @if ($topic->areas->isNotEmpty())
                 <li class="meta__item">
                     <div>
@@ -37,7 +41,6 @@
                     </div>
                 </li>
             @endif
-            <li class="meta__item">{{ trans_choice('forum/show.posts', $topic->posts_count, ['count' => $topic->posts_count]) }}</li>
             @if ($topic->latestPost)
                 <li class="meta__item">
                     <a href="{{ route('topic.show', [$topic->forum, $topic, $topic->slug, 'p' => ceil($topic->posts_count / Topic::PAGINATE_COUNT)]) }}#laatste" wire:navigate>
