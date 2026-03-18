@@ -128,8 +128,6 @@
         }
 
         &:last-child {
-            border-bottom-left-radius: var(--borderRadius-l);
-            border-bottom-right-radius: var(--borderRadius-l);
             margin-bottom: -1px;
         }
     }
