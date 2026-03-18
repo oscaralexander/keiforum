@@ -304,7 +304,7 @@ export default (content = '') => {
 
             // 1. Create the Link Mark with isMention: true
             const linkMark = schema.marks.link.create({
-                href: `/u/${user.username}`,
+                href: `/@${user.username}`,
                 isMention: true,
                 title: user.name,
             });
