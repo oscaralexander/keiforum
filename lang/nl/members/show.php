@@ -6,6 +6,6 @@ return [
     'no_topics' => 'Nog geen berichten geplaatst.',
     'posts_count' => 'Berichten',
     'topic_posts_count' => ':count bericht|:count berichten',
-    'topics' => 'Actief in onderwerpen',
+    'topics' => 'Actief in',
     'years_old' => 'jaar oud',
 ];
