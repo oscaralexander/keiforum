@@ -1,14 +1,19 @@
 @use '@css/mixins' as *;
 
 .forumListItem {
-    align-items: flex-start;
+    padding: 1.25em var(--panel-padding-x);
     display: flex;
-    gap: .75rem;
-    justify-content: space-between;
-    padding: 1.25em;
+    flex-direction: column;
+    gap: var(--size-m);
 
     &:not(:last-child) {
         border-bottom: 1px solid var(--color-border-lc);
+    }
+
+    &__header {
+        align-items: center;
+        display: flex;
+        gap: .75rem;
     }
 
     &__icon {
@@ -65,15 +70,23 @@
         display: flex;
         gap: .75rem;
 
+        &-icon {
+            align-items: center;
+            display: flex;
+            flex: 0 0 2.5rem;
+            justify-content: center;
+            width: 2.5rem;
+        }
+
         &-title {
-            font-size: var(--fontSize-s);
             font-weight: 600;
             text-decoration: none;
         }
     }
 
     &__moreTopics {
-        font-size: var(--fontSize-s);
+        display: inline-block;
+        margin-left: 3.25rem;
         text-decoration: none;
     }
 

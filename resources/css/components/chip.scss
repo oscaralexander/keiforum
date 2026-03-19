@@ -28,9 +28,9 @@
     }
     
     &:has(input:checked) {
-        background: var(--color-1);
-        border-color: transparent;
-        color: var(--color-bg);
+        background: rgba(var(--color-1-rgb), .1);
+        border-color: rgba(var(--color-1-rgb), .25);
+        color: var(--color-1);
     }
 
     @include screen-min(m) {
