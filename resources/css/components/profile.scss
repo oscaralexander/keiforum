@@ -80,12 +80,11 @@
 
     &__topic {
         border-top: 1px dotted var(--color-border-lc);
-        padding: var(--size-m) 0;
         display: flex;
+        padding: var(--size-m) 0;
 
         a {
             font-weight: 600;
-            font-size: var(--fontSize-l);
             text-decoration: none;
         }
     }
@@ -93,7 +92,7 @@
     @include screen-max(m) {
         &__topic {
             flex-direction: column;
-            gap: var(--size-xs);
+            gap: 2px;
         }
     }
 
@@ -133,9 +132,9 @@
         }
 
         &__topic {
-            justify-content: space-between;
             align-items: baseline;
-            gap: var(--size-m);
+            gap: var(--size-l);
+            justify-content: space-between;
         }
     }
 }
