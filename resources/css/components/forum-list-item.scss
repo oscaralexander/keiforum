@@ -58,7 +58,7 @@
     &__recentTopics {
         display: flex;
         flex-direction: column;
-        gap: .5rem;
+        gap: .75rem;
     }
 
     &__recentTopic {
@@ -113,7 +113,6 @@
         }
 
         &__recentTopics {
-            gap: .75rem;
             padding-left: 3.25rem;
         }
 
