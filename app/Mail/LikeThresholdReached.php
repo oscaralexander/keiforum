@@ -23,7 +23,7 @@ class LikeThresholdReached extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: __('mail/like_threshold_reached.subject'),
+            subject: __('mail/post/like_threshold_reached.subject'),
         );
     }
 
@@ -31,17 +31,6 @@ class LikeThresholdReached extends Mailable
     {
         return new Content(
             view: 'mail.' . app()->getLocale() . '.post.like-threshold-reached',
-            with: [
-
-            ]
-        );
-
-        return new Content(
-            markdown: 'emails.posts.threshold-reached',
-            with: [
-                'postTitle' => $this->post->title,
-                'likeCount' => $this->count,
-            ],
         );
     }
 }

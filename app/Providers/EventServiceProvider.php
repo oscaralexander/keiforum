@@ -2,14 +2,15 @@
 
 namespace App\Providers;
 
+use App\Events\MessageCreated;
+use App\Events\PostLiked;
+use App\Events\PostSaving;
+use App\Listeners\CheckLikeThreshold;
+use App\Listeners\SendMentionNotification;
+use App\Listeners\SendNewMessageNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
-use App\Events\MessageCreated;
-use App\Events\PostLiked;
-use App\Listeners\CheckLikeThreshold;
-use App\Listeners\SendNewMessageNotification;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -23,11 +24,12 @@ class EventServiceProvider extends ServiceProvider
         PostLiked::class => [
             CheckLikeThreshold::class,
         ],
-    ];  
+        PostSaving::class => [
+            SendMentionNotification::class,
+        ],
+    ];
 
-    public function boot(): void
-    {
-    }
+    public function boot(): void {}
 
     public function shouldDiscoverEvents(): bool
     {

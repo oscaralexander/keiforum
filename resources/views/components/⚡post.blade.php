@@ -2,6 +2,7 @@
 
 use App\Constants\Event;
 use App\Events\PostLiked;
+use App\Events\PostSaving;
 use App\Models\Area;
 use App\Models\Post;
 use App\Models\Topic;
@@ -107,9 +108,13 @@ new class extends Component
 
         $this->validate();
 
+        $oldBody = $this->post->body;
+
         $this->post->update([
             'body' => $this->body,
         ]);
+
+        PostSaving::dispatch($this->post, $oldBody);
 
         if ($this->isFirstPost) {
             $this->post->topic->update(['title' => $this->topic_title]);

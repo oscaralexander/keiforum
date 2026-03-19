@@ -1,6 +1,7 @@
 <?php
 
 use App\Constants\Event;
+use App\Events\PostSaving;
 use App\Models\Area;
 use App\Models\Forum;
 use App\Models\Topic;
@@ -160,6 +161,8 @@ new class extends Component
             'topic_id' => $this->topic->id,
             'user_id' => auth()->id(),
         ]);
+
+        PostSaving::dispatch($post);
 
         $this->redirect(route('topic.show', [$this->topic->forum, $this->topic, 'bericht' => $post->id]), navigate: true);
     }
