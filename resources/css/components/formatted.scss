@@ -70,7 +70,7 @@
     }
 
     a[data-mention] {
-        background: rgba(255, 0, 0, .15);
+        background: rgba(var(--color-1-rgb), .1);
         border-radius: var(--borderRadius-l);
         color: var(--color-1);
         display: inline-block;
