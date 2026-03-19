@@ -43,7 +43,7 @@
             @endif
             @if ($topic->latestPost)
                 <li class="meta__item">
-                    <a href="{{ route('topic.show', [$topic->forum, $topic, $topic->slug, 'p' => ceil($topic->posts_count / Topic::PAGINATE_COUNT)]) }}#laatste" wire:navigate>
+                    <a href="{{ route('topic.show', [$topic->forum, $topic, $topic->slug, 'post' => $topic->latestPost->id]) }}" wire:navigate>
                         {{ time_diff($topic->latestPost?->created_at) }} @lang('ui.ago')
                         <x-icon icon="arrow-right" />
                     </a>
