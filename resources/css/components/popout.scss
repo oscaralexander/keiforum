@@ -70,7 +70,7 @@
         position: absolute;
         right: 0;
         width: max-content;
-        z-index: 100;
+        z-index: 1000;
 
         &-link {
             color: var(--color-link);

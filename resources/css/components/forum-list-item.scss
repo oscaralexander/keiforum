@@ -1,9 +1,9 @@
 @use '@css/mixins' as *;
 
 .forumListItem {
-    align-items: center;
+    align-items: flex-start;
     display: flex;
-    gap: var(--size-m);
+    gap: .75rem;
     justify-content: space-between;
     padding: 1.25em;
 
@@ -21,20 +21,21 @@
         height: 2.5rem;
         justify-content: center;
         width: 2.5rem;
+        margin-top: .35rem;
     }
 
     &__text {
         display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: var(--size-m);
+    }
+
+    &__nameDescription {
+        display: flex;
         flex-direction: column;
         flex: 1;
         gap: var(--size-xs);
-    }
-
-    &__nameCount {
-        align-items: baseline;
-        display: flex;
-        gap: var(--size-m);
-        justify-content: space-between;
     }
 
     &__name {
@@ -53,6 +54,29 @@
         font-size: var(--fontSize-s);
     }
 
+    &__recentTopics {
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+    }
+
+    &__recentTopic {
+        align-items: center;
+        display: flex;
+        gap: .75rem;
+
+        &-title {
+            font-size: var(--fontSize-s);
+            font-weight: 600;
+            text-decoration: none;
+        }
+    }
+
+    &__moreTopics {
+        font-size: var(--fontSize-s);
+        text-decoration: none;
+    }
+
     @include screen-min(m) {
         &__name {
             font-size: var(--fontSize-xl);
@@ -63,6 +87,20 @@
         }
 
         &__description {
+            font-size: var(--fontSize-m);
+        }
+
+        &__recentTopics {
+            gap: .75rem;
+        }
+
+        &__recentTopic {
+            &-title {
+                font-size: var(--fontSize-m);
+            }
+        }
+
+        &__moreTopics {
             font-size: var(--fontSize-m);
         }
     }

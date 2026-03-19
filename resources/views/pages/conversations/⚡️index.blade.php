@@ -111,7 +111,7 @@ new class extends Component
             <div class="conversationList">
                 @forelse ($this->conversations as $conversation)
                     <x-conversations.list-item
-                        :conversation="$conversation"
+                        :$conversation
                         :isActive="$conversation->id === $this->conversation_id"
                     />
                 @empty

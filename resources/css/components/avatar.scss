@@ -8,6 +8,12 @@
     aspect-ratio: 1 / 1;
     position: relative;
 
+    &--xs {
+        flex: 0 0 24px;
+        height: 24px;
+        width: 24px;
+    }
+
     &--s {
         flex: 0 0 32px;
         height: 32px;

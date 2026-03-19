@@ -4,6 +4,7 @@ use Livewire\Component;
 use Livewire\Attributes\Computed;
 use App\Models\Forum;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 new class extends Component
 {
@@ -12,9 +13,25 @@ new class extends Component
     #[Computed]
     public function forums(): Collection
     {
-        return Forum::query()
+        $forums = Forum::query()
             ->withCount('topics')
             ->get();
+
+        $forums->each(function (Forum $forum): void {
+            $forum->setRelation('recentTopics',
+                $forum->topics()
+                    ->where('is_pinned', false)
+                    ->withCount('posts')
+                    ->with('latestPost.user')
+                    ->orderByDesc(
+                        DB::raw('(SELECT MAX(p.id) FROM posts p WHERE p.topic_id = topics.id)')
+                    )
+                    ->limit(5)
+                    ->get()
+            );
+        });
+
+        return $forums;
     }
 
     public function mount(): void
@@ -88,18 +105,7 @@ new class extends Component
     <div class="panel">
         <ul class="forumList">
             @foreach ($this->forums as $forum)
-                <li class="forumListItem">
-                    <div class="forumListItem__icon">
-                        <x-icon icon="{{ $forum->icon }}" />
-                    </div>
-                    <div class="forumListItem__text">
-                        <div class="forumListItem__nameCount">
-                            <a class="forumListItem__name" href="{{ route('forum.show', $forum->slug) }}" wire:navigate>{{ $forum->name }}</a>
-                            <div class="forumListItem__count">{{ trans_choice('forum/index.topics', $forum->topics_count, ['count' => $forum->topics_count]) }}</div>
-                        </div>
-                        <div class="forumListItem__description">{{ $forum->description }}</div>
-                    </div>
-                </li>
+                <x-forum-list-item :$forum />
             @endforeach
         </ul>
     </div>

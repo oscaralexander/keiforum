@@ -58,17 +58,14 @@
         text-decoration: none;
     }
 
-    &__areas {
-        color: var(--color-text-lc);
-
-        a {
-            color: var(--color-text-lc);
-            font-size: var(--fontSize-s);
-        }
-    }
-
     .avatar img {
         background: var(--color-bg);
+    }
+
+    @include screen-max(m) {
+        .avatarList {
+            display: none;
+        }
     }
 
     @include screen-min(m) {

@@ -15,8 +15,8 @@
         float: left;
         align-items: center;
         display: inline-flex;
-        gap: .35em;
-        margin-right: .35em;
+        gap: .25em;
+        margin-right: .25em;
         white-space: nowrap;
 
         &:not(:last-child) {
@@ -38,16 +38,15 @@
         }
 
         svg {
-            height: 1em;
-            stroke-width: 2;
-            width: 1em;
             flex: 0 0 1em;
+            height: 1em;
+            width: 1em;
         }
     }
 
     &--large {
-        font-size: var(--fontSize-s);
         color: var(--color-text);
+        font-size: var(--fontSize-s);
     }
 
     &--small {
