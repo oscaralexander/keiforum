@@ -1,10 +1,10 @@
 @use '@css/mixins' as *;
 
 .forumListItem {
-    padding: 1.25em var(--panel-padding-x);
     display: flex;
     flex-direction: column;
-    gap: var(--size-xl);
+    gap: 1.25rem;
+    padding: 1.25rem var(--panel-padding-x);
 
     &:not(:last-child) {
         border-bottom: 1px solid var(--color-border-lc);
@@ -98,7 +98,7 @@
     }
 
     @include screen-min(m) {
-        gap: 1.25rem;
+        gap: var(--size-l);
 
         &__name {
             font-size: var(--fontSize-xl);
