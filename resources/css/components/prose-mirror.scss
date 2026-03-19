@@ -97,7 +97,11 @@
         padding-left: 1em;
     }
 
-    p, ol, ul, div {
+    blockquote, p, ol, ul {
+        max-width: 75ch;
+    }
+
+    blockquote, p, ol, ul, div {
         &:not(:last-child) {
             margin-bottom: 1em;
         }

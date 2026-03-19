@@ -28,11 +28,11 @@
         max-width: 100%;
     }
 
-    p, ol, ul {
+    blockquote, p, ol, ul {
         max-width: 75ch;
     }
 
-    p, ol, ul, div {
+    blockquote, p, ol, ul, div {
         &:not(:last-child) {
             margin-bottom: 1.25em;
         }
