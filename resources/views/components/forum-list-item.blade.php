@@ -22,10 +22,9 @@
             @foreach ($forum->recentTopics as $topic)
                 <li class="forumListItem__recentTopic" wire:key="recent-topic-{{ $topic->id }}">
                     <div class="forumListItem__recentTopic-icon">
-                        <x-avatar class="m:hide" :size="AvatarSize::XS" :user="$topic->latestPost->user" />
-                        <x-avatar class="m:show" :size="AvatarSize::S" :user="$topic->latestPost->user" />
+                        <x-avatar :size="AvatarSize::S" :user="$topic->latestPost->user" />
                     </div>
-                    <div>
+                    <div class="forumListItem__recentTopic-titleMeta">
                         <a class="forumListItem__recentTopic-title" href="{{ route('topic.show', [$forum, $topic, $topic->slug]) }}" wire:navigate>{{ $topic->title }}</a>
                         <ul class="meta">
                             <li class="meta__item">
