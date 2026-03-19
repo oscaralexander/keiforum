@@ -96,8 +96,8 @@
             }
 
             &:hover {
-                background: var(--color-link);
-                color: var(--color-bg);
+                background: rgba(var(--color-1-rgb), .1);
+                color: var(--color-1);
             }
         }
 
