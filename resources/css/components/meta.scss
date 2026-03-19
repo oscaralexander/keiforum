@@ -12,9 +12,9 @@
     }
 
     &__item {
-        float: left;
         align-items: center;
-        display: inline-flex;
+        display: flex;
+        float: left;
         gap: .33em;
         margin-right: .33em;
         white-space: nowrap;

@@ -68,4 +68,15 @@
             width: 100%;
         }
     }
+
+    a[data-mention] {
+        background: rgba(255, 0, 0, .15);
+        border-radius: var(--borderRadius-l);
+        color: var(--color-1);
+        display: inline-block;
+        font-size: var(--fontSize-s);
+        font-weight: 500;
+        padding: 0 .5em;
+        text-decoration: none;
+    }
 }

@@ -5,7 +5,7 @@
     display: flex;
     gap: .75em;
     justify-content: space-between;
-    padding: 1.25em var(--panel-padding-x);
+    padding: 1rem var(--panel-padding-x);
 
     &:not(:last-child) {
         border-bottom: 1px solid var(--color-border-lc);
