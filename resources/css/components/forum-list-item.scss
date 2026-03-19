@@ -55,10 +55,6 @@
         font-size: var(--fontSize-s);
     }
 
-    &__description {
-        font-size: var(--fontSize-s);
-    }
-
     &__recentTopics {
         display: flex;
         flex-direction: column;
@@ -69,6 +65,13 @@
         align-items: center;
         display: flex;
         gap: .75rem;
+
+        &-titleMeta {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            gap: 2px;
+        }
 
         &-title {
             font-weight: 600;
@@ -92,10 +95,11 @@
                 width: 2.5rem;
             }
         }
-
     }
 
     @include screen-min(m) {
+        gap: var(--size-l);
+
         &__name {
             font-size: var(--fontSize-xl);
         }
