@@ -35,15 +35,22 @@
     &--online {
         &::after {
             background: var(--color-good);
-            content: '';
             border-radius: 50%;
-            box-shadow: 0 0 0 2px var(--color-bg);
-            height: .5rem;
-            right: 0;
             bottom: 0;
+            box-shadow: 0 0 0 2px var(--color-bg);
+            content: '';
+            height: 8px;
             position: absolute;
-            width: .5rem;
+            right: 0;
+            width: 8px;
             z-index: 3;
+        }
+
+        &.avatar--xs {
+            &::after {
+                height: 6px;
+                width: 6px;
+            }
         }
     }
 
