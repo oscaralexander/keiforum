@@ -4,7 +4,7 @@
     padding: 1.25em var(--panel-padding-x);
     display: flex;
     flex-direction: column;
-    gap: var(--size-l);
+    gap: var(--size-xl);
 
     &:not(:last-child) {
         border-bottom: 1px solid var(--color-border-lc);
@@ -98,6 +98,8 @@
     }
 
     @include screen-min(m) {
+        gap: 1.25rem;
+
         &__name {
             font-size: var(--fontSize-xl);
         }
