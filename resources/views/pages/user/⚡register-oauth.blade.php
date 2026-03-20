@@ -70,7 +70,7 @@ new class extends Component
             'name' => ['nullable', 'string', 'max:255'],
             'username' => [
                 'required',
-                'max:16',
+                'max:20',
                 'unique:users,username',
                 new AllowedUsername(),
             ],

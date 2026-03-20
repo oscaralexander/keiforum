@@ -70,7 +70,7 @@ new class extends Component
             'terms' => ['required', 'accepted'],
             'username' => [
                 'required',
-                'max:16',
+                'max:20',
                 'unique:users,username',
                 new AllowedUsername()
             ],
