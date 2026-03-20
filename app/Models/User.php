@@ -33,6 +33,8 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public const USERNAME_MAX_LENGTH = 20;
+
     public function avatarUrl(int $size = 256): string
     {
         $initial = strtolower(is_numeric($this->username[0]) ? '0' : $this->username[0]);

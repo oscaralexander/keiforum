@@ -70,7 +70,7 @@ new class extends Component
             'name' => ['nullable', 'string', 'max:255'],
             'username' => [
                 'required',
-                'max:20',
+                'max:' . User::USERNAME_MAX_LENGTH,
                 'unique:users,username',
                 new AllowedUsername(),
             ],
@@ -156,7 +156,7 @@ new class extends Component
             >
                 <x-input.text
                     autocomplete="username"
-                    maxlength="16"
+                    maxlength="{{ User::USERNAME_MAX_LENGTH }}"
                     required
                     style="text-transform: lowercase;"
                     wire:model.live.debounce.250ms="username"
