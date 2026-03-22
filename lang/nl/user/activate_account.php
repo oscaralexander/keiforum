@@ -1,12 +1,15 @@
 <?php
 
 return [
-    'btn_home' => 'Naar homepage',
+    'btn_confirm' => 'Activeer en log in',
     'btn_help' => 'Help!',
-    'error_cta' => 'Link opnieuw versturen',
+    'btn_home' => 'Homepage',
+    'btn_login' => 'Inloggen',
+    'btn_profile' => 'Profiel bewerken',
+    'confirm_text' => 'Klik op de knop hieronder om je account te activeren.',
+    'confirm_title' => 'Nog één klik…',
     'error_text' => 'Deze activatielink is ongeldig. Mogelijk is je account al geactiveerd.',
     'error_title' => 'Hmm…',
-    'success_cta' => 'Ga naar homepage',
-    'success_text' => 'Je account is nu geactiveerd! We hebben je voor het gemak meteen even ingelogd.',
+    'success_text' => 'Je account is nu geactiveerd!',
     'success_title' => 'Welkom bij Keiforum',
 ];

@@ -39,5 +39,5 @@ return [
         ],
     ],
     'activation_email_sent_title' => 'Gelukt!',
-    'activation_email_sent_callout' => 'We hebben een activatielink naar je email verstuurd. Klik op de link in de email om je account te activeren. Niks ontvangen? <a href="mailto:mail@keiforum.nl">Neem contact met ons op.</a>',
+    'activation_email_sent_callout' => 'We hebben een activatielink naar je email verstuurd. Klik op de link in de email om je account te activeren. Niks ontvangen? Check even je spam en <a href="mailto:mail@keiforum.nl">neem contact met ons op.</a>',
 ];

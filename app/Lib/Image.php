@@ -2,15 +2,13 @@
 
 namespace App\Lib;
 
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
 use Intervention\Image\ImageManager;
-use Intervention\Image\Interfaces\EncodedImageInterface;
 use Intervention\Image\Interfaces\ImageInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 class Image
@@ -36,13 +34,13 @@ class Image
     public function __construct()
     {
         $this->images = extension_loaded('imagick')
-            ? new ImageManager(new ImagickDriver())
-            : new ImageManager(new GdDriver());
+            ? new ImageManager(new ImagickDriver)
+            : new ImageManager(new GdDriver);
     }
 
     protected static function dimensionsFolder(?int $width, ?int $height): string
-    {      
-        return ($width ?? 'auto') . 'x' . ($height ?? 'auto');
+    {
+        return ($width ?? 'auto').'x'.($height ?? 'auto');
     }
 
     public function encode(int $quality = 100): string
@@ -52,8 +50,8 @@ class Image
 
     private function fetchImageLocal(string $path): string
     {
-        if (!is_readable($path)) {
-            $storagePath = storage_path('app/public') . DIRECTORY_SEPARATOR . $path;
+        if (! is_readable($path)) {
+            $storagePath = storage_path('app/public').DIRECTORY_SEPARATOR.$path;
 
             if (is_readable($storagePath)) {
                 $path = $storagePath;
@@ -63,6 +61,7 @@ class Image
         }
 
         $contents = file_get_contents($path);
+
         return $contents ?: '';
     }
 
@@ -72,7 +71,7 @@ class Image
             ->accept('image/*')
             ->get($url);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             abort(Response::HTTP_BAD_GATEWAY, __('image.error.bad_gateway'));
         }
 
@@ -100,7 +99,7 @@ class Image
 
     protected static function readCache(string $path): ?string
     {
-        if (!is_file($path)) {
+        if (! is_file($path)) {
             return null;
         }
 
@@ -119,15 +118,16 @@ class Image
 
         if ($width !== null && $height !== null) {
             $this->image = $this->image->cover($width, $height);
+        } else {
+            $this->image = $this->image->scaleDown($width, $height);
         }
 
-        $this->image = $this->image->scaleDown($width, $height);
         return $this;
     }
 
     public static function cacheFilePath(string $src, ?int $width, ?int $height): string
     {
-        return self::CACHE_ROOT . DIRECTORY_SEPARATOR . static::dimensionsFolder($width, $height) . DIRECTORY_SEPARATOR . sha1($src) . '.webp';
+        return self::CACHE_ROOT.DIRECTORY_SEPARATOR.static::dimensionsFolder($width, $height).DIRECTORY_SEPARATOR.sha1($src).'.webp';
     }
 
     public static function serve(string $src, ?int $width, ?int $height, int $quality): Response
@@ -135,8 +135,8 @@ class Image
         $cachePath = static::cacheFilePath($src, $width, $height);
         $contents = static::readCache($cachePath);
 
-        if (!$contents) {
-            $image = new self();
+        if (! $contents) {
+            $image = new self;
             $contents = $image
                 ->read($src)
                 ->resize($width, $height)
@@ -146,7 +146,7 @@ class Image
         Storage::disk('public')->put($cachePath, $contents);
 
         return response($contents, Response::HTTP_OK, [
-            'Cache-Control' => 'public, max-age=' . self::CACHE_TTL,
+            'Cache-Control' => 'public, max-age='.self::CACHE_TTL,
             'Content-Type' => 'image/webp',
         ]);
     }

@@ -62,7 +62,7 @@ class User extends Authenticatable
     public function avatar(): Attribute
     {
         return new Attribute(
-            get: fn ($value) => env('APP_PATH_AVATARS').DIRECTORY_SEPARATOR.$this->username.'.webp',
+            get: fn ($value) => config('app.path_avatars').DIRECTORY_SEPARATOR.$this->username.'.webp',
         );
     }
 

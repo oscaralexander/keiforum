@@ -127,7 +127,7 @@ new class extends Component
         try {
             $image = new Image;
             $contents = $image->read($avatarUrl)->encode(80);
-            $avatarPath = env('APP_PATH_AVATARS') . DIRECTORY_SEPARATOR . $user->username . '.webp';
+            $avatarPath = config('app.path_avatars') . DIRECTORY_SEPARATOR . $user->username . '.webp';
 
             if (Storage::disk('public')->put($avatarPath, $contents)) {
                 $user->has_avatar = true;

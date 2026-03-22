@@ -6,7 +6,6 @@ use App\Lib\Image;
 use App\Mail\ActivateAccount;
 use App\Models\Area;
 use App\Models\User;
-use App\Rules\AllowedUsername;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
@@ -88,13 +87,18 @@ new class extends Component
             'bio' => ['nullable', 'string', 'max:255'],
             'birthdate' => ['nullable', 'date'],
             'gender' => ['nullable', Rule::enum(Gender::class)],
-            'name' => ['required'],
+            'name' => ['required', 'string'],
         ];
+    }
+
+    public function submitRules(): array
+    {
+        return collect($this->rules())->except('avatar')->all();
     }
 
     public function submit()
     {
-        $this->validate();
+        $this->validate($this->submitRules());
 
         $this->user->area_id = empty($this->area_id) ? null : $this->area_id;
         $this->user->bio = empty($this->bio) ? null : $this->bio;
@@ -114,14 +118,15 @@ new class extends Component
                 ->read($this->avatar->getRealPath())
                 ->resize(1024)
                 ->encode(80);
-            $avatarPath = env('APP_PATH_AVATARS') . DIRECTORY_SEPARATOR . $this->user->username . '.webp';
+            $avatarPath = config('app.path_avatars') . DIRECTORY_SEPARATOR . $this->user->username . '.webp';
 
             if (Storage::disk('public')->put($avatarPath, $avatarContents)) {
+                $this->deleteCachedAvatars($avatarPath);
                 $this->user->has_avatar = true;
                 $this->user->save();
             }
 
-            $this->deleteCachedAvatars($avatarPath);
+            $this->avatar = null;
         }
     }
 
@@ -150,7 +155,9 @@ new class extends Component
                 </div>
                 <div class="avatar avatar--l" wire:loading.class="is-loading" wire:target="avatar">
                     @php
-                        $avatarUrl = $user->avatarUrl(size: AvatarSize::L->value);
+                        $avatarUrl = $user->has_avatar
+                            ? $user->avatarUrl(size: AvatarSize::L->value) . '&t=' . $user->updated_at->timestamp
+                            : $user->avatarUrl(size: AvatarSize::L->value);
 
                         if ($avatar && get_class($avatar) === TemporaryUploadedFile::class) {
                             $avatarUrl = $avatar->temporaryUrl();

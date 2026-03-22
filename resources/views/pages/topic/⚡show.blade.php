@@ -246,14 +246,16 @@ new class extends Component
             <section class="reply">
                 @auth
                     <div class="flex flex-col flex-gap-m">
-                        <h3>@lang('topic/show.reply')</h3>
+                        <div class="m:hide">
+                            <x-input.toggle :label="__('post/create.subscribe')" wire:model.live="subscribe" />
+                        </div>
                         <form class="flex flex-col flex-gap-m" wire:submit="submit">
                             <x-field model="body">
                                 <x-editor model="body" />
                             </x-field>
-                            <div class="flex flex-justify-spaceBetween">
+                            <div class="flex flex-align-center flex-justify-spaceBetween">
                                 <x-btn primary submit>@lang('post/create.reply')</x-btn>
-                                <div>
+                                <div class="m:show">
                                     <x-input.toggle :label="__('post/create.subscribe')" wire:model.live="subscribe" />
                                 </div>
                             </div>

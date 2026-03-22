@@ -122,4 +122,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'path_avatars' => env('APP_PATH_AVATARS', 'avatars'),
+
 ];
