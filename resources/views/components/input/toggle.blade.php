@@ -11,7 +11,7 @@
         $attributes = $attributes->merge(['wire:model' => $model]);
     }
 
-    $model ??= $attributes->whereStartsWith('wire:model')->first()?->value();
+    $model ??= $attributes->whereStartsWith('wire:model')->first();
     $id = $id ?? ($model ? Str::of($model)->slug() : null);
 @endphp
 

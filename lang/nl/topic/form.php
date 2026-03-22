@@ -12,6 +12,9 @@ return [
         'label' => 'Forum',
         'placeholder' => 'Selecteer een forum',
     ],
+    'subscribe' => [
+        'label' => 'E-mail mij bij nieuwe reacties',
+    ],
     'title' => [
         'label' => 'Titel',
     ],

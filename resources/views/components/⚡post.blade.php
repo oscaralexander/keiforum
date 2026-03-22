@@ -2,7 +2,7 @@
 
 use App\Constants\Event;
 use App\Events\PostLiked;
-use App\Events\PostSaving;
+use App\Events\PostSaved;
 use App\Models\Area;
 use App\Models\Post;
 use App\Models\Topic;
@@ -114,7 +114,7 @@ new class extends Component
             'body' => $this->body,
         ]);
 
-        PostSaving::dispatch($this->post, $oldBody);
+        PostSaved::dispatch($this->post, $oldBody);
 
         if ($this->isFirstPost) {
             $this->post->topic->update(['title' => $this->topic_title]);
@@ -126,6 +126,15 @@ new class extends Component
         if ($this->isFirstPost) {
             $this->dispatch(Event::TOPIC_UPDATED);
         }
+    }
+
+    public function reply(): void
+    {
+        $this->dispatch(Event::REPLY_TO_POST,
+            number: $this->number,
+            postUrl: $this->postUrl,
+            username: $this->post->user->username,
+        );
     }
 
     public function toggleLike()
@@ -162,6 +171,12 @@ new class extends Component
             @auth
                 <x-popout>
                     @if ($post->user_id !== auth()->id())
+                        <x-popout.item
+                            icon="reply"
+                            :label="__('ui.reply')"
+                            :href="$this->postUrl"
+                            wire:click="reply"
+                        />
                         <x-popout.item
                             icon="send"
                             :label="__('ui.private_message')"

@@ -92,4 +92,21 @@ class Topic extends Model
     {
         return $this->belongsToMany(Area::class);
     }
+
+    public function subscribers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)
+            ->using(TopicUser::class)
+            ->withPivot('last_read_post_id', 'is_subscribed', 'last_notified_post_id')
+            ->withTimestamps()
+            ->wherePivot('is_subscribed', true);
+    }
+
+    public function trackedByUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)
+            ->using(TopicUser::class)
+            ->withPivot('last_read_post_id', 'is_subscribed', 'last_notified_post_id')
+            ->withTimestamps();
+    }
 }

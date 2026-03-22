@@ -7,9 +7,9 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PostSaving
+class PostCreated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct(public Post $post, public ?string $oldBody = null) {}
+    public function __construct(public Post $post) {}
 }

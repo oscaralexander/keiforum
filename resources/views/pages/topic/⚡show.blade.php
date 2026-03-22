@@ -1,7 +1,8 @@
 <?php
 
 use App\Constants\Event;
-use App\Events\PostSaving;
+use App\Events\PostCreated;
+use App\Events\PostSaved;
 use App\Models\Area;
 use App\Models\Forum;
 use App\Models\Topic;
@@ -17,11 +18,13 @@ new class extends Component
 {   
     use WithPagination;
 
+    public string $body;
+
     public string $pageName = 'p';
 
-    public Topic $topic;
+    public bool $subscribe = false;
 
-    public string $body;
+    public Topic $topic;
 
     #[Computed]
     public function firstPost(): ?Post
@@ -33,9 +36,9 @@ new class extends Component
     public function posts(): LengthAwarePaginator
     {
         $paginator = $this->topic->posts()
-            ->withTrashed()
             ->with(['likes', 'user.area'])
             ->withCount('likes')
+            ->withTrashed()
             ->paginate(Post::PAGINATE_COUNT, pageName: 'p')
             ->setPath(route('topic.show', [$this->topic->forum, $this->topic, $this->topic->slug]));
 
@@ -53,6 +56,19 @@ new class extends Component
 
         if ($postId = request()->query('post')) {
             $this->paginateToPost((int) $postId);
+        }
+
+        if (auth()->check()) {
+            $pivot = $this->topic->trackedByUsers()->where('user_id', auth()->id())->first()?->pivot;
+            $this->subscribe = (bool) $pivot?->is_subscribed;
+
+            $highestPostId = $this->posts->getCollection()->max('id');
+
+            if ($highestPostId > ($pivot?->last_read_post_id ?? 0)) {
+                $this->topic->trackedByUsers()->syncWithoutDetaching([
+                    auth()->id() => ['last_read_post_id' => $highestPostId],
+                ]);
+            }
         }
     }
 
@@ -162,9 +178,29 @@ new class extends Component
             'user_id' => auth()->id(),
         ]);
 
-        PostSaving::dispatch($post);
+        PostSaved::dispatch($post);
+
+        if ($post->wasRecentlyCreated) {
+            PostCreated::dispatch($post);
+        }
 
         $this->redirect(route('topic.show', [$this->topic->forum, $this->topic, 'bericht' => $post->id]), navigate: true);
+    }
+
+    public function updatedSubscribe(bool $value): void
+    {
+        Gate::authorize('create', Post::class);
+
+        $this->topic->trackedByUsers()->syncWithoutDetaching([
+            auth()->id() => ['is_subscribed' => $value],
+        ]);
+    }
+
+    #[On(Event::REPLY_TO_POST)]
+    public function replyToPost(string $username, int $number, string $postUrl): void
+    {
+        $this->body = sprintf('<p><a href="%s" data-mention="true">@%s#%d</a></p>', $postUrl, $username, $number);
+        $this->js("document.querySelector('.reply').scrollIntoView({ behavior: 'smooth', block: 'start' })");
     }
 };
 ?>
@@ -215,14 +251,17 @@ new class extends Component
                             <x-field model="body">
                                 <x-editor model="body" />
                             </x-field>
-                            <div class="flex">
+                            <div class="flex flex-justify-spaceBetween">
                                 <x-btn primary submit>@lang('post/create.reply')</x-btn>
+                                <div>
+                                    <x-input.toggle :label="__('post/create.subscribe')" wire:model.live="subscribed" />
+                                </div>
                             </div>
                         </form>
                     </div>
                 @else
                     <p class="text-align-center text-color-lc">
-                        🔒 @lang('topic/show.reply_login')
+                        @lang('topic/show.reply_login')
                     </p>
                 @endauth
             </section>

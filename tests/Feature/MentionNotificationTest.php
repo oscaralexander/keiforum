@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Events\PostSaving;
+use App\Events\PostSaved;
 use App\Listeners\SendMentionNotification;
 use App\Mail\UserMentioned;
 use App\Models\Post;
@@ -29,7 +29,7 @@ class MentionNotificationTest extends TestCase
         ]);
 
         $listener = new SendMentionNotification;
-        $listener->handle(new PostSaving($post));
+        $listener->handle(new PostSaved($post));
 
         Mail::assertSent(UserMentioned::class, function (UserMentioned $mail) use ($mentioned, $post) {
             return $mail->hasTo($mentioned->email)
@@ -47,7 +47,7 @@ class MentionNotificationTest extends TestCase
         ]);
 
         $listener = new SendMentionNotification;
-        $listener->handle(new PostSaving($post));
+        $listener->handle(new PostSaved($post));
 
         Mail::assertNothingSent();
     }
@@ -63,7 +63,7 @@ class MentionNotificationTest extends TestCase
         ]);
 
         $listener = new SendMentionNotification;
-        $listener->handle(new PostSaving($post));
+        $listener->handle(new PostSaved($post));
 
         Mail::assertNothingSent();
     }
@@ -81,7 +81,7 @@ class MentionNotificationTest extends TestCase
         ]);
 
         $listener = new SendMentionNotification;
-        $listener->handle(new PostSaving($post));
+        $listener->handle(new PostSaved($post));
 
         Mail::assertSentCount(2);
         Mail::assertSent(UserMentioned::class, fn ($m) => $m->hasTo($userA->email));
@@ -100,7 +100,7 @@ class MentionNotificationTest extends TestCase
         ]);
 
         $listener = new SendMentionNotification;
-        $listener->handle(new PostSaving($post));
+        $listener->handle(new PostSaved($post));
 
         Mail::assertSentCount(1);
         Mail::assertSent(UserMentioned::class, fn ($m) => $m->hasTo($mentioned->email));
@@ -115,7 +115,7 @@ class MentionNotificationTest extends TestCase
         ]);
 
         $listener = new SendMentionNotification;
-        $listener->handle(new PostSaving($post));
+        $listener->handle(new PostSaved($post));
 
         Mail::assertNothingSent();
     }
@@ -133,7 +133,7 @@ class MentionNotificationTest extends TestCase
         ]);
 
         $listener = new SendMentionNotification;
-        $listener->handle(new PostSaving($post, $oldBody));
+        $listener->handle(new PostSaved($post, $oldBody));
 
         Mail::assertNothingSent();
     }
@@ -153,15 +153,32 @@ class MentionNotificationTest extends TestCase
         ]);
 
         $listener = new SendMentionNotification;
-        $listener->handle(new PostSaving($post, $oldBody));
+        $listener->handle(new PostSaved($post, $oldBody));
 
         Mail::assertSentCount(1);
         Mail::assertSent(UserMentioned::class, fn ($m) => $m->hasTo($added->email));
     }
 
+    public function test_email_is_sent_for_reply_mention_via_text_content(): void
+    {
+        Mail::fake();
+
+        $author = User::factory()->create();
+        $mentioned = User::factory()->create(['username' => 'janedoe']);
+        $post = Post::factory()->create([
+            'user_id' => $author->id,
+            'body' => '<p><a href="https://keiforum.nl/algemeen/1/topic?post=5" data-mention="true">@janedoe#5</a></p>',
+        ]);
+
+        $listener = new SendMentionNotification;
+        $listener->handle(new PostSaved($post));
+
+        Mail::assertSent(UserMentioned::class, fn ($m) => $m->hasTo($mentioned->email));
+    }
+
     public function test_post_saving_event_is_dispatched_on_create(): void
     {
-        \Event::fake([PostSaving::class]);
+        \Event::fake([PostSaved::class]);
 
         $author = User::factory()->create();
         $topic = Topic::factory()->create();
@@ -172,14 +189,14 @@ class MentionNotificationTest extends TestCase
             ->set('body', '<p>Hello world</p>')
             ->call('submit');
 
-        \Event::assertDispatched(PostSaving::class, function (PostSaving $event) {
+        \Event::assertDispatched(PostSaved::class, function (PostSaved $event) {
             return $event->oldBody === null;
         });
     }
 
     public function test_post_saving_event_is_dispatched_on_edit_with_old_body(): void
     {
-        \Event::fake([PostSaving::class]);
+        \Event::fake([PostSaved::class]);
 
         $author = User::factory()->create();
         $post = Post::factory()->create(['user_id' => $author->id, 'body' => '<p>Original</p>']);
@@ -190,7 +207,7 @@ class MentionNotificationTest extends TestCase
             ->set('body', '<p>Updated</p>')
             ->call('submit');
 
-        \Event::assertDispatched(PostSaving::class, function (PostSaving $event) use ($post) {
+        \Event::assertDispatched(PostSaved::class, function (PostSaved $event) use ($post) {
             return $event->post->is($post) && $event->oldBody === '<p>Original</p>';
         });
     }

@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\PostSaving;
+use App\Events\PostSaved;
 use App\Mail\UserMentioned;
 use App\Models\User;
 use DOMDocument;
@@ -13,7 +13,7 @@ class SendMentionNotification implements ShouldQueue
 {
     public string $queue = 'notifications';
 
-    public function handle(PostSaving $event): void
+    public function handle(PostSaved $event): void
     {
         $post = $event->post;
         $newMentions = $this->parseMentionedUsernames($post->body);
@@ -50,11 +50,16 @@ class SendMentionNotification implements ShouldQueue
 
             $href = $anchor->getAttribute('href');
 
-            if (!str_starts_with($href, '/@')) {
+            if (str_starts_with($href, '/@')) {
+                $usernames[] = ltrim(substr($href, 1), '@');
                 continue;
             }
 
-            $usernames[] = ltrim(substr($href, 1), '@');
+            // Quote/reply mentions use a post URL as href; extract from text content instead.
+            // Text content is "@username" or "@username#3".
+            if (preg_match('/^@([^#]+)/', $anchor->textContent, $matches)) {
+                $usernames[] = $matches[1];
+            }
         }
 
         return array_unique($usernames);

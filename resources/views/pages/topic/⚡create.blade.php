@@ -16,8 +16,10 @@ new class extends Component
     public string $body;
 
     public Forum $forum;
-
+    
     public int $forum_id;
+
+    public bool $subscribe = false;
 
     public string $title;
 
@@ -92,6 +94,10 @@ new class extends Component
             'user_id' => auth()->id(),
         ]);
 
+        $topic->trackedByUsers()->syncWithoutDetaching([
+            auth()->id() => ['is_subscribed' => $this->subscribe],
+        ]);
+
         $this->redirect(route('topic.show', [$this->forum, $topic]));
     }
 };
@@ -161,6 +167,7 @@ new class extends Component
                     <x-field :label="__('topic/form.body.label')" model="body">
                         <x-editor model="body" required />
                     </x-field>
+                    <x-input.toggle :label="__('topic/form.subscribe.label')" wire:model.live="subscribe" />
                 </div>
                 <div class="flex flex-align-center flex-gap-m">
                     <x-btn primary submit>@lang('ui.post')</x-btn>

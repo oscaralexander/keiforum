@@ -1,4 +1,4 @@
-import { EditorState, Plugin, PluginKey } from 'prosemirror-state';
+import { EditorState, Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Schema, DOMParser, DOMSerializer, Fragment, Slice } from 'prosemirror-model';
 import { schema as basicSchema } from 'prosemirror-schema-basic';
@@ -276,6 +276,28 @@ export default (content = '') => {
             if (this.$refs.imageInput) {
                 this.$refs.imageInput.addEventListener('change', this.onImageUpload.bind(this));
             }
+
+            // Watch for external content updates (e.g. Livewire setting body via replyToPost)
+            this.$watch('content', (newContent) => {
+                if (!editorView) return;
+
+                // Skip if the editor itself caused this change
+                if (newContent === this.getHTML()) return;
+
+                const $content = document.createElement('div');
+                $content.innerHTML = newContent || '';
+                const doc = DOMParser.fromSchema(editorSchema).parse($content);
+                const newState = EditorState.create({ doc, plugins: editorView.state.plugins });
+                editorView.updateState(newState);
+
+                // Insert a trailing space and place the cursor after it
+                const { state } = editorView;
+                const end = state.doc.content.size - 1;
+                const tr = state.tr.insertText(' ', end);
+                tr.setSelection(TextSelection.create(tr.doc, end + 1));
+                editorView.dispatch(tr.scrollIntoView());
+                editorView.focus();
+            });
         },
 
         execute(command) {

@@ -52,7 +52,6 @@ class User extends Authenticatable
     /**
      * Attributes
      */
-
     public function age(): Attribute
     {
         return new Attribute(
@@ -137,6 +136,14 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Conversation::class)
             ->withPivot('last_read_at', 'last_notified_at')
+            ->withTimestamps();
+    }
+
+    public function trackedTopics(): BelongsToMany
+    {
+        return $this->belongsToMany(Topic::class)
+            ->using(TopicUser::class)
+            ->withPivot('last_read_post_id', 'is_subscribed', 'last_notified_post_id')
             ->withTimestamps();
     }
 

@@ -102,4 +102,47 @@ class ShowTest extends TestCase
         Livewire::test('pages::topic.show', ['topic' => $topic])
             ->assertOk();
     }
+
+    public function test_last_read_post_id_is_set_on_mount_for_authenticated_user(): void
+    {
+        [$forum, $topic, $post] = $this->createTopicWithPost();
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test('pages::topic.show', ['topic' => $topic]);
+
+        $this->assertDatabaseHas('topic_user', [
+            'topic_id' => $topic->id,
+            'user_id' => $user->id,
+            'last_read_post_id' => $post->id,
+        ]);
+    }
+
+    public function test_last_read_post_id_is_not_overwritten_when_back_browsing(): void
+    {
+        [$forum, $topic] = $this->createTopicWithPost();
+        $laterPost = Post::factory()->create(['topic_id' => $topic->id]);
+        $user = User::factory()->create();
+
+        $topic->trackedByUsers()->attach($user->id, ['last_read_post_id' => $laterPost->id]);
+
+        // Visit page 1 which has a lower max post ID than what was already tracked
+        Livewire::actingAs($user)
+            ->test('pages::topic.show', ['topic' => $topic]);
+
+        $this->assertDatabaseHas('topic_user', [
+            'topic_id' => $topic->id,
+            'user_id' => $user->id,
+            'last_read_post_id' => $laterPost->id,
+        ]);
+    }
+
+    public function test_last_read_post_id_is_not_tracked_for_guests(): void
+    {
+        [$forum, $topic] = $this->createTopicWithPost();
+
+        Livewire::test('pages::topic.show', ['topic' => $topic]);
+
+        $this->assertDatabaseMissing('topic_user', ['topic_id' => $topic->id]);
+    }
 }
