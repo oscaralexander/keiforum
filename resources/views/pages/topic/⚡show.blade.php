@@ -254,7 +254,7 @@ new class extends Component
                             <div class="flex flex-justify-spaceBetween">
                                 <x-btn primary submit>@lang('post/create.reply')</x-btn>
                                 <div>
-                                    <x-input.toggle :label="__('post/create.subscribe')" wire:model.live="subscribed" />
+                                    <x-input.toggle :label="__('post/create.subscribe')" wire:model.live="subscribe" />
                                 </div>
                             </div>
                         </form>
