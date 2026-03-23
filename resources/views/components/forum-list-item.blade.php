@@ -13,7 +13,7 @@
             <x-icon icon="{{ $forum->icon }}" />
         </div>
         <div class="forumListItem__nameDescription">
-            <a class="forumListItem__name" href="{{ route('forum.show', $forum->slug) }}" wire:navigate>{{ $forum->name }}</a>
+            <h2 class="forumListItem__name"><a href="{{ route('forum.show', $forum->slug) }}" wire:navigate>{{ $forum->name }}</a></h2>
             <div class="forumListItem__description">{{ $forum->description }}</div>
         </div>
     </header>
