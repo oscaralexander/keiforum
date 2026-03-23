@@ -263,7 +263,7 @@ new class extends Component
                     </div>
                 @else
                     <p class="text-align-center text-color-lc">
-                        @lang('topic/show.reply_login')
+                        @lang('topic/show.reply_login', ['login_url' => route('login')])
                     </p>
                 @endauth
             </section>

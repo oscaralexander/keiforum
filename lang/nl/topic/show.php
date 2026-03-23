@@ -2,5 +2,5 @@
 
 return [
     'reply' => 'Reageren',
-    'reply_login' => 'Je moet ingelogd zijn om te reageren.',
+    'reply_login' => '<a href=":login_url" wire:navigate>Log in</a> om te reageren.',
 ];
