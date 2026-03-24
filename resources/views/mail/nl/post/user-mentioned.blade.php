@@ -5,7 +5,7 @@
 @section('content')
     <h1>@lang('mail/post/user_mentioned.subject', ['username' => $post->user->username])</h1>
     <p>
-        Hi {{ $user->emailName }},<br>
+        Hi {{ $mentionedUser->emailName }},<br>
         <br>
         <a href="{{ route('member.show', $post->user) }}">@{{ $post->user->username }}</a>
         heeft je genoemd in

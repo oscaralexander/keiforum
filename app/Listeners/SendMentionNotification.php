@@ -56,7 +56,7 @@ class SendMentionNotification implements ShouldQueue
             }
 
             // Quote/reply mentions use a post URL as href; extract from text content instead.
-            // Text content is "@username" or "@username#3".
+            // Text content is "@username" or "@username#1".
             if (preg_match('/^@([^#]+)/', $anchor->textContent, $matches)) {
                 $usernames[] = $matches[1];
             }
