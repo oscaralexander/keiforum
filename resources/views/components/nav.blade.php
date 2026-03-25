@@ -29,6 +29,7 @@
         <button
             aria-controls="navMobileMenu"
             aria-expanded="false"
+            aria-label="{{ __('nav.toggle_menu') }}"
             class="nav__menuToggle"
             type="button"
             x-bind:aria-expanded="isMenuOpen"
@@ -137,6 +138,7 @@
             >
                 <button
                     aria-controls="navUserMenu"
+                    aria-label="{{ __('nav.toggle_user_menu') }}"
                     class="avatar avatar--s"
                     type="button"
                     x-bind:aria-expanded="isMenuOpen"

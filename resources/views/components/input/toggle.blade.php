@@ -2,6 +2,7 @@
 
 @props([
     'description' => null,
+    'id' => null,
     'model' => null,
     'label' => null,
 ])

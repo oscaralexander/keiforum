@@ -247,7 +247,7 @@ new class extends Component
                 @auth
                     <div class="flex flex-col flex-gap-m">
                         <div class="m:hide">
-                            <x-input.toggle :label="__('post/create.subscribe')" wire:model.live="subscribe" />
+                            <x-input.toggle id="subscribeMobile" :label="__('post/create.subscribe')" wire:model.live="subscribe" />
                         </div>
                         <form class="flex flex-col flex-gap-m" wire:submit="submit">
                             <x-field model="body">
@@ -256,7 +256,7 @@ new class extends Component
                             <div class="flex flex-align-center flex-justify-spaceBetween">
                                 <x-btn primary submit>@lang('post/create.reply')</x-btn>
                                 <div class="m:show">
-                                    <x-input.toggle :label="__('post/create.subscribe')" wire:model.live="subscribe" />
+                                    <x-input.toggle id="subscribeDesktop" :label="__('post/create.subscribe')" wire:model.live="subscribe" />
                                 </div>
                             </div>
                         </form>

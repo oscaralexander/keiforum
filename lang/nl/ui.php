@@ -14,6 +14,7 @@ return [
     'logout' => 'Uitloggen',
     'ok' => 'OK',
     'or' => 'of',
+    'popout_label' => 'Uitklapmenu',
     'post' => 'Plaatsen',
     'private_message' => 'Privébericht',
     'register' => 'Registreren',

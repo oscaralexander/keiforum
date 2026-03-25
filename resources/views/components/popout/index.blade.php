@@ -1,10 +1,12 @@
 @props([
     'icon' => 'ellipsis',
+    'label' => __('ui.popout_label'),
     'small' => false,
 ])
 
 <button
     aria-expanded="false"
+    aria-label="{{ $label }}"
     @class([
         'popout',
         'popout--small' => $small,

@@ -269,9 +269,12 @@ new class extends Component
             'post__like--liked' => $this->isLiked,
         ])>
             @auth
-                <button class="post__like-btn" wire:click="toggleLike" wire:loading.attr="disabled">
-                    <x-icon icon="thumbs-up" />
-                </button>
+                <button
+                    aria-label="{{ __('post/show.like') }}"
+                    class="post__like-btn"
+                    wire:click="toggleLike"
+                    wire:loading.attr="disabled"
+                ><x-icon icon="thumbs-up" /></button>
             @else
                 <div class="post__like-icon"><x-icon icon="thumbs-up" /></div>
             @endauth
