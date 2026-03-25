@@ -7,7 +7,7 @@
     <p>
         Hi {{ $subscriber->emailName }},<br>
         <br>
-        <a href="{{ route('member.show', $post->user) }}">@{{ $post->user->username }}</a>
+        <a href="{{ route('member.show', $post->user) }}">{{ '@' . $post->user->username }}</a>
         heeft een nieuw bericht geplaatst in
         <a href="{{ route('topic.show', ['forum' => $post->topic->forum, 'topic' => $post->topic, 'slug' => $post->topic->slug]) }}">{{ $post->topic->title }}</a>.<br>
         <br>
