@@ -31,7 +31,7 @@
                 </div>
                 <x-actions>
                     <x-btn primary submit>@lang('post/report.submit')</x-btn>
-                    <x-btn text wire:click="cancelEdit">@lang('ui.cancel')</x-btn>
+                    <x-btn text wire:click="$dispatch('closeModal')">@lang('ui.cancel')</x-btn>
                 </x-actions>
             </form>
         @endif
