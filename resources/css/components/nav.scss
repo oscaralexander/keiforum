@@ -139,26 +139,33 @@
 
     &__menu {
         display: flex;
-    }
 
-    &__menu-link {
-        align-items: center;
-        display: flex;
-        border-radius: var(--input-height);
-        height: var(--input-height);
-        text-decoration: none;
-        font-weight: 600;
-        padding: 0 1rem;
-        position: relative;
-
-        &:hover {
-            color: var(--color-link-hover);
+        &-link {
+            align-items: center;
+            border-radius: var(--input-height);
+            display: flex;
+            font-weight: 600;
+            gap: var(--size-xs);
+            height: var(--input-height);
+            text-decoration: none;
+            padding: 0 1rem;
+            position: relative;
+    
+            &:hover {
+                color: var(--color-link-hover);
+            }
+    
+            &--active,
+            &--active:hover {
+                background: rgba(var(--color-1-rgb), .1);
+                color: var(--color-1);
+            }
         }
 
-        &--active,
-        &--active:hover {
-            background: rgba(var(--color-1-rgb), .1);
-            color: var(--color-1);
+        &-badge {
+            display: inline-block;
+            font-variant-numeric: tabular-nums;
+            opacity: .5;
         }
     }
 

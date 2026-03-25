@@ -2,6 +2,14 @@
 
 @use('App\Enums\AvatarSize')
 
+@php
+    $reportedPostsCount = 0;
+
+    if (auth()->check() && auth()->user()->is_admin) {
+        $reportedPostsCount = \App\Models\Post::query()->whereHas('reports')->count();
+    }
+@endphp
+
 <nav
     class="nav"
     x-bind:class="{ 'is-menuOpen': isMenuOpen }"
@@ -15,7 +23,7 @@
         x-transition.opacity.duration.250ms
     ></div>
     <div class="nav__mobileMenu" id="navMobileMenu">
-        <x-mobile-menu />
+        <x-mobile-menu :reported-posts-count="$reportedPostsCount" />
     </div>
     <div class="nav__menuToggleLogo">
         <button
@@ -37,9 +45,10 @@
         <ul class="nav__menu">
             @php
                 $isAgenda = request()->is('agenda*');
+                $isAdmin = request()->is('admin*');
                 $isConversations = request()->is('berichten*');
                 $isUsers = request()->is('@*') || request()->is('leden*');
-                $isForums = !$isAgenda && !$isUsers && !$isConversations;
+                $isForums = !$isAgenda && !$isAdmin && !$isUsers && !$isConversations;
             @endphp
             <li class="nav__menu-item">
                 <a
@@ -49,7 +58,7 @@
                     ])
                     href="{{ route('home') }}"
                     wire:navigate
-                >Forums</a>
+                >@lang('nav.forums')</a>
             </li>
             <li class="nav__menu-item">
                 <a
@@ -59,7 +68,7 @@
                     ])
                     href="{{ route('members') }}"
                     wire:navigate
-                >Leden</a>
+                >@lang('nav.members')</a>
             </li>
             <li class="nav__menu-item">
                 <a
@@ -69,8 +78,28 @@
                     ])
                     href="{{ route('agenda') }}"
                     wire:navigate
-                >Agenda</a>
+                >@lang('nav.agenda')</a>
             </li>
+            @if (auth()->check() && auth()->user()->is_admin)
+                @php
+                    $reportedPostsCount = \App\Models\Post::query()->whereHas('reports')->count();
+                @endphp
+                <li class="nav__menu-item">
+                    <a
+                        @class([
+                            'nav__menu-link',
+                            'nav__menu-link--active' => $isAdmin,
+                        ])
+                        href="{{ route('admin') }}"
+                        wire:navigate
+                    >
+                        @lang('nav.admin')
+                        @if ($reportedPostsCount > 0)
+                            <span class="nav__menu-badge">{{ $reportedPostsCount }}</span>
+                        @endif
+                    </a>
+                </li>
+            @endif
         </ul>
         <form
             class="nav__search"

@@ -1,5 +1,9 @@
 @blaze(memo: true)
 
+@props([
+    'reportedPostsCount' => 0,
+])
+
 <div class="mobileMenu">
     <div class="mobileMenu__main">
         <form
@@ -19,9 +23,10 @@
         <ul class="mobileMenu__menu">
             @php
                 $isAgenda = request()->is('agenda*');
+                $isAdmin = request()->is('admin*');
                 $isConversations = request()->is('berichten*');
                 $isUsers = request()->is('@*') || request()->is('leden*');
-                $isForums = !$isAgenda && !$isUsers && !$isConversations;
+                $isForums = !$isAgenda && !$isAdmin && !$isUsers && !$isConversations;
             @endphp
             <li class="mobileMenu__menu-item">
                 <a
@@ -53,6 +58,23 @@
                     wire:navigate
                 >@lang('nav.agenda')</a>
             </li>
+            @if (auth()->check() && auth()->user()->is_admin)
+                <li class="mobileMenu__menu-item">
+                    <a
+                        @class([
+                            'mobileMenu__menu-link',
+                            'mobileMenu__menu-link--active' => $isAdmin,
+                        ])
+                        href="{{ route('admin') }}"
+                        wire:navigate
+                    >
+                        @lang('nav.admin')
+                        @if ($reportedPostsCount > 0)
+                            <span class="mobileMenu__menu-badge">{{ $reportedPostsCount }}</span>
+                        @endif
+                    </a>
+                </li>
+            @endif
         </ul>
     </div>
     <footer class="mobileMenu__footer">

@@ -26,6 +26,7 @@ Route::get('auth/google', [App\Http\Controllers\User\GoogleAuthController::class
 Route::get('auth/google/callback', [App\Http\Controllers\User\GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 
 Route::middleware('auth')->group(function () {
+    Route::livewire('admin', 'pages::admin.index')->name('admin');
     Route::livewire('berichten/{conversation_id?}', 'pages::conversations.index')->name('conversations');
     Route::livewire('instellingen', 'pages::user.settings')->name('settings');
     Route::livewire('profiel', 'pages::user.profile')->name('profile');

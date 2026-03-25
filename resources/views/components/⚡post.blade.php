@@ -6,6 +6,7 @@ use App\Events\PostSaved;
 use App\Models\Area;
 use App\Models\Post;
 use App\Models\Topic;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
@@ -38,6 +39,16 @@ new class extends Component
         return Area::all();
     }
 
+    #[Computed]
+    public function reports(): Collection
+    {
+        if (!auth()->user()?->is_admin) {
+            return collect();
+        }
+
+        return $this->post->reports()->with('user')->get();
+    }
+
     public function cancelEdit()
     {
         $this->isEditing = false;
@@ -56,6 +67,13 @@ new class extends Component
             $this->post->topic->delete();
             return redirect()->route('forum.show', ['forum' => $this->post->topic->forum]);
         }
+    }
+
+    public function deleteReports(): void
+    {
+        abort_unless(auth()->user()?->is_admin, 403);
+
+        $this->post->reports()->delete();
     }
 
     public function edit()
@@ -231,6 +249,18 @@ new class extends Component
             </x-actions>
         </form>
     @else
+        @if ($this->reports->isNotEmpty())
+            <div class="post__report">
+                <x-icon icon="flag" />
+                <div class="post__report-content">
+                    <div class="post__report-info">
+                        <span class="post__report-labels">{{ $this->reports->pluck('type')->map->label()->implode(', ') }}</span>
+                        <span class="post__report-usernames">volgens {{ $this->reports->pluck('user.username')->implode(', ') }}</span>
+                    </div>
+                    <x-btn icon="trash" small wire:click="deleteReports" /> 
+                </div>
+            </div>
+        @endif
         <div class="formatted">{!! $post->body_transformed !!}</div>
     @endif
     <footer class="post__footer">

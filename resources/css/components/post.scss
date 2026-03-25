@@ -99,6 +99,51 @@
         }
     }
 
+    &__report {
+        align-items: center;
+        background: var(--color-bad);
+        border-radius: var(--borderRadius-m);
+        color: var(--color-bg);
+        display: flex;
+        font-size: var(--fontSize-s);
+        gap: var(--size-s);
+        padding: var(--size-xs) var(--size-xs) var(--size-xs) .75rem;
+
+        .icon {
+            flex: 0 0 1.25rem;
+            height: 1.25rem;
+            width: 1.25rem;
+        }
+
+        &-content {
+            align-items: center;
+            display: flex;
+            flex: 1;
+            gap: var(--size-m);
+            justify-content: space-between;
+        }
+
+        &-labels {
+            font-weight: 600;
+        }
+
+        &-usernames {
+            opacity: .75;
+        }
+
+        .btn {
+            background: transparent;
+            border-radius: 50%;
+            border: none;
+            color: var(--color-bg);
+            opacity: .5;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
     &--deleted {
         .post__user {
             .avatar {

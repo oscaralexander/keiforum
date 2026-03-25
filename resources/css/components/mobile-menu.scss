@@ -24,24 +24,34 @@
         }
     }
 
-    &__menu-link {
-        align-items: center;
-        display: flex;
-        border-radius: var(--input-height);
-        height: var(--input-height);
-        text-decoration: none;
-        font-weight: 600;
-        padding: 0 1rem;
-        position: relative;
+    &__menu {
+        &-link {
+            align-items: center;
+            display: flex;
+            border-radius: var(--input-height);
+            font-weight: 600;
+            gap: var(--size-s);
+            height: var(--input-height);
+            justify-content: space-between;
+            padding: 0 1rem;
+            position: relative;
+            text-decoration: none;
 
-        &:hover {
-            color: var(--color-link-hover);
+            &:hover {
+                color: var(--color-link-hover);
+            }
+
+            &--active,
+            &--active:hover {
+                background: rgba(var(--color-1-rgb), .1);
+                color: var(--color-1);
+            }
         }
 
-        &--active,
-        &--active:hover {
-            background: rgba(var(--color-1-rgb), .1);
-            color: var(--color-1);
+        &-badge {
+            display: inline-block;
+            font-variant-numeric: tabular-nums;
+            opacity: .5;
         }
     }
 }
