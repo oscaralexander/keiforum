@@ -109,12 +109,11 @@ new class extends Component
 <div>
     @if ($activationEmailSent)
         <x-header center hide-path :title="__('user/register.activation_email_sent_title')" />
-        <div class="callout callout--success">
-            <x-icon class="callout__icon" icon="mail" />
-            <div class="callout__content">
-                @lang('user/register.activation_email_sent_callout')
-            </div>
-        </div>
+        <x-callout
+            icon="mail"
+            success
+            :text="__('user/register.activation_email_sent_text')"
+        />
     @else
         <x-header
             center

@@ -1,0 +1,113 @@
+@keyframes reportModalTypeCheck {
+    from {
+        transform: scale(0);
+    }
+}
+
+.reportModal {
+    &__types {
+        border-radius: var(--borderRadius-m);
+        box-shadow: var(--boxShadow-s);
+    }
+
+    &__type {
+        align-items: center;
+        border: 1px solid var(--color-border);
+        cursor: pointer;
+        display: flex;
+        gap: .75rem;
+        line-height: var(--lineHeight-l);
+        padding: var(--size-m);
+        position: relative;
+        transition: border-color var(--duration-s);
+
+        &:first-child {
+            border-top-left-radius: var(--borderRadius-m);
+            border-top-right-radius: var(--borderRadius-m);
+        }
+
+        &:not(:last-child) {
+            border-bottom: none;
+        }
+
+        &:last-child {
+            border-bottom-left-radius: var(--borderRadius-m);
+            border-bottom-right-radius: var(--borderRadius-m);
+        }
+
+        &::before {
+            content: '';
+            flex: 0 0 1.25rem;
+            height: 1.25rem;
+            width: 1.25rem;
+        }
+
+        input[type=radio] {
+            position: absolute;
+            height: 0;
+            width: 0;
+        }
+
+        &-label {
+            font-weight: 600;
+        }
+
+        &-description {
+            font-size: var(--fontSize-s);
+        }
+
+        &:has(input[type=radio]:not(:checked)) {
+            &::before {
+                background: var(--color-bg);
+                border: 1px solid var(--color-border);
+                border-radius: 50%;
+                content: '';
+                flex: 0 0 1.25rem;
+                height: 1.25rem;
+                width: 1.25rem;
+            }
+        }
+
+        &:has(input[type=radio]:checked) {
+            background: var(--color-good-tint);
+            border-color: var(--color-good-border);
+            color: rgba(var(--color-good-rgb), .75);
+            z-index: 3;
+
+            .reportModal__type-label {
+                color: var(--color-good);
+            }
+
+            &::before {
+                animation: reportModalTypeCheck var(--duration-m) both cubic-bezier(0.22, 1, 0.36, 1);
+                mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21,5.3125l-12.375,12.375-5.625-5.625" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></svg>');
+                mask-position: center;
+                mask-repeat: no-repeat;
+                mask-size: 1.25rem;
+                background: var(--color-good);
+            }
+
+            & + .reportModal__type {
+                border-top-color: var(--color-good-border);
+            }
+        }
+    }
+
+    &__comment {
+        .textarea {
+            width: 100%;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &__confirmation {
+        color: var(--color-text);
+        line-height: var(--lineHeight-l);
+        padding: var(--size-m) 0;
+        text-align: center;
+    }
+}

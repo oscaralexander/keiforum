@@ -155,7 +155,7 @@ new class extends Component
     <header class="post__header">
         <div class="post__user">
             <x-avatar :user="$post->user" />
-            <div class="post__user-name">
+            <div class="post__usernameMeta">
                 <a class="post__username" href="{{ route('member.show', $post->user) }}" wire:navigate>{{ $post->user->username }}</a>
                 @auth
                     <ul class="meta">
@@ -183,10 +183,12 @@ new class extends Component
                             :navigate="false"
                             wire:click="$dispatch('openModal', { component: 'messages.message-modal', arguments: { username: '{{ $post->user->username }}' } })"
                         />
-                        {{--
-                        <x-popout.item icon="reply" :label="__('ui.reply')" />
-                        <x-popout.item icon="flag" :label="__('ui.report')" />
-                        --}}
+                        <x-popout.item
+                            icon="flag"
+                            :label="__('ui.report')"
+                            :navigate="false"
+                            wire:click="$dispatch('openModal', { component: 'posts.report-modal', arguments: { postId: {{ $post->id }} } })"
+                        />
                     @endif
                     @if ($post->user_id == auth()->id() || auth()->user()->is_admin)
                         <x-popout.item icon="pencil" :label="__('ui.edit')" wire:click="edit" />
@@ -247,8 +249,8 @@ new class extends Component
         </div>
         <ul class="meta">
             <li class="meta__item">
-                <time class="m:hide" datetime="{{ $post->created_at->toIso8601String() }}">{{ time_diff($post->created_at) . ' ' . __('ui.ago') }}</time>
-                <time class="m:show"datetime="{{ $post->created_at->toIso8601String() }}">{{ time_diff($post->created_at, long: true) . ' ' . __('ui.ago') }}</time>
+                <time class="m:hide" datetime="{{ $post->created_at->toIso8601String() }}" title="{{ $post->created_at->translatedFormat('j F Y, H:i') }}">{{ time_diff($post->created_at) . ' ' . __('ui.ago') }}</time>
+                <time class="m:show" datetime="{{ $post->created_at->toIso8601String() }}" title="{{ $post->created_at->translatedFormat('j F Y, H:i') }}">{{ time_diff($post->created_at, long: true) . ' ' . __('ui.ago') }}</time>
             </li>
             <li class="meta__item">
                 <a

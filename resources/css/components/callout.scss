@@ -10,14 +10,16 @@
     align-items: center;
     border-radius: var(--borderRadius-m);
     display: flex;
-    gap: var(--size-l);
+    gap: var(--size-m);
     padding: var(--size-l);
 
     &--success {
         background: var(--color-good-tint);
         border: 1px solid var(--color-good-border);
-        color: var(--color-good);
+        color: rgba(var(--color-good-rgb), .75);
 
+        .callout__icon,
+        .callout__title,
         a {
             color: var(--color-good);
         }
@@ -30,5 +32,10 @@
 
     &__content {
         flex: 1;
+        line-height: var(--lineHeight-l);
+
+        h4 {
+            line-height: var(--lineHeight-l);
+        }
     }
 }

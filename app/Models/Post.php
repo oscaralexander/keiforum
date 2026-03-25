@@ -40,7 +40,6 @@ class Post extends Model
     /**
      * Relationships
      */
-
     public function deletedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'deleted_by_id');
@@ -59,6 +58,11 @@ class Post extends Model
     public function topic(): BelongsTo
     {
         return $this->belongsTo(Topic::class);
+    }
+
+    public function reports(): HasMany
+    {
+        return $this->hasMany(Report::class);
     }
 
     public function user(): BelongsTo

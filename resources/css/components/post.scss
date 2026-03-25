@@ -30,6 +30,12 @@
         gap: .75rem;
     }
 
+    &__usernameMeta {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
     &__username {
         font-weight: 600;
         text-decoration: none;

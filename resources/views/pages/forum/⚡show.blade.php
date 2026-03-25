@@ -15,7 +15,7 @@ new class extends Component
     use WithPagination;
 
     #[Url('ad_types')]
-    public array $adTypes = [AdType::OFFERED->value, AdType::WANTED->value];
+    public array $adTypes = [];
 
     public Forum $forum;
 
@@ -87,11 +87,11 @@ new class extends Component
                     @endforeach
                 </ul>
             </div>
+            {{ $this->topics->links() }}
         @else
             <div class="panel panel--padded">
                 <p>@lang('forum/show.no_topics')</p>
             </div>
         @endif
-        {{ $this->topics->links() }}
     </div>
 </div>

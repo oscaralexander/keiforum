@@ -15,7 +15,7 @@ return [
         ],
         'email' => [
             'description' => 'Zichtbaar voor niemand.',
-            'label' => 'Email',
+            'label' => 'E-mail',
         ],
         'gender' => [
             'description' => 'Alleen zichtbaar voor leden.',
@@ -38,6 +38,5 @@ return [
             'label' => 'Gebruikersnaam',
         ],
     ],
-    'activation_email_sent_title' => 'Gelukt!',
-    'activation_email_sent_callout' => 'We hebben een activatielink naar je email verstuurd. Klik op de link in de email om je account te activeren. Niks ontvangen? Check even je spam en <a href="mailto:mail@keiforum.nl">neem contact met ons op.</a>',
+    'activation_email_sent_text' => 'We hebben een activatielink naar je e-mail verstuurd. Klik op de link in de mail om je account te activeren. Niks ontvangen? Check even je spam en <a href="mailto:mail@keiforum.nl">neem contact met ons op.</a>',
 ];
