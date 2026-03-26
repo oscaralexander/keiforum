@@ -38,7 +38,7 @@
             <div></div>
         </button>
         <a href="{{ route('home') }}" class="logo" wire:navigate>
-            <img alt="Keiforum" class="logo__icon" src="{{ asset('assets/img/keiforum.svg') }}">
+            <img alt="Keiforum logo" class="logo__icon" src="{{ asset('assets/img/keiforum.svg') }}">
             <span class="logo__name">Keiforum</span>
         </a>
     </div>

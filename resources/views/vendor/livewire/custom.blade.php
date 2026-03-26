@@ -5,7 +5,7 @@
         </div>
         <div class="pagination__list">
             @if ($paginator->onFirstPage())
-                <span aria-disabled="true" aria-label="@lang('pagination.previous')" class="pagination__link pagination__link--disabled">
+                <span class="pagination__link pagination__link--disabled">
                     <x-icon icon="arrow-left" />
                 </span>
             @else
@@ -32,7 +32,7 @@
             @if ($paginator->hasMorePages())
                 <a aria-label="@lang('pagination.next')" class="pagination__link" href="{{ $paginator->nextPageUrl() }}" rel="next" wire:loading.attr="disabled" wire:navigate><x-icon icon="arrow-right" /></a>
             @else
-                <span aria-disabled="true" aria-label="@lang('pagination.next')" class="pagination__link pagination__link--disabled"><x-icon icon="arrow-right" /></span>
+                <span class="pagination__link pagination__link--disabled"><x-icon icon="arrow-right" /></span>
             @endif
         </div>
     </nav>
