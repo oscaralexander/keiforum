@@ -102,7 +102,7 @@
         }
     }
 
-    @include screen-min(l) {
+    @include screen-min(m) {
         &__main {
             padding: 3rem 0;
         }
