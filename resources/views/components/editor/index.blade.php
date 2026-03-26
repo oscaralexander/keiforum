@@ -18,7 +18,7 @@
                     <button class="editor__toolbar-btn" :class="{ 'is-active': isActive('blockquote') }" tabindex="-1" title="@lang('editor.blockquote')" type="button" x-on:click="toggleBlockquote()"><x-icon icon="text-quote" /></button>
                     <button class="editor__toolbar-btn" tabindex="-1" title="@lang('editor.image')" type="button" x-show="!isUploading">
                         <x-icon icon="image" />
-                        <input accept="image/heic,image/jpeg,image/png,image/webp" tabindex="-1" type="file" x-ref="imageInput">
+                        <input accept="image/heic,image/jpeg,image/png,image/webp" aria-label="@lang('editor.image_input')" tabindex="-1" type="file" x-ref="imageInput">
                     </button>
                     <div class="editor__toolbar-spinner" x-cloak x-show="isUploading"><x-icon icon="loader-circle" /></div>
                 @endunless

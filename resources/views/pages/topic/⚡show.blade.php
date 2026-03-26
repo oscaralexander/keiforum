@@ -206,7 +206,8 @@ new class extends Component
 ?>
 
 @push('meta')
-    <meta property="og:description" content="{{ $this->firstPost?->bodyPlainText }}">
+    <meta content="{{ $this->firstPost?->bodyPlainText }}" name="description">
+    <meta content="{{ $this->firstPost?->bodyPlainText }}" property="og:description">
     @if ($this->posts->hasPages())
         @if (!$this->posts->onFirstPage())
             <link href="{{ $this->posts->previousPageUrl() }}" rel="prev">
@@ -259,7 +260,7 @@ new class extends Component
                                     <x-input.toggle id="subscribeDesktop" :label="__('post/create.subscribe')" wire:model.live="subscribe" />
                                 </div>
                             </div>
-                        </form>
+                        </form>✌🏻
                     </div>
                 @else
                     <p class="text-align-center text-color-lc">

@@ -5,6 +5,7 @@ return [
     'bold' => 'Vet',
     'bullet_list' => 'Lijst',
     'image' => 'Afbeelding invoegen',
+    'image_input' => 'Afbeelding',
     'italic' => 'Cursief',
     'link' => 'Link',
     'ordered_list' => 'Genummerde lijst',
