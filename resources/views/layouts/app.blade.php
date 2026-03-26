@@ -19,9 +19,7 @@
         @stack('schema')
         @stack('scripts.head')
         @vite(['resources/css/app.scss', 'resources/js/app.js'])
-        @auth
-            @vite(['resources/js/auth.js'])
-        @endauth
+        @stack('scripts.auth')
         @livewireStyles
     </head>
     <body>

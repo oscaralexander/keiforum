@@ -205,6 +205,12 @@ new class extends Component
 };
 ?>
 
+@auth
+    @push('scripts.auth')
+        @vite(['resources/js/auth.js'])
+    @endpush
+@endauth
+
 @push('meta')
     <meta content="{{ $this->firstPost?->bodyPlainText }}" name="description">
     <meta content="{{ $this->firstPost?->bodyPlainText }}" property="og:description">

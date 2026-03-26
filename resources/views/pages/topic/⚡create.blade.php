@@ -103,6 +103,12 @@ new class extends Component
 };
 ?>
 
+@auth
+    @push('scripts.auth')
+        @vite(['resources/js/auth.js'])
+    @endpush
+@endauth
+
 <div>
     <x-header
         :path="[
