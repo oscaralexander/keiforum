@@ -120,6 +120,7 @@
     <div class="nav__actions">
         @auth
             <a
+                aria-label="{{ __('nav.conversations') }}"
                 @class([
                     'nav__action',
                     'nav__action--active' => $isConversations,

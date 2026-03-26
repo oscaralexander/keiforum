@@ -3,6 +3,7 @@
 return [
     'admin' => 'Admin',
     'agenda' => 'Agenda',
+    'conversations' => 'Privéberichten',
     'forums' => 'Forums',
     'members' => 'Leden',
     'toggle_menu' => 'Menu',

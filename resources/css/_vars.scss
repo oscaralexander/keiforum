@@ -37,11 +37,11 @@ $sizes: (
     --color-good-tint: rgba(9, 128, 95, .1);
     --color-good-tint-hover: rgba(9, 128, 95, .2);
 
-    --color-text: #666462;
-    --color-text-rgb: 102, 100, 98;
-    --color-text-hc: #1A1919;
-    --color-text-lc: #B2AEAC;
-    --color-text-placeholder: #D9D4D1;
+    --color-text: #565554; // 66
+    --color-text-rgb: 86, 85, 84;
+    --color-text-hc: #191919; // 90% zwart op tint
+    --color-text-lc: #A9A7A5; // 33% zwart op tint
+    --color-text-placeholder: #BDBBB8; // 25% zwart op tint
 
     --color-link: var(--color-1);
     --color-link-hover: var(--color-text-hc);
