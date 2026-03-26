@@ -266,7 +266,7 @@ new class extends Component
                                     <x-input.toggle id="subscribeDesktop" :label="__('post/create.subscribe')" wire:model.live="subscribe" />
                                 </div>
                             </div>
-                        </form>✌🏻
+                        </form>
                     </div>
                 @else
                     <p class="text-align-center text-color-lc">
