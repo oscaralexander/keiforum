@@ -6,9 +6,6 @@
         <meta content="#c93020" name="theme-color">
         @stack('meta')
         <title>{{ $title ?? '' }} - {{ config('app.name') }}</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Parkinsans:wght@600&display=swap" rel="stylesheet">
         <link href="/favicon.svg" rel="icon" sizes="any" type="image/svg+xml">
         <link href="{{ asset('apple-touch-icon.png') }}" rel="apple-touch-icon" sizes="180x180">
         <link href="{{ asset('google-touch-icon.png') }}" rel="google-touch-icon" sizes="180x180">

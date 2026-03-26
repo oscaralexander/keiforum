@@ -4,31 +4,6 @@ import path from 'path';
 
 export default defineConfig({
     plugins: [
-        // {
-        //     name: 'custom-manifest',
-        //     generateBundle() {
-        //         this.emitFile({
-        //             type: 'asset',
-        //             fileName: 'manifest.json',
-        //             source: JSON.stringify(
-        //                 {
-        //                     name: 'Keiforum',
-        //                     short_name: 'Keiforum',
-        //                     start_url: '/',
-        //                     display: 'standalone',
-        //                     background_color: '#fff9f6',
-        //                     theme_color: '#c93020',
-        //                     icons: [
-        //                         { src: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-        //                         { src: '/google-touch-icon.png', sizes: '512x512', type: 'image/png' },
-        //                     ],
-        //                 },
-        //                 null,
-        //                 2
-        //             ),
-        //         });
-        //     },
-        // },
         laravel({
             input: ['resources/css/app.scss', 'resources/js/app.js', 'resources/js/auth.js'],
             refresh: true,
@@ -37,6 +12,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@css': path.resolve(__dirname, 'resources/css'),
+            '@fonts': path.resolve(__dirname, 'resources/fonts'),
             '@js': path.resolve(__dirname, 'resources/js'),
             '@npm': path.resolve(__dirname, 'node_modules'),
             '@public': path.resolve(__dirname, 'public'),
