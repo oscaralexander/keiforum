@@ -40,6 +40,31 @@ class EmbedTransformer
             $html
         );
 
+        // Internal links: replace target="_blank" with wire:navigate
+        $appUrl = rtrim(config('app.url'), '/');
+        $html = preg_replace_callback(
+            '/<a([^>]*)>/i',
+            function ($matches) use ($appUrl) {
+                $attrs = $matches[1];
+
+                if (!preg_match('/href=["\']([^"\']*)["\']/', $attrs, $hrefMatch)) {
+                    return $matches[0];
+                }
+
+                $href = $hrefMatch[1];
+
+                if (!str_starts_with($href, $appUrl)) {
+                    return $matches[0];
+                }
+
+                $attrs = preg_replace('/\s*target=["\'][^"\']*["\']/', '', $attrs);
+                $attrs = preg_replace('/\s*wire:navigate/', '', $attrs);
+
+                return '<a' . $attrs . ' wire:navigate>';
+            },
+            $html
+        );
+
         return $html;
     }
 }

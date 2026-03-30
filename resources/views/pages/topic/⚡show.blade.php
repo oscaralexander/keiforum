@@ -184,7 +184,12 @@ new class extends Component
             PostCreated::dispatch($post);
         }
 
-        $this->redirect(route('topic.show', [$this->topic->forum, $this->topic, 'bericht' => $post->id]), navigate: true);
+        $this->redirect(route('topic.show', [
+            'forum' => $this->topic->forum,
+            'topic' => $this->topic,
+            'slug' => $this->topic->slug,
+            'post' => $post->id,
+        ]), navigate: true);
     }
 
     public function updatedSubscribe(bool $value): void
