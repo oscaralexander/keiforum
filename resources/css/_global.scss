@@ -20,17 +20,17 @@ a {
 }
 
 body {
-    position: relative;
     background-color: var(--color-bg-tint);
     color: var(--color-text);
     font-family: var(--font-1);
+    position: relative;
 
     &::after {
+        background-image: url('@public/assets/img/lines.svg');
+        background-position: center;
+        background-size: cover;
         content: '';
         inset: 0;
-        background-image: url('@public/assets/img/lines.svg');
-        background-size: cover;
-        background-position: center;
         position: fixed;
         z-index: -1;
     }

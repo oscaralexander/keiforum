@@ -101,7 +101,12 @@ new class extends Component
 
 <div>
     <x-schema :data="$this->schema" />
-    <x-header hide-path :intro="__('home.intro')" :title="$title" />
+    <x-header hide-path :intro="__('home.intro')" :title="$title">
+        <x-slot:actions>
+            <x-btn class="m:hide" :href="route('topic.create')" icon="plus" primary small>@lang('forum/show.new_topic')</x-btn>
+            <x-btn class="m:show" :href="route('topic.create')" icon="plus" primary>@lang('forum/show.new_topic')</x-btn>
+        </x-slot:actions>
+    </x-header>
     <div class="panel">
         <ul class="forumList">
             @foreach ($this->forums as $forum)

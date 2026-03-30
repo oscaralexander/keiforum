@@ -15,7 +15,7 @@ new class extends Component
 
     public string $body;
 
-    public Forum $forum;
+    public ?Forum $forum = null;
     
     public int $forum_id;
 
@@ -37,21 +37,36 @@ new class extends Component
         return Forum::all();
     }
 
-    public function mount(Forum $forum)
+    public function mount(?Forum $forum = null)
     {
         $this->forum = $forum;
-        $this->forum_id = $forum->id;
 
-        if ($forum->is_marketplace) {
-            $this->ad_type = AdType::OFFERED;
-            $this->topicAreas = array_filter([auth()->user()->area_id]);
+        if ($this->forum) {
+            $this->forum_id = $this->forum->id;
+
+            if ($this->forum->is_marketplace) {
+                $this->ad_type = AdType::OFFERED;
+                $this->topicAreas = array_filter([auth()->user()->area_id]);
+            }
         }
+    }
+
+    #[Computed]
+    public function path(): array
+    {
+        $path = [];
+
+        if ($this->forum) {
+            $path[] = ['label' => $this->forum->name, 'href' => route('forum.show', $this->forum)];
+        }
+
+        return $path;
     }
 
     public function render()
     {
         return $this->view()
-            ->title(__('topic/create.title_' . ($this->forum->is_marketplace ? 'ad' : 'topic')));
+            ->title(__('topic/create.title_' . ($this->forum && $this->forum->is_marketplace ? 'ad' : 'topic')));
     }
 
     public function rules()
@@ -78,7 +93,7 @@ new class extends Component
         $topic = Topic::create([
             'ad_type' => $this->ad_type,
             'title' => $this->title,
-            'forum_id' => $this->forum->id,
+            'forum_id' => $this->forum_id,
             'user_id' => auth()->id(),
         ]);
 
@@ -111,10 +126,8 @@ new class extends Component
 
 <div>
     <x-header
-        :path="[
-            ['label' => $forum->name, 'href' => route('forum.show', $forum)],
-        ]"
-        :title="__('topic/create.title_' . ($forum->is_marketplace ? 'ad' : 'topic'))"
+        :path="$this->path"
+        :title="__('topic/create.title_' . ($forum && $forum->is_marketplace ? 'ad' : 'topic'))"
     />
     <div class="panel panel--padded">
         <form wire:submit="submit">
@@ -177,7 +190,11 @@ new class extends Component
                 </div>
                 <div class="flex flex-align-center flex-gap-m">
                     <x-btn primary submit>@lang('ui.post')</x-btn>
-                    <x-btn text href="{{ route('forum.show', $forum) }}">@lang('ui.cancel')</x-btn>
+                    @if ($this->forum)
+                        <x-btn text href="{{ route('forum.show', $this->forum) }}">@lang('ui.cancel')</x-btn>
+                    @else
+                        <x-btn text href="{{ route('home') }}">@lang('ui.cancel')</x-btn>
+                    @endif
                 </div>
             </div>
         </form>

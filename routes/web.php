@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::post('uitloggen', App\Http\Controllers\User\LogoutController::class)->name('logout');
 
     // Topic
-    Route::livewire('{forum}/nieuw', 'pages::topic.create')->name('topic.create');
+    Route::livewire('nieuw-onderwerp/{forum?}', 'pages::topic.create')->name('topic.create');
 });
 
 // Member
