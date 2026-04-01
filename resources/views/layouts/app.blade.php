@@ -14,6 +14,7 @@
         <link href="/favicon.svg" rel="icon" sizes="any" type="image/svg+xml">
         <link href="{{ asset('apple-touch-icon.png') }}" rel="apple-touch-icon" sizes="180x180">
         <link href="{{ asset('google-touch-icon.png') }}" rel="google-touch-icon" sizes="180x180">
+        @stack('meta')
         <meta content="@lang('app.description')" name="description">
         <meta content="@lang('app.description')" property="og:description">
         <meta content="{{ asset('assets/img/og-image-1.png') }}" property="og:image">
@@ -22,7 +23,6 @@
         <meta content="{{ $title ?? config('app.name') }}" property="og:title">
         <meta content="website" property="og:type">
         <meta content="{{ url()->current() }}" property="og:url">
-        @stack('meta')
         @stack('schema')
         @stack('scripts.head')
         @vite(['resources/css/app.scss', 'resources/js/app.js'])

@@ -78,7 +78,7 @@ new class extends Component
             'body' => ['required'],
         ];
 
-        if ($this->forum->is_marketplace) {
+        if ($this->forum && $this->forum->is_marketplace) {
             $rules['ad_type'] = ['nullable', Rule::enum(AdType::class)];
         }
 
