@@ -52,7 +52,7 @@ new class extends Component
     public function mount(Topic $topic)
     {
         $this->topic->loadCount(['posts']);
-        $this->topic->loadMissing(['areas', 'firstPost', 'forum']);
+        $this->topic->loadMissing(['areas', 'firstPost', 'forum', 'poll']);
 
         if ($postId = request()->query('post')) {
             $this->paginateToPost((int) $postId);
@@ -240,6 +240,9 @@ new class extends Component
         :title="$topic->title"
     />
     <div class="flex flex-col flex-gap-l">
+        @if ($topic->poll)
+            <livewire:poll :topic="$topic" wire:key="poll-{{ $topic->id }}" />
+        @endif
         <div class="panel">
             <ol>
                 @foreach ($this->posts as $post)

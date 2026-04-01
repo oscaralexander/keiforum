@@ -32,7 +32,11 @@
                                 {{ $topic->posts_count }}
                             </li>
                             <li class="meta__item">
-                                <a href="{{ route('topic.show', [$topic->forum, $topic, $topic->slug, 'post' => $topic->latestPost->id]) }}" wire:navigate>
+                                <a
+                                    aria-label="@lang('forum/show.latest_post_label', ['topic' => $topic->title])"
+                                    href="{{ route('topic.show', [$topic->forum, $topic, $topic->slug, 'post' => $topic->latestPost->id]) }}"
+                                    wire:navigate
+                                >
                                     {{ time_diff($topic->latestPost?->created_at) }} @lang('ui.ago')
                                     <x-icon icon="arrow-right" />
                                 </a>

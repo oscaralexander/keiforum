@@ -68,6 +68,11 @@ class Topic extends Model
         return $this->hasOne(Post::class)->oldestOfMany();
     }
 
+    public function poll(): HasOne
+    {
+        return $this->hasOne(Poll::class);
+    }
+
     public function forum(): BelongsTo
     {
         return $this->belongsTo(Forum::class);

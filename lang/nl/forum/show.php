@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'latest_post_label' => 'Ga naar laatste bericht in \':topic\'',
     'new_ad' => 'Nieuwe advertentie',
     'new_topic' => 'Nieuw onderwerp',
     'no_topics' => 'Nog geen onderwerpen in dit forum 🥲',

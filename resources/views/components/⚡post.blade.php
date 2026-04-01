@@ -3,6 +3,7 @@
 use App\Constants\Event;
 use App\Events\PostLiked;
 use App\Events\PostSaved;
+use App\Livewire\Forms\PollForm;
 use App\Models\Area;
 use App\Models\Post;
 use App\Models\Topic;
@@ -28,6 +29,8 @@ new class extends Component
     public bool $isLiked = false;
 
     public Post $post;
+
+    public PollForm $poll;
 
     public string $topic_title;
 
@@ -65,6 +68,7 @@ new class extends Component
 
         if ($this->isFirstPost && !$this->post->topic->has_replies) {
             $this->post->topic->delete();
+
             return redirect()->route('forum.show', ['forum' => $this->post->topic->forum]);
         }
     }
@@ -76,6 +80,22 @@ new class extends Component
         $this->post->reports()->delete();
     }
 
+    public function addPollOption(): void
+    {
+        $this->poll->addOption();
+        $this->dispatch('poll-option-added');
+    }
+
+    public function removePollOption(string $id): void
+    {
+        $this->poll->removeOption($id);
+    }
+
+    public function reorderPollOptions(string $id, int $position): void
+    {
+        $this->poll->reorderOptions($id, $position);
+    }
+
     public function edit()
     {
         Gate::authorize('update', $this->post);
@@ -83,6 +103,12 @@ new class extends Component
         if ($this->isFirstPost) {
             $this->topic_title = $this->post->topic->title;
             $this->topicAreas = $this->post->topic->areas->pluck('id')->toArray();
+
+            $topicPoll = $this->post->topic->poll;
+
+            if ($topicPoll) {
+                $this->poll->loadFromPoll($topicPoll, $this->post->topic->user_id);
+            }
         }
 
         $this->isEditing = true;
@@ -106,7 +132,8 @@ new class extends Component
         ]);
     }
 
-    public function rules() {
+    public function rules(): array
+    {
         $rules = [
             'body' => ['required', 'string'],
         ];
@@ -137,6 +164,12 @@ new class extends Component
         if ($this->isFirstPost) {
             $this->post->topic->update(['title' => $this->topic_title]);
             $this->post->topic->areas()->sync($this->topicAreas);
+
+            $topicPoll = $this->post->topic->poll;
+
+            if ($topicPoll && $this->poll->active) {
+                $this->poll->saveExisting($topicPoll);
+            }
         }
 
         $this->isEditing = false;
@@ -239,6 +272,9 @@ new class extends Component
                         :placeholder="__('topic/form.topic_areas.placeholder')"
                     />
                 </x-field>
+                @if ($this->poll->active)
+                    <x-poll-editor :form="$this->poll" />
+                @endif
             @endif
             <x-editor model="body" />
             <x-actions class="flex-justify-spaceBetween">
@@ -257,7 +293,7 @@ new class extends Component
                         <span class="post__report-labels">{{ $this->reports->pluck('type')->map->label()->implode(', ') }}</span>
                         <span class="post__report-usernames">volgens {{ $this->reports->pluck('user.username')->implode(', ') }}</span>
                     </div>
-                    <x-btn icon="trash" small wire:click="deleteReports" /> 
+                    <x-btn icon="trash" small wire:click="deleteReports" />
                 </div>
             </div>
         @endif

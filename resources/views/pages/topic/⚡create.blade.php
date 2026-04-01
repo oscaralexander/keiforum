@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\AdType;
+use App\Livewire\Forms\PollForm;
 use App\Models\Area;
 use App\Models\Forum;
 use App\Models\Post;
@@ -10,14 +11,16 @@ use Livewire\Component;
 use Livewire\Attributes\Computed;
 
 new class extends Component
-{   
+{
     public ?AdType $ad_type = null;
 
     public string $body;
 
     public ?Forum $forum = null;
-    
+
     public int $forum_id;
+
+    public PollForm $poll;
 
     public bool $subscribe = false;
 
@@ -69,7 +72,7 @@ new class extends Component
             ->title(__('topic/create.title_' . ($this->forum && $this->forum->is_marketplace ? 'ad' : 'topic')));
     }
 
-    public function rules()
+    public function rules(): array
     {
         $rules = [
             'title' => ['required', 'max:255'],
@@ -85,16 +88,32 @@ new class extends Component
         return $rules;
     }
 
+    public function addPollOption(): void
+    {
+        $this->poll->addOption();
+        $this->dispatch('poll-option-added');
+    }
+
+    public function removePollOption(string $id): void
+    {
+        $this->poll->removeOption($id);
+    }
+
+    public function reorderPollOptions(string $id, int $position): void
+    {
+        $this->poll->reorderOptions($id, $position);
+    }
+
     public function submit()
     {
         $this->validate();
 
         // Create Topic
         $topic = Topic::create([
-            'ad_type' => $this->ad_type,
-            'title' => $this->title,
             'forum_id' => $this->forum_id,
             'user_id' => auth()->id(),
+            'ad_type' => $this->ad_type,
+            'title' => $this->title,
         ]);
 
         if (!empty($this->topicAreas)) {
@@ -104,16 +123,21 @@ new class extends Component
 
         // Create Post
         Post::create([
-            'body' => $this->body,
             'topic_id' => $topic->id,
             'user_id' => auth()->id(),
+            'body' => $this->body,
         ]);
+
+        if ($this->poll->active) {
+            $this->poll->saveNew($topic);
+        }
 
         $topic->trackedByUsers()->syncWithoutDetaching([
             auth()->id() => ['is_subscribed' => $this->subscribe],
         ]);
 
-        $this->redirect(route('topic.show', [$this->forum, $topic]));
+        $forum = $this->forum ?? Forum::find($this->forum_id);
+        $this->redirect(route('topic.show', [$forum, $topic]));
     }
 };
 ?>
@@ -136,7 +160,7 @@ new class extends Component
                     <x-field :label="__('topic/form.title.label')" model="title">
                         <x-input.text large model="title" required />
                     </x-field>
-                    <div class="flex flex-col flex-gap-m l:flex-gap-m l:flex-row">                    
+                    <div class="flex flex-col flex-gap-m l:flex-gap-m l:flex-row">
                         <x-field
                             class="flex-flex"
                             :label="__('topic/form.forum.label')"
@@ -186,6 +210,14 @@ new class extends Component
                     <x-field :label="__('topic/form.body.label')" model="body">
                         <x-editor model="body" required />
                     </x-field>
+
+                    {{-- Poll (not shown for marketplace) --}}
+                    @unless ($forum && $forum->is_marketplace)
+                        <div x-cloak x-show="$wire.forum_id != 2">
+                            <x-poll-editor :form="$this->poll" show-toggle />
+                        </div>
+                    @endunless
+
                     <x-input.toggle :label="__('topic/form.subscribe.label')" wire:model.live="subscribe" />
                 </div>
                 <div class="flex flex-align-center flex-gap-m">
