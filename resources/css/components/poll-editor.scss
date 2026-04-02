@@ -12,6 +12,7 @@
         border: 1px solid var(--color-border);
         border-radius: var(--borderRadius-m);
         box-shadow: var(--boxShadow-s);
+        min-height: calc(3rem + 2px);
         overflow: clip;
     }
 

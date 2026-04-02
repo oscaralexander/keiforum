@@ -21,11 +21,16 @@
         <ul class="forumListItem__recentTopics">
             @foreach ($forum->recentTopics as $topic)
                 <li class="forumListItem__recentTopic" wire:key="recent-topic-{{ $topic->id }}">
-                    <div class="forumListItem__recentTopic-icon">
+                    <div class="forumListItem__recentTopic-avatar">
                         <x-avatar :size="AvatarSize::S" :user="$topic->latestPost->user" />
                     </div>
                     <div class="forumListItem__recentTopic-titleMeta">
-                        <a class="forumListItem__recentTopic-title" href="{{ route('topic.show', [$forum, $topic, $topic->slug]) }}" wire:navigate>{{ $topic->title }}</a>
+                        <div>
+                            @if ($topic->poll)
+                                <x-icon class="forumListItem__recentTopic-icon" icon="vote" />
+                            @endif
+                            <a class="forumListItem__recentTopic-title" href="{{ route('topic.show', [$forum, $topic, $topic->slug]) }}" wire:navigate>{{ $topic->title }}</a>
+                        </div>
                         <ul class="meta">
                             <li class="meta__item">
                                 <x-icon icon="message-circle" />

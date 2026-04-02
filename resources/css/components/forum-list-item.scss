@@ -71,6 +71,16 @@
             gap: 2px;
         }
 
+        &-icon {
+            color: var(--color-1);
+            display: inline-block;
+            height: 1em;
+            margin-right: .1em;
+            position: relative;
+            top: .15em;
+            width: 1em;
+        }
+
         &-title {
             font-weight: 600;
             text-decoration: none;
@@ -85,7 +95,7 @@
 
     @include screen-max(m) {
         &__recentTopic {
-            &-icon {
+            &-avatar {
                 align-items: center;
                 display: flex;
                 flex: 0 0 2.5rem;

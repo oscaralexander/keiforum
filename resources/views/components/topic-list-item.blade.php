@@ -22,7 +22,7 @@
             @if ($topic->is_pinned)
                 <x-icon class="topicListItem__icon" icon="pin" />
             @endif
-            @if (!is_null($topic->poll))
+            @if ($topic->poll)
                 <x-icon class="topicListItem__icon" icon="vote" />
             @endif
             <a class="topicListItem__title" href="{{ route('topic.show', [$topic->forum, $topic, $topic->slug]) }}" wire:navigate>{{ $topic->title }}</a>

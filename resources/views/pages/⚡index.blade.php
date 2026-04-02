@@ -22,7 +22,7 @@ new class extends Component
                 $forum->topics()
                     ->where('is_pinned', false)
                     ->withCount('posts')
-                    ->with('latestPost.user')
+                    ->with('latestPost.user', 'poll')
                     ->orderByDesc(
                         DB::raw('(SELECT MAX(p.id) FROM posts p WHERE p.topic_id = topics.id)')
                     )
