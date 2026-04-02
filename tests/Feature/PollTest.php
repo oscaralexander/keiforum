@@ -179,8 +179,8 @@ class PollTest extends TestCase
 
         Livewire::test('poll', ['topic' => $topic])
             ->assertSee('Blauw')
-            ->assertSee('ingelogd', false)
-            ->assertSee('stemmen en resultaten te bekijken', false);
+            ->assertSee('Log in', false)
+            ->assertSee('om te stemmen', false);
     }
 
     public function test_authenticated_user_who_has_not_voted_sees_vote_form(): void
@@ -224,8 +224,8 @@ class PollTest extends TestCase
 
         Livewire::actingAs($user)
             ->test('poll', ['topic' => $topic])
-            ->assertSee(__('poll.voted'))
-            ->assertSee(__('poll.change_vote'));
+            ->assertSee(__('poll.change_vote'))
+            ->assertDontSee(__('poll.vote'));
     }
 
     public function test_user_can_change_vote(): void
@@ -241,11 +241,11 @@ class PollTest extends TestCase
 
         Livewire::actingAs($user)
             ->test('poll', ['topic' => $topic])
-            ->call('startChangeVote')
-            ->assertSet('isChangingVote', true)
+            ->call('edit')
+            ->assertSet('isUpdating', true)
             ->set('selectedOption', $optionB->id)
             ->call('vote')
-            ->assertSet('isChangingVote', false);
+            ->assertSet('isUpdating', false);
 
         $this->assertDatabaseMissing('poll_votes', ['poll_option_id' => $optionA->id, 'user_id' => $user->id]);
         $this->assertDatabaseHas('poll_votes', ['poll_option_id' => $optionB->id, 'user_id' => $user->id]);
@@ -265,7 +265,7 @@ class PollTest extends TestCase
 
         Livewire::actingAs($user)
             ->test('poll', ['topic' => $topic])
-            ->call('startChangeVote')
+            ->call('edit')
             ->assertSet('selectedOption', $optionA->id);
     }
 
@@ -282,9 +282,27 @@ class PollTest extends TestCase
 
         Livewire::actingAs($user)
             ->test('poll', ['topic' => $topic])
-            ->call('startChangeVote')
-            ->assertSee(__('poll.change_vote'))
-            ->assertDontSee(__('poll.voted'));
+            ->call('edit')
+            ->assertSee(__('poll.vote'))
+            ->assertDontSee(__('poll.change_vote'));
+    }
+
+    public function test_voted_option_is_highlighted_in_results(): void
+    {
+        [$forum, $topic, $poll, $optionA, $optionB] = $this->createTopicWithPoll();
+        $user = User::factory()->create();
+
+        PollVote::create([
+            'poll_id' => $poll->id,
+            'poll_option_id' => $optionA->id,
+            'user_id' => $user->id,
+        ]);
+
+        $html = Livewire::actingAs($user)
+            ->test('poll', ['topic' => $topic])
+            ->html();
+
+        $this->assertStringContainsString('poll__result--voted', $html);
     }
 
     public function test_voting_directly_without_start_change_vote_replaces_existing_vote(): void

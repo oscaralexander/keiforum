@@ -9,6 +9,15 @@ class PollVote extends Model
 {
     protected $guarded = ['id'];
 
+    protected function casts(): array
+    {
+        return [
+            'poll_id' => 'integer',
+            'poll_option_id' => 'integer',
+            'user_id' => 'integer',
+        ];
+    }
+
     /**
      * Relationships
      */
