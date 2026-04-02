@@ -40,7 +40,7 @@
         width: 0;
 
         &::placeholder {
-            color: var(--color-text-lc);
+            color: var(--color-text-placeholder);
         }
 
         &[type=date] {

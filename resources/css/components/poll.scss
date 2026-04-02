@@ -1,0 +1,64 @@
+@keyframes pollResultBarFill {
+    from {
+        width: 0;
+    }
+}
+
+.poll {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-l);
+
+    &__results {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    &__result {
+        align-items: center;
+        display: flex;
+        gap: var(--size-s);
+
+        &-icon {
+            color: transparent;
+            flex: 0 0 1.25rem;
+        }
+    
+        &-content {
+            flex: 1;
+        }
+
+        &-label {
+            color: var(--color-text-hc);
+            font-weight: 500;
+        }
+
+        &-percentage {
+            color: var(--color-text-lc);
+            font-size: var(--fontSize-s);
+        }
+
+        &-bar {
+            background: rgba(var(--color-1-rgb), .1);
+            border-radius: 4px;
+            display: flex;
+            height: 8px;
+            margin-top: .25rem;
+
+            &-fill {
+                animation: pollResultBarFill .5s both cubic-bezier(0, .5, 0, 1);
+                background: var(--color-1);
+                border-radius: 4px;
+                box-shadow: 0 .125rem .125rem rgba(var(--color-1-rgb), .15);
+                height: 100%;
+            }
+        }
+
+        &--voted {
+            .poll__result-icon {
+                color: var(--color-1);
+            }
+        }
+    }
+}

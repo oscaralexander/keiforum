@@ -210,15 +210,14 @@ new class extends Component
                     <x-field :label="__('topic/form.body.label')" model="body">
                         <x-editor model="body" required />
                     </x-field>
-
-                    {{-- Poll (not shown for marketplace) --}}
-                    @unless ($forum && $forum->is_marketplace)
-                        <div x-cloak x-show="$wire.forum_id != 2">
-                            <x-poll-editor :form="$this->poll" show-toggle />
-                        </div>
-                    @endunless
-
-                    <x-input.toggle :label="__('topic/form.subscribe.label')" wire:model.live="subscribe" />
+                    <div>
+                        @unless ($forum && $forum->is_marketplace)
+                            <div x-cloak x-show="$wire.forum_id != 2">
+                                <x-poll-editor :form="$this->poll" show-toggle />
+                            </div>
+                        @endunless
+                        <x-input.toggle :label="__('topic/form.subscribe.label')" wire:model.live="subscribe" />
+                    </div>
                 </div>
                 <div class="flex flex-align-center flex-gap-m">
                     <x-btn primary submit>@lang('ui.post')</x-btn>

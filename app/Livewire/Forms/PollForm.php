@@ -101,8 +101,8 @@ class PollForm extends Form
         $this->question = $poll->question;
         $this->options = $poll->options->map(fn ($opt) => [
             'id' => $opt->id,
-            'label' => $opt->label,
             'isLocked' => $opt->votes()->where('user_id', '!=', $authorId)->exists(),
+            'label' => $opt->label,
         ])->all();
     }
 

@@ -28,7 +28,7 @@ new class extends Component
     public function topics(): LengthAwarePaginator
     {
         return $this->forum->topics()
-            ->with(['areas', 'latestPost.user'])
+            ->with(['areas', 'latestPost.user', 'poll'])
             ->when(
                 $this->forum->is_marketplace && !empty($this->adTypes),
                 fn ($q) => $q->where(function ($query) {

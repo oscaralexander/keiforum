@@ -239,7 +239,7 @@ new class extends Component
         ]"
         :title="$topic->title"
     />
-    <div class="flex flex-col flex-gap-l">
+    <div class="flex flex-col flex-gap-m">
         @if ($topic->poll)
             <livewire:poll :topic="$topic" wire:key="poll-{{ $topic->id }}" />
         @endif

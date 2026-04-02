@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'login_to_vote' => 'Je moet <a href=":login_url">ingelogd</a> zijn om te stemmen en resultaten te bekijken.',
-    'total_votes' => ':count stem|:count stemmen',
+    'login_to_vote' => '<a href=":login_url">Log in</a> om te stemmen.',
     'change_vote' => 'Stem aanpassen',
-    'vote' => 'Stem',
+    'vote' => 'Stemmen',
     'voted' => 'Je hebt gestemd.',
+    'votes' => ':count stem|:count stemmen',
 ];

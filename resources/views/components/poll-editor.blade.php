@@ -4,19 +4,22 @@
 ])
 
 @if ($showToggle)
-    <x-input.toggle
-        :label="__('topic/form.poll.label')"
-        wire:model.live="poll.active"
-    />
+    <x-input.toggle :label="__('topic/form.poll.label')" wire:model.live="poll.active" />
 @endif
 
 <div
-    class="pollEditor"
+    @class([
+        'pollEditor',
+        'pollEditor--hasToggle' => $showToggle,
+    ])
     x-data="{
         focusLastOption() {
             this.$nextTick(() => {
-                const inputs = this.$el.querySelectorAll('.pollEditor__option-label input:not([disabled])');
-                if (inputs.length) inputs[inputs.length - 1].focus();
+                const $$inputs = this.$el.querySelectorAll('.pollEditor__option-label input:not([disabled])');
+
+                if ($$inputs.length) {
+                    $$inputs[$$inputs.length - 1].focus();
+                }
             });
         }
     }"
@@ -73,7 +76,7 @@
         <div class="field__error">{{ $message }}</div>
     @enderror
     <div>
-        <x-btn icon="plus" wire:click="addPollOption">
+        <x-btn icon="plus" small wire:click="addPollOption">
             {{ __('topic/form.poll.add_option') }}
         </x-btn>
     </div>

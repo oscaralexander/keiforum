@@ -23,6 +23,10 @@
         }
     }
 
+    &-num {
+        font-variant-numeric: tabular-nums;
+    }
+
     &-size {   
         &-xs {
             font-size: var(--fontSize-xs);

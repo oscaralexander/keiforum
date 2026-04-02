@@ -86,6 +86,12 @@ img {
     object-fit: cover;
 }
 
+input {
+    &::placeholder {
+        color: var(--color-text-placeholder);
+    }
+}
+
 ul, ol {
     list-style-type: none;
     margin: 0;

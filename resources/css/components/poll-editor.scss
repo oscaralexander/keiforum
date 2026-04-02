@@ -1,9 +1,14 @@
 .pollEditor {
+    background: var(--color-bg-tint);
+    border: 1px solid var(--color-border);
+    border-radius: var(--borderRadius-m);
+    padding: var(--size-l);
     display: flex;
     flex-direction: column;
     gap: var(--size-m);
 
     &__options {
+        background: var(--color-bg);
         border: 1px solid var(--color-border);
         border-radius: var(--borderRadius-m);
         box-shadow: var(--boxShadow-s);
@@ -61,5 +66,9 @@
                 }
             }
         }
+    }
+
+    &--hasToggle {
+        margin: var(--size-m) 0;
     }
 }

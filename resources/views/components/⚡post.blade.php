@@ -272,11 +272,11 @@ new class extends Component
                         :placeholder="__('topic/form.topic_areas.placeholder')"
                     />
                 </x-field>
-                @if ($this->poll->active)
-                    <x-poll-editor :form="$this->poll" />
-                @endif
             @endif
             <x-editor model="body" />
+            @if ($isFirstPost &&$this->poll->active)
+                <x-poll-editor :form="$this->poll" />
+            @endif
             <x-actions class="flex-justify-spaceBetween">
                 <x-actions>
                     <x-btn primary submit>Opslaan</x-btn>
