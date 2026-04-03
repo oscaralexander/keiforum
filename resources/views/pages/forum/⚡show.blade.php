@@ -36,7 +36,7 @@ new class extends Component
                           ->orWhereNull('ad_type');
                 })
             )
-            ->withCount('posts')
+            ->withCount('pollVotes', 'posts')
             ->orderByDesc('is_pinned')
             ->orderByDesc(
                 DB::raw('(SELECT MAX(p.id) FROM posts p WHERE p.topic_id = topics.id)')

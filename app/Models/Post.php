@@ -14,7 +14,7 @@ class Post extends Model
 {
     use HasFactory, SoftDeletes;
 
-    public const PAGINATE_COUNT = 2;
+    public const PAGINATE_COUNT = 10;
 
     protected $guarded = ['id'];
 

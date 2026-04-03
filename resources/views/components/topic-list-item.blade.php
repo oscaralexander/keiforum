@@ -35,6 +35,12 @@
                 <x-icon icon="message-circle" />
                 {{  $topic->posts_count }}
             </li>
+            @if ($topic->poll)
+                <li class="meta__item">
+                    <x-icon icon="check" />
+                    {{ $topic->poll_votes_count }}
+                </li>
+            @endif
             @if ($topic->areas->isNotEmpty())
                 <li class="meta__item">
                     <div>

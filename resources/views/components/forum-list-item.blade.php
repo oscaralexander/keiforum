@@ -36,6 +36,12 @@
                                 <x-icon icon="message-circle" />
                                 {{ $topic->posts_count }}
                             </li>
+                            @if ($topic->poll)
+                                <li class="meta__item">
+                                    <x-icon icon="check" />
+                                    {{ $topic->poll_votes_count }}
+                                </li>
+                            @endif
                             <li class="meta__item">
                                 <a
                                     aria-label="@lang('forum/show.latest_post_label', ['topic' => $topic->title])"
