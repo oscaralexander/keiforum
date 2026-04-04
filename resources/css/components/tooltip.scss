@@ -1,0 +1,52 @@
+@keyframes tooltip {
+    from {
+        opacity: 0;
+        transform: scale(.75);
+    }
+}
+
+.tooltip {
+    background: rgba(0, 0, 0, .85);
+    border-radius: 4px;
+    color: #fff;
+    font-size: var(--fontSize-xs);
+    max-width: 300px;
+    padding: 4px 8px;
+    pointer-events: none;
+    position: fixed;
+    white-space: pre-line;
+    z-index: 9999;
+
+    &__arrow {
+        height: 0;
+        left: 50%;
+        position: absolute;
+        width: 0;
+
+        .tooltip.is-above & {
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid rgba(0, 0, 0, .85);
+            top: 100%;
+        }
+
+        .tooltip.is-below & {
+            border-bottom: 4px solid rgba(0, 0, 0, .85);
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            bottom: 100%;
+        }
+    }
+
+    &.is-above {
+        transform-origin: center bottom;
+    }
+
+    &.is-below {
+        transform-origin: center top;
+    }
+
+    &.is-enter {
+        animation: tooltip var(--duration-s) ease-out;
+    }
+}

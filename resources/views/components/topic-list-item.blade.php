@@ -10,8 +10,8 @@
     @if ($topic->latestPost->user)
         <x-avatar
             img-only
-            :title="'@' . $topic->latestPost->user->username"
             :user="$topic->latestPost->user"
+            x-data="tooltip('{{ $topic->latestPost->user->username }}')"
         />
     @endif
     <div class="topicListItem__text">
@@ -66,8 +66,8 @@
                 @if ($postUser['user']->id !== $topic->user_id)
                     <x-avatar
                         img-only
-                        :title="'@' . $postUser['user']->username . ' · ' . trans_choice('forum/show.posts', $postUser['post_count'], ['count' => $postUser['post_count']])"
                         :user="$postUser['user']"
+                        x-data="tooltip('{{ $postUser['user']->username }}')"
                     />
                 @endif
             @endforeach

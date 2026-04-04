@@ -22,7 +22,7 @@
             @foreach ($forum->recentTopics as $topic)
                 <li class="forumListItem__recentTopic" wire:key="recent-topic-{{ $topic->id }}">
                     <div class="forumListItem__recentTopic-avatar">
-                        <x-avatar :size="AvatarSize::S" :user="$topic->latestPost->user" />
+                        <x-avatar :size="AvatarSize::S" :user="$topic->latestPost->user" x-data="tooltip('{{ $topic->latestPost->user->username }}')" />
                     </div>
                     <div class="forumListItem__recentTopic-titleMeta">
                         <div>

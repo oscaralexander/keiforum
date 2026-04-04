@@ -314,7 +314,19 @@ new class extends Component
             @else
                 <div class="post__like-icon"><x-icon icon="thumbs-up" /></div>
             @endauth
-            <div class="post__like-count">{{ $post->likes->count() }}</div>
+            @php
+                $likers = $post->likes->sortByDesc('created_at');
+                $total = $likers->count();
+                $tooltipContent = $likers->take(10)->pluck('user.username')->implode("\n");
+                if ($total > 10) {
+                    $tooltipContent .= "\nEn " . ($total - 10) . " anderen...";
+                }
+            @endphp
+            @if ($total > 0)
+                <div class="post__like-count" x-data='tooltip({{ json_encode($tooltipContent) }})'>{{ $total }}</div>
+            @else
+                <div class="post__like-count">0</div>
+            @endif
         </div>
         <ul class="meta">
             <li class="meta__item">

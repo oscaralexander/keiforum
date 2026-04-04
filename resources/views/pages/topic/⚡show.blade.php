@@ -36,7 +36,7 @@ new class extends Component
     public function posts(): LengthAwarePaginator
     {
         $paginator = $this->topic->posts()
-            ->with(['likes', 'user.area'])
+            ->with(['likes.user', 'user.area'])
             ->withCount('likes')
             ->withTrashed()
             ->paginate(Post::PAGINATE_COUNT, pageName: 'p')
