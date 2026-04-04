@@ -2,6 +2,7 @@ export default (content, delay = 100) => {
     return {
         _delayTimer: null,
         _hideHandler: null,
+        _scrollHandler: null,
         _showHandler: null,
         $arrow: null,
         $tooltip: null,
@@ -67,13 +68,16 @@ export default (content, delay = 100) => {
         init() {
             this._showHandler = this.show.bind(this);
             this._hideHandler = this.hide.bind(this);
+            this._scrollHandler = this.hide.bind(this);
             this.$root.addEventListener('mouseenter', this._showHandler);
             this.$root.addEventListener('mouseleave', this._hideHandler);
+            window.addEventListener('scroll', this._scrollHandler, { passive: true, capture: true });
         },
         destroy() {
             this.hide();
             this.$root.removeEventListener('mouseenter', this._showHandler);
             this.$root.removeEventListener('mouseleave', this._hideHandler);
+            window.removeEventListener('scroll', this._scrollHandler, { capture: true });
         },
     };
 };
