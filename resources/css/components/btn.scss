@@ -12,10 +12,9 @@
     appearance: none;
     background: var(--btn-color-bg);
     border: 1px solid var(--btn-color-border);
-    border-radius: var(--borderRadius-l);
+    border-radius: var(--borderRadius-m);
     box-shadow: var(--boxShadow-s);
     color: var(--btn-color);
-    corner-shape: squircle;
     display: flex;
     font-size: var(--fontSize-m);
     font-weight: 500;

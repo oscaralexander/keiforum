@@ -2,6 +2,7 @@
 
 return [
     'max' => [
+        'file' => 'Bestand mag maximaal :max KB groot zijn.',
         'string' => 'Dit veld mag maximaal :min tekens bevatten.',
     ],
     'min' => [

@@ -83,7 +83,7 @@ new class extends Component
     {
         return [
             'area_id' => ['nullable', 'exists:areas,id'],
-            'avatar' => ['nullable', 'image', 'max:1024'],
+            'avatar' => ['nullable', 'image', 'max:5120'],
             'bio' => ['nullable', 'string', 'max:255'],
             'birthdate' => ['nullable', 'date'],
             'gender' => ['nullable', Rule::enum(Gender::class)],
@@ -148,7 +148,7 @@ new class extends Component
                     <x-field
                         :description="__('user/profile.form.avatar.description')"
                         :label="__('user/profile.form.avatar.label')"
-                        model="name"
+                        model="avatar"
                     >
                         <x-input.upload model="avatar" />
                     </x-field>
