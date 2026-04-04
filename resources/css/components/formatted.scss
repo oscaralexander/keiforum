@@ -22,7 +22,6 @@
     }
 
     img {
-        border-radius: var(--borderRadius-s);
         display: block;
         max-height: 75vh;
         max-width: 100%;
@@ -61,10 +60,8 @@
 
         iframe {
             aspect-ratio: 16 / 9;
-            border-radius: var(--borderRadius-s);
             border: none;
             height: auto;
-            overflow: hidden;
             width: 100%;
         }
     }
