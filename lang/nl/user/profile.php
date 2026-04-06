@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'saved' => 'Profiel opgeslagen',
     'title' => 'Profiel bewerken',
     'form' => [
         'area_id' => [

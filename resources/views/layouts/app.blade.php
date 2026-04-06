@@ -39,6 +39,7 @@
             </main>
             <x-footer />
         </div>
+        <x-toast />
         @stack('scripts.body')
         @livewire('wire-elements-modal')
         @livewireScripts

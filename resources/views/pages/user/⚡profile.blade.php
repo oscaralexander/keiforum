@@ -106,6 +106,8 @@ new class extends Component
         $this->user->gender = empty($this->gender) ? null : $this->gender;
         $this->user->name = $this->name;
         $this->user->save();
+
+        $this->dispatch('toast', message: __('user/profile.saved'), type: 'success');
     }
 
     public function updatedAvatar()

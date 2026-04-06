@@ -5,6 +5,7 @@ import Share from './components/alpine/Share';
 import Popout from './components/alpine/Popout';
 import ConversationScroll from './components/alpine/ConversationScroll';
 import AutoResize from './components/alpine/AutoResize';
+import Toast from './components/alpine/Toast';
 import Tooltip from './components/alpine/Tooltip';
 
 window.axios = axios;
@@ -15,5 +16,6 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('popout', Popout);
     Alpine.data('conversationScroll', ConversationScroll);
     Alpine.data('autoResize', AutoResize);
+    Alpine.data('toast', Toast);
     Alpine.data('tooltip', Tooltip);
 });
