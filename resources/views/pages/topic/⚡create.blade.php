@@ -18,7 +18,7 @@ new class extends Component
 
     public ?Forum $forum = null;
 
-    public int $forum_id;
+    public int $forum_id = 1;
 
     public PollForm $poll;
 
