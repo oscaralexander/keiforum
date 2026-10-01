@@ -1,6 +1,7 @@
 <?php
 
 use App\Constants\Event;
+use App\Enums\HeadlineVerdict;
 use App\Events\PostLiked;
 use App\Events\PostSaved;
 use App\Livewire\Forms\PollForm;
@@ -71,6 +72,21 @@ new class extends Component
 
             return redirect()->route('forum.show', ['forum' => $this->post->topic->forum]);
         }
+    }
+
+    public function toggleNewsVisibility(): void
+    {
+        abort_unless(auth()->user()?->is_admin, 403);
+
+        $topic = $this->post->topic;
+
+        abort_unless($this->isFirstPost && $topic->headline, 404);
+
+        $isShowing = $topic->headline->verdict !== HeadlineVerdict::APPROVED;
+
+        $topic->setNewsVerdict($isShowing ? HeadlineVerdict::APPROVED : HeadlineVerdict::NEUTRAL);
+
+        $this->dispatch('toast', message: __($isShowing ? 'post/show.news_shown' : 'post/show.news_hidden'), type: 'success');
     }
 
     public function deleteReports(): void
@@ -240,6 +256,13 @@ new class extends Component
                             :navigate="false"
                             wire:click="$dispatch('openModal', { component: 'posts.report-modal', arguments: { postId: {{ $post->id }} } })"
                         />
+                    @endif
+                    @if ($isFirstPost && auth()->user()->is_admin && $post->topic->headline)
+                        @if ($post->topic->headline->verdict === HeadlineVerdict::APPROVED)
+                            <x-popout.item icon="eye-off" :label="__('post/show.news_hide')" wire:click="toggleNewsVisibility" />
+                        @else
+                            <x-popout.item icon="eye" :label="__('post/show.news_show')" wire:click="toggleNewsVisibility" />
+                        @endif
                     @endif
                     @if ($post->user_id == auth()->id() || auth()->user()->is_admin)
                         <x-popout.item icon="pencil" :label="__('ui.edit')" wire:click="edit" />

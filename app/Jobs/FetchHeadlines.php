@@ -13,11 +13,14 @@ class FetchHeadlines implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct() {}
+    /**
+     * Headlines older than this are no longer turned into topics.
+     */
+    public const PROCESS_WITHIN_DAYS = 2;
 
     public function handle(): void
     {
-        $response = Http::get('https://www.nieuwsplein33.nl/rss/nieuws.xml');
+        $response = Http::get(config('news.feed_url'));
 
         if (! $response->successful()) {
             return;
@@ -37,13 +40,23 @@ class FetchHeadlines implements ShouldQueue
                 $enclosureUrl = (string) $item->enclosure->attributes()['url'];
             }
 
+            $link = (string) $item->link;
+            $description = trim((string) $item->description);
+
             Headline::query()->create([
                 'guid' => $guid,
+                'article_id' => Headline::articleIdFromLink($link),
                 'title' => (string) $item->title,
-                'link' => (string) $item->link,
+                'description' => $description !== '' ? $description : null,
+                'link' => $link,
                 'image_url' => $enclosureUrl,
                 'pub_date' => Carbon::parse((string) $item->pubDate),
             ]);
         }
+
+        Headline::query()
+            ->whereNull('verdict')
+            ->where('pub_date', '>=', now()->subDays(self::PROCESS_WITHIN_DAYS))
+            ->each(fn (Headline $headline) => ProcessHeadline::dispatch($headline));
     }
 }

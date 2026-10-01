@@ -55,4 +55,11 @@ class IndexTest extends TestCase
         Livewire::test('pages::members.index')
             ->assertSee('—');
     }
+
+    public function test_news_user_is_not_listed_as_member(): void
+    {
+        Livewire::test('pages::members.index')
+            ->assertSet('totalMembers', 0)
+            ->assertDontSee(config('news.username'));
+    }
 }

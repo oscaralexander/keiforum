@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\HeadlineVerdict;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Headline extends Model
 {
@@ -15,6 +17,28 @@ class Headline extends Model
     {
         return [
             'pub_date' => 'datetime',
+            'verdict' => HeadlineVerdict::class,
         ];
+    }
+
+    /**
+     * Extract the Nieuwsplein33 article ID from an article URL, e.g.
+     * https://www.nieuwsplein33.nl/nieuws/4097209/some-slug
+     */
+    public static function articleIdFromLink(string $link): ?int
+    {
+        if (preg_match('#/nieuws/(\d+)#', $link, $matches)) {
+            return (int) $matches[1];
+        }
+
+        return null;
+    }
+
+    /**
+     * Relationships
+     */
+    public function topic(): BelongsTo
+    {
+        return $this->belongsTo(Topic::class);
     }
 }

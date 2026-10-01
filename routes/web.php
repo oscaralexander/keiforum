@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\User\SearchController;
 use App\Http\Controllers\ImageProxyController;
+use App\Http\Controllers\NewsTopicController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\User\GoogleAuthController;
 use App\Http\Controllers\User\LogoutController;
@@ -15,6 +16,7 @@ Route::livewire('agenda', 'pages::agenda.index')->name('agenda');
 
 Route::get('img', ImageProxyController::class)->name('img');
 Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('praat-mee/{articleId}', NewsTopicController::class)->whereNumber('articleId')->name('news.topic');
 
 // API
 Route::match(['get', 'post'], 'api/users/search', SearchController::class)->name('users.search');

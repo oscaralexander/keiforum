@@ -35,6 +35,7 @@ new class extends Component
             ->groupBy('topic_id');
 
         return Topic::query()
+            ->visible()
             ->with('forum')
             ->joinSub($userPostStats, 'user_posts', 'topics.id', '=', 'user_posts.topic_id')
             ->select('topics.*', 'user_posts.posts_count', 'user_posts.latest_post_id', 'user_posts.latest_post_created_at')

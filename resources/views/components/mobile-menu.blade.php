@@ -79,7 +79,7 @@
     </div>
     <footer class="mobileMenu__footer">
         <div class="flex flex-gap-s">
-            <x-btn class="flex-flex" :href="route('login')" primary>@lang('ui.login')</x-btn>
+            <x-btn class="flex-flex" :href="login_url()" primary>@lang('ui.login')</x-btn>
             <x-btn class="flex-flex" :href="route('register')" primary>@lang('ui.register')</x-btn>
         </div>
     </footer>

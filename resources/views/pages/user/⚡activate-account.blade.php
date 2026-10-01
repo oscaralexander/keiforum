@@ -45,12 +45,21 @@ new class extends Component
             return;
         }
 
+        $intendedUrl = $user->intended_url;
+
         $user->forceFill([
             'email_verified_at' => now(),
             'email_verification_token' => null,
+            'intended_url' => null,
         ])->save();
 
         auth()->login($user);
+
+        if ($intendedUrl) {
+            $this->redirect($intendedUrl, navigate: true);
+
+            return;
+        }
 
         $this->isValidToken = false;
         $this->success = true;

@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Enums\AdType;
+use App\Enums\HeadlineVerdict;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,6 +30,7 @@ class Topic extends Model
         'ad_type' => AdType::class,
         'is_locked' => 'boolean',
         'is_pinned' => 'boolean',
+        'is_visible' => 'boolean',
     ];
 
     protected $with = ['user'];
@@ -42,6 +46,49 @@ class Topic extends Model
                 ];
             })
             ->sortByDesc('post_count');
+    }
+
+    /**
+     * Topics created from a news headline stay hidden from listings until
+     * Claude approved the headline or someone replied.
+     */
+    public function refreshVisibility(): void
+    {
+        $headline = $this->headline;
+
+        if (! $headline || $headline->verdict === HeadlineVerdict::APPROVED) {
+            return;
+        }
+
+        $isVisible = $this->posts()->count() > 1;
+
+        if ($this->is_visible !== $isVisible) {
+            $this->update(['is_visible' => $isVisible]);
+        }
+    }
+
+    /**
+     * Change the verdict of the news headline behind this topic: approved
+     * topics are visible right away, neutral ones once someone replied.
+     */
+    public function setNewsVerdict(HeadlineVerdict $verdict): void
+    {
+        $this->headline->update(['verdict' => $verdict]);
+
+        if ($verdict === HeadlineVerdict::APPROVED) {
+            $this->update(['is_visible' => true]);
+        } else {
+            $this->refreshVisibility();
+        }
+    }
+
+    /**
+     * Scopes
+     */
+    #[Scope]
+    protected function visible(Builder $query): void
+    {
+        $query->where('topics.is_visible', true);
     }
 
     /**
@@ -67,6 +114,11 @@ class Topic extends Model
     public function firstPost(): HasOne
     {
         return $this->hasOne(Post::class)->oldestOfMany();
+    }
+
+    public function headline(): HasOne
+    {
+        return $this->hasOne(Headline::class);
     }
 
     public function poll(): HasOne

@@ -20,6 +20,18 @@ class Post extends Model
 
     protected $with = ['user', 'deletedBy'];
 
+    protected static function booted(): void
+    {
+        static::saved(function (Post $post): void {
+            if ($post->wasRecentlyCreated || $post->wasChanged('deleted_at')) {
+                $post->topic?->refreshVisibility();
+            }
+        });
+
+        static::deleted(fn (Post $post) => $post->topic?->refreshVisibility());
+        static::restored(fn (Post $post) => $post->topic?->refreshVisibility());
+    }
+
     public function bodyPlainText(): Attribute
     {
         $bodyPlainText = preg_replace('/<\/([ol|p|ul])>/', "<$1>\n\n", $this->body);

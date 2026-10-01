@@ -11,6 +11,7 @@ new class extends Component
     public function members(): Collection
     {
         return User::query()
+            ->members()
             ->with('area')
             ->orderBy('username', 'asc')
             ->get();
@@ -19,13 +20,14 @@ new class extends Component
     #[Computed]
     public function totalMembers(): int
     {
-        return User::count();
+        return User::query()->members()->count();
     }
 
     #[Computed]
     public function newMembersCount(): int
     {
         return User::query()
+            ->members()
             ->where('created_at', '>=', now()->subDays(7))
             ->count();
     }
@@ -34,6 +36,7 @@ new class extends Component
     public function latestMember(): ?User
     {
         return User::query()
+            ->members()
             ->latest()
             ->first();
     }

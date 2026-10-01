@@ -28,6 +28,7 @@ new class extends Component
     public function topics(): LengthAwarePaginator
     {
         return $this->forum->topics()
+            ->visible()
             ->with(['areas', 'latestPost.user', 'poll'])
             ->when(
                 $this->forum->is_marketplace && !empty($this->adTypes),

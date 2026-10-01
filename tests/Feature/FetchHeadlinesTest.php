@@ -2,21 +2,36 @@
 
 namespace Tests\Feature;
 
+use App\Enums\HeadlineVerdict;
 use App\Jobs\FetchHeadlines;
+use App\Jobs\ProcessHeadline;
 use App\Models\Headline;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class FetchHeadlinesTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Queue::fake();
+    }
+
     private function makeFeedXml(array $items): string
     {
         $itemsXml = '';
 
         foreach ($items as $item) {
+            $description = isset($item['description'])
+                ? "<description><![CDATA[{$item['description']}]]></description>"
+                : '';
+
             $enclosure = isset($item['image'])
                 ? "<enclosure url=\"{$item['image']}\" />"
                 : '';
@@ -26,6 +41,7 @@ class FetchHeadlinesTest extends TestCase
                 ."<link>{$item['link']}</link>"
                 ."<guid>{$item['guid']}</guid>"
                 ."<pubDate>{$item['pubDate']}</pubDate>"
+                ."{$description}"
                 ."{$enclosure}"
                 .'</item>';
         }
@@ -112,13 +128,65 @@ class FetchHeadlinesTest extends TestCase
         $this->assertDatabaseCount('headlines', 0);
     }
 
-    public function test_it_is_scheduled_hourly(): void
+    public function test_it_saves_description_and_article_id(): void
     {
-        $schedule = app(\Illuminate\Console\Scheduling\Schedule::class);
+        Http::fake([
+            '*' => Http::response($this->makeFeedXml([
+                [
+                    'guid' => 'https://www.nieuwsplein33.nl/nieuws/4097209/-',
+                    'title' => 'Windmolens Isselt',
+                    'link' => 'https://www.nieuwsplein33.nl/nieuws/4097209/windmolens-isselt',
+                    'pubDate' => now()->toRssString(),
+                    'description' => 'Een besluit over twee windmolens is in zicht.',
+                ],
+            ]), 200),
+        ]);
 
-        $isScheduled = collect($schedule->events())
-            ->contains(fn ($event) => str_contains($event->command ?? $event->description ?? '', 'FetchHeadlines'));
+        (new FetchHeadlines)->handle();
 
-        $this->assertTrue($isScheduled, 'FetchHeadlines is not scheduled hourly.');
+        $headline = Headline::first();
+        $this->assertSame(4097209, $headline->article_id);
+        $this->assertSame('Een besluit over twee windmolens is in zicht.', $headline->description);
+    }
+
+    public function test_it_dispatches_processing_for_new_headlines(): void
+    {
+        Http::fake([
+            '*' => Http::response($this->makeFeedXml([
+                [
+                    'guid' => 'https://www.nieuwsplein33.nl/nieuws/4097209/-',
+                    'title' => 'Windmolens Isselt',
+                    'link' => 'https://www.nieuwsplein33.nl/nieuws/4097209/windmolens-isselt',
+                    'pubDate' => now()->toRssString(),
+                ],
+            ]), 200),
+        ]);
+
+        (new FetchHeadlines)->handle();
+
+        Queue::assertPushed(ProcessHeadline::class, fn (ProcessHeadline $job) => $job->headline->article_id === 4097209);
+    }
+
+    public function test_it_retries_recent_unprocessed_headlines(): void
+    {
+        Http::fake(['*' => Http::response($this->makeFeedXml([]), 200)]);
+
+        $pending = Headline::factory()->create(['pub_date' => now()->subHour()]);
+        Headline::factory()->create(['pub_date' => now()->subDays(FetchHeadlines::PROCESS_WITHIN_DAYS + 1)]);
+        Headline::factory()->verdict(HeadlineVerdict::APPROVED)->create(['pub_date' => now()->subHour()]);
+
+        (new FetchHeadlines)->handle();
+
+        Queue::assertPushed(ProcessHeadline::class, 1);
+        Queue::assertPushed(ProcessHeadline::class, fn (ProcessHeadline $job) => $job->headline->is($pending));
+    }
+
+    public function test_it_is_scheduled_every_fifteen_minutes(): void
+    {
+        $event = collect(app(Schedule::class)->events())
+            ->first(fn ($event) => str_contains($event->command ?? $event->description ?? '', 'FetchHeadlines'));
+
+        $this->assertNotNull($event, 'FetchHeadlines is not scheduled.');
+        $this->assertSame('*/15 * * * *', $event->expression);
     }
 }

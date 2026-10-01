@@ -21,10 +21,52 @@ if (! function_exists('time_diff')) {
             $value = abs($value);
 
             if ($value >= 1 || $unit === 's') {
-                return ($value ?: 1) . __('time_diff.' . $unit . ($long ? '_long' : ''));
+                return ($value ?: 1).__('time_diff.'.$unit.($long ? '_long' : ''));
             }
         }
 
         return __('time_diff.now');
+    }
+}
+
+if (! function_exists('safe_redirect_path')) {
+    /**
+     * Return the path when it is a local path that is safe to redirect to.
+     */
+    function safe_redirect_path(?string $path): ?string
+    {
+        if (! is_string($path) || ! str_starts_with($path, '/') || str_starts_with($path, '//') || str_contains($path, '\\')) {
+            return null;
+        }
+
+        return $path;
+    }
+}
+
+if (! function_exists('remember_redirect_path')) {
+    /**
+     * Store a safe `redirect` query parameter as the URL to return to after logging in.
+     */
+    function remember_redirect_path(): void
+    {
+        if ($path = safe_redirect_path(request()->query('redirect'))) {
+            session()->put('url.intended', url($path));
+        }
+    }
+}
+
+if (! function_exists('login_url')) {
+    /**
+     * The login URL, returning to the current page after logging in.
+     */
+    function login_url(): string
+    {
+        $path = '/'.ltrim(request()->path(), '/');
+
+        if ($path === '/' || request()->routeIs('login', 'register', 'register-oauth', 'forgot-password', 'reset-password', 'activate-account')) {
+            return route('login');
+        }
+
+        return route('login', ['redirect' => $path]);
     }
 }

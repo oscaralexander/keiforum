@@ -39,6 +39,7 @@ new class extends Component
     public function topics(): LengthAwarePaginator
     {
         return Topic::query()
+            ->visible()
             ->whereHas('areas', fn ($q) => $q->where('areas.id', $this->area->id))
             ->when(
                 !empty($this->selectedForumIds),

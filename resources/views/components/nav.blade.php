@@ -171,8 +171,8 @@
                 </ul>
             </div>
         @else
-            <x-btn class="m:hide" :href="route('login')" primary small>@lang('ui.login_alt')</x-btn>
-            <x-btn class="m:show" :href="route('login')" primary>@lang('ui.login_alt')</x-btn>
+            <x-btn class="m:hide" :href="login_url()" primary small>@lang('ui.login_alt')</x-btn>
+            <x-btn class="m:show" :href="login_url()" primary>@lang('ui.login_alt')</x-btn>
         @endauth
     </div>
 </nav>

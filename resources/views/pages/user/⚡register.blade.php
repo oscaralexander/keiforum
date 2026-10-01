@@ -52,6 +52,11 @@ new class extends Component
         ];
     }
 
+    public function mount(): void
+    {
+        remember_redirect_path();
+    }
+
     public function render()
     {
         return $this->view()
@@ -88,6 +93,7 @@ new class extends Component
             'email' => $this->email,
             'email_verification_token' => Str::random(32),
             'gender' => $this->gender ?? null,
+            'intended_url' => session('url.intended'),
             'name' => $this->name,
             'password' => Hash::make($this->password),
             'username' => strtolower($this->username),

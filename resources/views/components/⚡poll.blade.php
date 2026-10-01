@@ -157,7 +157,7 @@ new class extends Component
             </div>
         </div>
         <p class="text-color-lc">
-            {!! __('poll.login_to_vote', ['login_url' => route('login')]) !!}
+            {!! __('poll.login_to_vote', ['login_url' => login_url()]) !!}
         </p>
     @endauth
 </div>

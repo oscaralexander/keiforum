@@ -221,6 +221,9 @@ new class extends Component
 @endauth
 
 @push('meta')
+    @if (!$topic->is_visible)
+        <meta content="noindex" name="robots">
+    @endif
     <meta content="{{ $this->firstPost?->bodyPlainText }}" name="description">
     <meta content="{{ $this->firstPost?->bodyPlainText }}" property="og:description">
     @if ($this->posts->hasPages())
@@ -234,7 +237,9 @@ new class extends Component
 @endpush
 
 <div>
-    <x-schema :data="$this->schema" />
+    @if ($topic->is_visible)
+        <x-schema :data="$this->schema" />
+    @endif
     <x-header
         :areas="$topic->areas"
         :home="__('nav.forums')"
@@ -282,7 +287,7 @@ new class extends Component
                     </div>
                 @else
                     <p class="text-align-center text-color-lc">
-                        @lang('topic/show.reply_login', ['login_url' => route('login')])
+                        @lang('topic/show.reply_login', ['login_url' => login_url()])
                     </p>
                 @endauth
             </section>

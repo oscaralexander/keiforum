@@ -105,7 +105,7 @@ new class extends Component
 
         Auth::login($user, remember: true);
 
-        $this->redirect(route('home'), navigate: true);
+        $this->redirectIntended(route('home'), navigate: true);
     }
 
     public function updatedUsername(): void

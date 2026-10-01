@@ -14,12 +14,13 @@ new class extends Component
     public function forums(): Collection
     {
         $forums = Forum::query()
-            ->withCount('topics')
+            ->withCount(['topics' => fn ($query) => $query->visible()])
             ->get();
 
         $forums->each(function (Forum $forum): void {
             $forum->setRelation('recentTopics',
                 $forum->topics()
+                    ->visible()
                     ->where('is_pinned', false)
                     ->withCount('pollVotes', 'posts')
                     ->with('latestPost.user', 'poll')

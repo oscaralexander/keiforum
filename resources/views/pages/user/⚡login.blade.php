@@ -31,6 +31,11 @@ new class extends Component
         ];
     }
 
+    public function mount(): void
+    {
+        remember_redirect_path();
+    }
+
     public function render()
     {
         return $this->view()
@@ -53,7 +58,7 @@ new class extends Component
         $key = filter_var($this->identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
         if (Auth::attempt([$key => $this->identifier, 'password' => $this->password], $this->remember)) {
-            return $this->redirect(route('home'), navigate: true);
+            return $this->redirectIntended(route('home'), navigate: true);
         }
 
         $this->addError('password', __('user/login.attempt_failed'));

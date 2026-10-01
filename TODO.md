@@ -1,5 +1,28 @@
 # To-do: het forum tot leven brengen
 
+## Nu: Nieuwsplein33-samenwerking
+
+Elk artikel uit de feed krijgt een topic in het forum "Nieuws", geplaatst door het account "Nieuwsplein33". Claude beoordeelt elk artikel:
+
+- **Goedgekeurd**: topic direct zichtbaar
+- **Neutraal**: topic verborgen tot de eerste reactie
+- **Geblokkeerd** (slachtoffers, strafzaken, geen discussiestof): geen topic
+
+Gideon linkt onder elk artikel naar `keiforum.nl/praat-mee/{artikel-id}`.
+
+- [x] Feed elk kwartier ophalen, inclusief `description` en artikel-id
+- [x] Beoordeling door Claude (goedgekeurd / neutraal / geblokkeerd) en reden opslaan
+- [x] Botaccount "Nieuwsplein33" en forum "Nieuws"
+- [x] Topic aanmaken met samenvatting, openingsvraag en "Lees meer"-link
+- [x] Zichtbaarheid: `is_visible` op topics, bijwerken bij nieuwe en verwijderde reacties
+- [x] Verborgen topics weren uit index, forumlijsten, gebiedspagina's, profielen en sitemap
+- [x] Verborgen topics: `noindex` en geen gestructureerde data
+- [x] `/praat-mee/{artikel-id}`: doorsturen naar topic, feed opnieuw ophalen bij onbekend artikel, terugval op forum "Nieuws"
+- [x] Terugkeren naar het topic na inloggen, registreren (ook via Google) en accountactivatie
+- [ ] `ANTHROPIC_API_KEY` instellen op productie
+- [ ] Afspraken met Gideon op schrift (titels, intro, afbeeldingen)
+- [ ] Gideon de link laten plaatsen onder elk artikel
+
 ## Bouwen
 
 - [x] E-mailmelding bij een reactie op je topic of een @vermelding (bestond al; nu opt-out)
