@@ -105,7 +105,7 @@ new class extends Component
             </div>
         </form>
         <div class="flex flex-justify-center">
-            <x-btn href="#" text>@lang('user/login.forgot_password')</x-btn>
+            <x-btn :href="route('forgot-password')" navigate text>@lang('user/login.forgot_password')</x-btn>
         </div>
     </div>
 </div>

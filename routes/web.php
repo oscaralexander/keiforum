@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\User\SearchController;
+use App\Http\Controllers\ImageProxyController;
+use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\User\GoogleAuthController;
+use App\Http\Controllers\User\LogoutController;
 use Illuminate\Support\Facades\Route;
 
 Route::livewire('/', 'pages::index')->name('home');
@@ -8,29 +13,31 @@ Route::livewire('privacy', 'pages::privacy')->name('privacy');
 Route::livewire('leden', 'pages::members.index')->name('members');
 Route::livewire('agenda', 'pages::agenda.index')->name('agenda');
 
-Route::get('img', App\Http\Controllers\ImageProxyController::class)->name('img');
-Route::get('sitemap.xml', App\Http\Controllers\SitemapController::class)->name('sitemap');
+Route::get('img', ImageProxyController::class)->name('img');
+Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
 
 // API
-Route::match(['get', 'post'], 'api/users/search', App\Http\Controllers\Api\User\SearchController::class)->name('users.search');
+Route::match(['get', 'post'], 'api/users/search', SearchController::class)->name('users.search');
 
 Route::middleware('guest')->group(function () {
     Route::livewire('inloggen', 'pages::user.login')->name('login');
     Route::livewire('registreren', 'pages::user.register')->name('register');
     Route::livewire('registreren/google', 'pages::user.register-oauth')->name('register-oauth');
     Route::livewire('account-activeren/{token}', 'pages::user.activate-account')->name('activate-account');
+    Route::livewire('wachtwoord-vergeten', 'pages::user.forgot-password')->name('forgot-password');
+    Route::livewire('wachtwoord-herstellen/{token}', 'pages::user.reset-password')->name('reset-password');
 });
 
 // Google OAuth
-Route::get('auth/google', [App\Http\Controllers\User\GoogleAuthController::class, 'redirect'])->name('auth.google');
-Route::get('auth/google/callback', [App\Http\Controllers\User\GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+Route::get('auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
+Route::get('auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 
 Route::middleware('auth')->group(function () {
     Route::livewire('admin', 'pages::admin.index')->name('admin');
     Route::livewire('berichten/{conversation_id?}', 'pages::conversations.index')->name('conversations');
     Route::livewire('instellingen', 'pages::user.settings')->name('settings');
     Route::livewire('profiel', 'pages::user.profile')->name('profile');
-    Route::post('uitloggen', App\Http\Controllers\User\LogoutController::class)->name('logout');
+    Route::post('uitloggen', LogoutController::class)->name('logout');
 
     // Topic
     Route::livewire('nieuw-onderwerp/{forum?}', 'pages::topic.create')->name('topic.create');

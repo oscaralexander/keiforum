@@ -18,6 +18,6 @@
         @if ($title)
             <h4 class="callout__title">{{ $title }}</h4>
         @endif
-        <p class="callout__text">{{ $text }}</p>
+        <p class="callout__text">{!! $text !!}</p>
     </div>
 </div>
