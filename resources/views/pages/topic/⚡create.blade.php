@@ -22,7 +22,7 @@ new class extends Component
 
     public PollForm $poll;
 
-    public bool $subscribe = false;
+    public bool $subscribe = true;
 
     public string $title;
 

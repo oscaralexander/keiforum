@@ -22,7 +22,7 @@ new class extends Component
 
     public string $pageName = 'p';
 
-    public bool $subscribe = false;
+    public bool $subscribe = true;
 
     public Topic $topic;
 
@@ -60,7 +60,7 @@ new class extends Component
 
         if (auth()->check()) {
             $pivot = $this->topic->trackedByUsers()->where('user_id', auth()->id())->first()?->pivot;
-            $this->subscribe = (bool) $pivot?->is_subscribed;
+            $this->subscribe = $pivot?->is_subscribed ?? true;
 
             $highestPostId = $this->posts->getCollection()->max('id');
 
@@ -183,6 +183,10 @@ new class extends Component
         if ($post->wasRecentlyCreated) {
             PostCreated::dispatch($post);
         }
+
+        $this->topic->trackedByUsers()->syncWithoutDetaching([
+            auth()->id() => ['is_subscribed' => $this->subscribe],
+        ]);
 
         $this->redirect(route('topic.show', [
             'forum' => $this->topic->forum,

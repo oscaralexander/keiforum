@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\Forum;
 use App\Models\Post;
 use App\Models\Topic;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -91,7 +93,7 @@ class TopicUserTest extends TestCase
 
         $topic->trackedByUsers()->attach($user->id);
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
 
         $topic->trackedByUsers()->attach($user->id);
     }
@@ -146,5 +148,113 @@ class TopicUserTest extends TestCase
         Livewire::test('pages::topic.show', ['topic' => $topic])
             ->set('subscribe', true)
             ->assertForbidden();
+    }
+
+    public function test_subscribe_defaults_to_true_without_pivot(): void
+    {
+        $topic = Topic::factory()->create();
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test('pages::topic.show', ['topic' => $topic])
+            ->assertSet('subscribe', true);
+    }
+
+    public function test_subscribe_defaults_to_true_when_pivot_has_no_choice(): void
+    {
+        $topic = Topic::factory()->create();
+        $user = User::factory()->create();
+
+        $topic->trackedByUsers()->attach($user->id);
+
+        Livewire::actingAs($user)
+            ->test('pages::topic.show', ['topic' => $topic])
+            ->assertSet('subscribe', true);
+    }
+
+    public function test_viewing_topic_does_not_subscribe_user(): void
+    {
+        $topic = Topic::factory()->create();
+        Post::factory()->create(['topic_id' => $topic->id]);
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test('pages::topic.show', ['topic' => $topic]);
+
+        $this->assertFalse($topic->subscribers()->where('users.id', $user->id)->exists());
+    }
+
+    public function test_subscribe_is_false_when_user_opted_out(): void
+    {
+        $topic = Topic::factory()->create();
+        $user = User::factory()->create();
+
+        $topic->trackedByUsers()->attach($user->id, ['is_subscribed' => false]);
+
+        Livewire::actingAs($user)
+            ->test('pages::topic.show', ['topic' => $topic])
+            ->assertSet('subscribe', false);
+    }
+
+    public function test_replying_subscribes_user_by_default(): void
+    {
+        $topic = Topic::factory()->create();
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test('pages::topic.show', ['topic' => $topic])
+            ->set('body', '<p>Reactie</p>')
+            ->call('submit');
+
+        $this->assertTrue($topic->subscribers()->where('users.id', $user->id)->exists());
+    }
+
+    public function test_replying_keeps_user_unsubscribed_after_opting_out(): void
+    {
+        $topic = Topic::factory()->create();
+        $user = User::factory()->create();
+
+        $topic->trackedByUsers()->attach($user->id, ['is_subscribed' => false]);
+
+        Livewire::actingAs($user)
+            ->test('pages::topic.show', ['topic' => $topic])
+            ->set('body', '<p>Reactie</p>')
+            ->call('submit');
+
+        $this->assertFalse($topic->subscribers()->where('users.id', $user->id)->exists());
+    }
+
+    public function test_creating_topic_subscribes_user_by_default(): void
+    {
+        $forum = Forum::factory()->create();
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test('pages::topic.create', ['forum' => $forum])
+            ->set('title', 'Nieuw onderwerp')
+            ->set('body', '<p>Test</p>')
+            ->call('submit');
+
+        $topic = Topic::query()->where('title', 'Nieuw onderwerp')->firstOrFail();
+
+        $this->assertTrue($topic->subscribers()->where('users.id', $user->id)->exists());
+    }
+
+    public function test_creating_topic_without_subscribing(): void
+    {
+        $forum = Forum::factory()->create();
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test('pages::topic.create', ['forum' => $forum])
+            ->assertSet('subscribe', true)
+            ->set('title', 'Nieuw onderwerp')
+            ->set('body', '<p>Test</p>')
+            ->set('subscribe', false)
+            ->call('submit');
+
+        $topic = Topic::query()->where('title', 'Nieuw onderwerp')->firstOrFail();
+
+        $this->assertFalse($topic->subscribers()->where('users.id', $user->id)->exists());
     }
 }
