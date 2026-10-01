@@ -12,6 +12,7 @@ return [
 
     // Custom validation rules
     'email' => [
+        'invalid' => 'Dit is geen geldig e-mailadres.',
         'unique' => 'Aan dit e-mailadres is al een account gekoppeld.',
     ],
     'allowed_username' => [
@@ -35,7 +36,7 @@ return [
             'mixed' => 'Minimaal één hoofdletter',
             'numbers' => 'Minimaal één cijfer',
             'symbols' => 'Minimaal één speciaal teken',
-        ]
+        ],
     ],
     'terms' => [
         'accepted' => 'Je moet akkoord gaan met de voorwaarden.',

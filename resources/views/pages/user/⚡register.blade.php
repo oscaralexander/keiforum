@@ -41,6 +41,7 @@ new class extends Component
     protected function messages() 
     {
         return [
+            'email.email' => __('validation.email.invalid'),
             'email.unique' => __('validation.email.unique'),
             'password.letters' => __('validation.password.letters'),
             'password.min' => __('validation.password.min'),
