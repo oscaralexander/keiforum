@@ -160,6 +160,12 @@
                         </a>
                     </li>
                     <li class="nav__user-menu-item">
+                        <a class="nav__user-menu-link" href="{{ route('settings') }}">
+                            <x-icon icon="settings" />
+                            @lang('user/settings.title')
+                        </a>
+                    </li>
+                    <li class="nav__user-menu-item">
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button class="nav__user-menu-link" type="submit">
