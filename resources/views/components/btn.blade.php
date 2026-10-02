@@ -3,6 +3,7 @@
 @props([
     'borderless' => false,
     'danger' => false,
+    'good' => false,
     'href' => null,
     'icon' => null,
     'navigate' => false,
@@ -31,6 +32,7 @@
         'btn',
         'btn--borderless' => $borderless,
         'btn--danger' => $danger,
+        'btn--good' => $good,
         'btn--icon' => $iconOnly,
         'btn--primary' => $primary,
         'btn--small' => $small,

@@ -126,6 +126,28 @@
         box-shadow: none;
     }
 
+    &--danger,
+    &--good {
+        background: var(--btn-variant-color);
+        border-color: var(--btn-variant-color);
+        box-shadow: none;
+        color: #fff;
+
+        &:hover {
+            background: color-mix(in srgb, var(--btn-variant-color) 85%, #000);
+            border-color: color-mix(in srgb, var(--btn-variant-color) 85%, #000);
+            color: #fff;
+        }
+    }
+
+    &--danger {
+        --btn-variant-color: var(--color-bad);
+    }
+
+    &--good {
+        --btn-variant-color: var(--color-good);
+    }
+
     &--icon {
         aspect-ratio: 1 / 1;
         padding: 1px 0;

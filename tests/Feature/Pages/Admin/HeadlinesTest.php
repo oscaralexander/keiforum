@@ -133,6 +133,18 @@ class HeadlinesTest extends TestCase
             ->assertDontSee(__('admin/index.headlines.accept'));
     }
 
+    public function test_buttons_are_coloured_icon_buttons(): void
+    {
+        Headline::factory()->verdict(HeadlineVerdict::NEUTRAL)->create();
+
+        $html = $this->asAdmin()->html();
+
+        $this->assertMatchesRegularExpression('/class="btn btn--good btn--icon btn--small"[^>]*aria-label="Accepteren"|aria-label="Accepteren"[^>]*class="btn btn--good btn--icon btn--small"/', $html);
+        $this->assertMatchesRegularExpression('/class="btn btn--danger btn--icon btn--small"[^>]*aria-label="Weigeren"|aria-label="Weigeren"[^>]*class="btn btn--danger btn--icon btn--small"/', $html);
+        $this->assertStringNotContainsString('<span>Accepteren</span>', $html);
+        $this->assertStringNotContainsString('<span>Weigeren</span>', $html);
+    }
+
     public function test_regular_users_cannot_use_headlines_overview(): void
     {
         $headline = Headline::factory()->verdict(HeadlineVerdict::BLOCKED)->create();

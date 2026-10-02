@@ -85,16 +85,25 @@ new class extends Component
                         </div>
                         <div class="headlineListItem__actions">
                             @if ($headline->verdict !== HeadlineVerdict::APPROVED)
-                                <x-btn icon="check" primary small wire:click="accept({{ $headline->id }})">@lang('admin/index.headlines.accept')</x-btn>
+                                <x-btn
+                                    :aria-label="__('admin/index.headlines.accept')"
+                                    good
+                                    icon="check"
+                                    small
+                                    :title="__('admin/index.headlines.accept')"
+                                    wire:click="accept({{ $headline->id }})"
+                                />
                             @endif
                             @if ($headline->verdict !== HeadlineVerdict::BLOCKED)
                                 <x-btn
+                                    :aria-label="__('admin/index.headlines.reject')"
                                     danger
                                     icon="x"
                                     small
+                                    :title="__('admin/index.headlines.reject')"
                                     wire:click="reject({{ $headline->id }})"
                                     wire:confirm="{{ __('admin/index.headlines.confirm_reject') }}"
-                                >@lang('admin/index.headlines.reject')</x-btn>
+                                />
                             @endif
                         </div>
                     </li>
