@@ -320,6 +320,22 @@ new class extends Component
                 </div>
             </div>
         @endif
+        @if ($isFirstPost && $post->topic->headline?->showsArticleImage())
+            @php $headline = $post->topic->headline @endphp
+            <figure class="post__image">
+                <img alt="{{ $headline->article_image_caption }}" loading="lazy" src="{{ route('img', ['src' => $headline->article_image_url, 'w' => 1104, 'q' => 80]) }}">
+                @if ($headline->article_image_caption || $headline->article_image_credit)
+                    <figcaption class="post__image-caption">
+                        @if ($headline->article_image_caption)
+                            <span>{{ $headline->article_image_caption }}</span>
+                        @endif
+                        @if ($headline->article_image_credit)
+                            <span class="post__image-credit">{{ $headline->article_image_credit }}</span>
+                        @endif
+                    </figcaption>
+                @endif
+            </figure>
+        @endif
         <div class="formatted">{!! $post->body_transformed !!}</div>
     @endif
     <footer class="post__footer">

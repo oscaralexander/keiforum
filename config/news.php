@@ -20,4 +20,17 @@ return [
 
     'model' => env('NEWS_MODEL', 'claude-opus-5-5'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Article image
+    |--------------------------------------------------------------------------
+    |
+    | Show the lead image of the Nieuwsplein33 article, with its caption and
+    | copyright credit, above the opening post of news topics. Turning this
+    | off hides the image on all news topics right away.
+    |
+    */
+
+    'show_article_image' => env('NEWS_SHOW_ARTICLE_IMAGE', true),
+
 ];

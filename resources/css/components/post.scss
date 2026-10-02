@@ -41,6 +41,25 @@
         text-decoration: none;
     }
 
+    &__image {
+        img {
+            aspect-ratio: 1104 / 620;
+            display: block;
+            height: auto;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        &-caption {
+            color: var(--color-text-lc);
+            display: flex;
+            flex-wrap: wrap;
+            font-size: var(--fontSize-s);
+            gap: .25em .75em;
+            margin-top: .5rem;
+        }
+    }
+
     &__footer {
         align-items: center;
         display: flex;

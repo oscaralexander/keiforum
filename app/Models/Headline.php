@@ -35,6 +35,14 @@ class Headline extends Model
     }
 
     /**
+     * Whether the article image should be shown above the topic's opening post.
+     */
+    public function showsArticleImage(): bool
+    {
+        return config('news.show_article_image') && $this->article_image_url !== null;
+    }
+
+    /**
      * Relationships
      */
     public function topic(): BelongsTo

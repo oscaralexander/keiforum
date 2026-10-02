@@ -17,6 +17,6 @@ class ImageProxyController extends Controller
             'w' => ['nullable', 'integer', 'min:1', 'max:4096'],
         ]);
 
-        return Image::serve($data['src'], $data['w'], $data['h'], $data['q']);
+        return Image::serve($data['src'], $data['w'] ?? null, $data['h'] ?? null, $data['q'] ?? 80);
     }
 }

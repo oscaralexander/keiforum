@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Enums\HeadlineVerdict;
 use App\Lib\HeadlineEvaluator;
+use App\Lib\NewsArticleImage;
 use App\Models\Forum;
 use App\Models\Headline;
 use App\Models\Post;
@@ -14,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class ProcessHeadline implements ShouldBeUnique, ShouldQueue
 {
@@ -26,9 +28,9 @@ class ProcessHeadline implements ShouldBeUnique, ShouldQueue
         return (string) $this->headline->id;
     }
 
-    public function handle(HeadlineEvaluator $evaluator): void
+    public function handle(HeadlineEvaluator $evaluator, NewsArticleImage $articleImage): void
     {
-        Cache::lock("process-headline-{$this->headline->id}", 120)->block(60, function () use ($evaluator): void {
+        Cache::lock("process-headline-{$this->headline->id}", 120)->block(60, function () use ($evaluator, $articleImage): void {
             $headline = $this->headline->fresh();
 
             if ($headline->verdict !== null) {
@@ -36,6 +38,10 @@ class ProcessHeadline implements ShouldBeUnique, ShouldQueue
             }
 
             $evaluation = $evaluator->evaluate($headline);
+
+            if ($evaluation['verdict'] !== HeadlineVerdict::BLOCKED) {
+                $this->storeArticleImage($headline, $articleImage);
+            }
 
             DB::transaction(function () use ($headline, $evaluation): void {
                 $headline->verdict = $evaluation['verdict'];
@@ -48,6 +54,26 @@ class ProcessHeadline implements ShouldBeUnique, ShouldQueue
                 $headline->save();
             });
         });
+    }
+
+    /**
+     * A missing article image never stops the topic from being created.
+     */
+    protected function storeArticleImage(Headline $headline, NewsArticleImage $articleImage): void
+    {
+        try {
+            $image = $articleImage->fetch($headline->link, $headline->image_url);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return;
+        }
+
+        if ($image) {
+            $headline->article_image_url = $image['url'];
+            $headline->article_image_caption = $image['caption'];
+            $headline->article_image_credit = $image['credit'];
+        }
     }
 
     protected function createTopic(Headline $headline, HeadlineVerdict $verdict, ?string $question): Topic

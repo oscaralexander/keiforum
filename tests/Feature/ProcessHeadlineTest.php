@@ -7,12 +7,34 @@ use App\Jobs\ProcessHeadline;
 use App\Lib\HeadlineEvaluator;
 use App\Models\Headline;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
 class ProcessHeadlineTest extends TestCase
 {
     use RefreshDatabase;
+
+    private ?string $articleHtml = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Http::fake([
+            'www.nieuwsplein33.nl/nieuws/*' => fn () => $this->articleHtml !== null
+                ? Http::response($this->articleHtml)
+                : Http::response('', 404),
+        ]);
+    }
+
+    private function makeArticleHtml(string $imageUrl, string $caption, string $credit): string
+    {
+        return '<html><body><div __component="api.api-image" class="component">'
+            .'<figure class="responsive-image"><img alt="" src="'.$imageUrl.'"></figure>'
+            .'<figcaption class="figcaption"><span class="description">'.$caption.'</span> '
+            .'<span class="copyright">'.$credit.'</span></figcaption></div></body></html>';
+    }
 
     private function mockEvaluation(HeadlineVerdict $verdict, ?string $question = 'Wat vind jij hiervan?'): void
     {
@@ -131,5 +153,42 @@ class ProcessHeadlineTest extends TestCase
         ProcessHeadline::dispatchSync($headline);
 
         $this->assertSame(0, $headline->refresh()->topic->subscribers()->count());
+    }
+
+    public function test_article_image_with_caption_and_credit_is_stored(): void
+    {
+        $this->mockEvaluation(HeadlineVerdict::APPROVED);
+        $headline = Headline::factory()->create(['image_url' => 'https://i.regiogroei.cloud/abc.jpg?width=552']);
+
+        $this->articleHtml = $this->makeArticleHtml('https://i.regiogroei.cloud/abc.jpg?width=1104', 'De windmolens', '© RTV Utrecht');
+
+        ProcessHeadline::dispatchSync($headline);
+
+        $headline->refresh();
+        $this->assertSame('https://i.regiogroei.cloud/abc.jpg?width=1104', $headline->article_image_url);
+        $this->assertSame('De windmolens', $headline->article_image_caption);
+        $this->assertSame('© RTV Utrecht', $headline->article_image_credit);
+    }
+
+    public function test_topic_is_created_when_article_page_is_unavailable(): void
+    {
+        $this->mockEvaluation(HeadlineVerdict::APPROVED);
+        $headline = Headline::factory()->create();
+
+        ProcessHeadline::dispatchSync($headline);
+
+        $headline->refresh();
+        $this->assertNotNull($headline->topic);
+        $this->assertNull($headline->article_image_url);
+    }
+
+    public function test_article_page_is_not_fetched_for_blocked_headline(): void
+    {
+        $this->mockEvaluation(HeadlineVerdict::BLOCKED, null);
+        $headline = Headline::factory()->create();
+
+        ProcessHeadline::dispatchSync($headline);
+
+        Http::assertNothingSent();
     }
 }

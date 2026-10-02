@@ -18,6 +18,13 @@ class NewsTopicControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Http::fake(['www.nieuwsplein33.nl/nieuws/*' => Http::response('', 404)]);
+    }
+
     private function newsForum(): Forum
     {
         return Forum::query()->where('slug', config('news.forum_slug'))->firstOrFail();
