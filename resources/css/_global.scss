@@ -24,18 +24,6 @@ body {
     color: var(--color-text);
     font-family: var(--font-1);
     position: relative;
-
-    /*
-    &::after {
-        background-image: url('@public/assets/img/lines.svg');
-        background-position: center;
-        background-size: cover;
-        content: '';
-        inset: 0;
-        position: fixed;
-        z-index: -1;
-    }
-    */
 }
 
 button,
