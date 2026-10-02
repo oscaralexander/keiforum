@@ -40,6 +40,8 @@ new class extends Component
 <div>
     <x-header hide-path title="Admin" />
     <div class="flex flex-col flex-gap-l">
+        <livewire:admin.headlines />
+        <h2>@lang('admin/index.reported_posts')</h2>
         @if ($this->posts->isNotEmpty())
             <div class="panel">
                 <ol>
