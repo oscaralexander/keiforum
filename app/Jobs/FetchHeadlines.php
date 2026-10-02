@@ -60,6 +60,8 @@ class FetchHeadlines implements ShouldQueue
         Headline::query()
             ->whereNull('verdict')
             ->where('pub_date', '>=', now()->subDays(self::PROCESS_WITHIN_DAYS))
+            ->orderBy('pub_date')
+            ->orderBy('id')
             ->each(fn (Headline $headline) => ProcessHeadline::dispatch($headline));
     }
 

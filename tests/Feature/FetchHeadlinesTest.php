@@ -241,6 +241,41 @@ class FetchHeadlinesTest extends TestCase
         $this->assertSame('<p>Oude tekst.</p>', $post->fresh()->body);
     }
 
+    public function test_it_processes_headlines_from_oldest_to_newest(): void
+    {
+        Http::fake([
+            '*' => Http::response($this->makeFeedXml([
+                [
+                    'guid' => 'https://www.nieuwsplein33.nl/nieuws/3/-',
+                    'title' => 'Nieuwste',
+                    'link' => 'https://www.nieuwsplein33.nl/nieuws/3/nieuwste',
+                    'pubDate' => now()->subHour()->toRssString(),
+                ],
+                [
+                    'guid' => 'https://www.nieuwsplein33.nl/nieuws/2/-',
+                    'title' => 'Middelste',
+                    'link' => 'https://www.nieuwsplein33.nl/nieuws/2/middelste',
+                    'pubDate' => now()->subHours(2)->toRssString(),
+                ],
+                [
+                    'guid' => 'https://www.nieuwsplein33.nl/nieuws/1/-',
+                    'title' => 'Oudste',
+                    'link' => 'https://www.nieuwsplein33.nl/nieuws/1/oudste',
+                    'pubDate' => now()->subHours(3)->toRssString(),
+                ],
+            ]), 200),
+        ]);
+
+        (new FetchHeadlines)->handle();
+
+        $titles = Queue::pushed(ProcessHeadline::class)
+            ->map(fn (ProcessHeadline $job) => $job->headline->title)
+            ->values()
+            ->all();
+
+        $this->assertSame(['Oudste', 'Middelste', 'Nieuwste'], $titles);
+    }
+
     public function test_it_is_scheduled_every_fifteen_minutes(): void
     {
         $event = collect(app(Schedule::class)->events())
