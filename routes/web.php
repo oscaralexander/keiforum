@@ -16,6 +16,8 @@ Route::livewire('agenda', 'pages::agenda.index')->name('agenda');
 
 Route::get('img', ImageProxyController::class)->name('img');
 Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
+Route::livewire('e-mailadres-bevestigen/{user}', 'pages::user.confirm-email-change')->middleware('signed')->name('confirm-email-change');
+Route::livewire('afmelden/wekelijkse-update/{user}', 'pages::user.unsubscribe-digest')->middleware('signed')->name('digest.unsubscribe');
 Route::get('praat-mee/{articleId}', NewsTopicController::class)->whereNumber('articleId')->name('news.topic');
 
 // API

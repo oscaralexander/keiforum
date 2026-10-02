@@ -1,10 +1,16 @@
 <?php
 
 return [
+    'email_change_sent' => 'We hebben een bevestigingslink gestuurd naar <strong>:email</strong>. Je e-mailadres wordt pas gewijzigd als je op die link klikt.',
+    'notifications' => [
+        'digest' => 'Stuur me elke zondag een update met wat er die week gebeurde',
+    ],
+    'saved' => 'Je instellingen zijn opgeslagen.',
     'title' => 'Instellingen',
     'form' => [
         'email' => [
-            'label' => 'Email',
+            'description' => 'Wijzig je je e-mailadres, dan sturen we eerst een bevestigingslink naar het nieuwe adres.',
+            'label' => 'E-mailadres',
         ],
         'gender' => [
             'description' => 'Alleen zichtbaar voor leden.',

@@ -40,6 +40,34 @@
                 color: #c93020;
             }
 
+            h2 {
+                color: #191919;
+                font-size: 18px;
+                font-weight: 600;
+                margin: 0 0 0.75rem 0;
+            }
+
+            ul.topics {
+                list-style: none;
+                margin: 0 0 1.5rem 0;
+                padding: 0;
+            }
+
+            ul.topics li {
+                margin-bottom: 0.75rem;
+            }
+
+            ul.topics small {
+                color: #979594;
+                font-size: 14px;
+            }
+
+            p.footer {
+                color: #979594;
+                font-size: 13px;
+                margin: 2rem 0 0 0;
+            }
+
             a.btn {
                 background: #c93020;
                 border-radius: 0.5rem;

@@ -26,7 +26,7 @@ Gideon linkt onder elk artikel naar `keiforum.nl/praat-mee/{artikel-id}`.
 ## Bouwen
 
 - [x] E-mailmelding bij een reactie op je topic of een @vermelding (bestond al; nu opt-out)
-- [ ] Wekelijkse e-mailsamenvatting (populairste topics + komende agenda-items)
+- [x] Wekelijkse e-mailsamenvatting (populairste en nieuwe topics; nog zonder agenda)
 - [ ] Uitnodigende lege-staatweergave op rustige pagina's
 - [ ] Open Graph-tags per topic (mooie preview op WhatsApp/Facebook)
 - [ ] Controleren dat topics zonder inloggen te lezen zijn (SEO)

@@ -26,6 +26,7 @@ class User extends Authenticatable
         'gender' => Gender::class,
         'has_avatar' => 'boolean',
         'is_admin' => 'boolean',
+        'is_subscribed_to_digest' => 'boolean',
         'last_seen_at' => 'datetime',
         'password' => 'hashed',
     ];
@@ -60,6 +61,18 @@ class User extends Authenticatable
     protected function members(Builder $query): void
     {
         $query->where('username', '!=', config('news.username'));
+    }
+
+    /**
+     * Activated, non-banned members who want the weekly digest.
+     */
+    #[Scope]
+    protected function digestRecipients(Builder $query): void
+    {
+        $query->members()
+            ->where('is_subscribed_to_digest', true)
+            ->whereNotNull('email_verified_at')
+            ->where(fn (Builder $query) => $query->whereNull('banned_until')->orWhere('banned_until', '<', now()));
     }
 
     public function sendPasswordResetNotification($token): void

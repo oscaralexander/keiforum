@@ -25,6 +25,7 @@ return [
         'unique' => 'Deze gebruikersnaam is al in gebruik.',
     ],
     'password' => [
+        'incorrect' => 'Dit wachtwoord klopt niet.',
         'letters' => 'Wachtwoord moet minimaal één letter bevatten.',
         'min' => 'Wachtwoord moet minimaal :min tekens bevatten.',
         'mixed' => 'Wachtwoord moet minimaal één hoofdletter bevatten.',
