@@ -33,7 +33,7 @@
         {{ $attributes }}
     >
         @if($icon)
-            <svg><use href="/assets/img/icons.svg#{{ $icon }}" /></svg>
+            <svg><use href="{{ versioned_asset('assets/img/icons.svg') }}#{{ $icon }}" /></svg>
         @endif
         <span>{{ $label }}</span>
     </a>

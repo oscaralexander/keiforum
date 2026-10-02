@@ -70,3 +70,20 @@ if (! function_exists('login_url')) {
         return route('login', ['redirect' => $path]);
     }
 }
+
+if (! function_exists('versioned_asset')) {
+    /**
+     * The asset URL with a hash of the file's contents appended, so caches
+     * fetch the file again whenever it changes.
+     */
+    function versioned_asset(string $path): string
+    {
+        static $hashes = [];
+
+        $hashes[$path] ??= is_file(public_path($path))
+            ? substr(md5_file(public_path($path)), 0, 8)
+            : null;
+
+        return $hashes[$path] ? asset($path).'?v='.$hashes[$path] : asset($path);
+    }
+}
