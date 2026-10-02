@@ -1,8 +1,10 @@
 <?php
 
+use App\Lib\Image;
 use App\Models\Forum;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Storage;
 
 return new class extends Migration
 {
@@ -28,6 +30,19 @@ return new class extends Migration
                 'password' => null,
                 'username' => config('news.username'),
             ])->save();
+        }
+
+        $user = User::query()->where('username', config('news.username'))->firstOrFail();
+
+        if (! $user->has_avatar) {
+            $avatarContents = (new Image)
+                ->read(resource_path('img/nieuwsplein33.png'))
+                ->resize(1024)
+                ->encode(80);
+
+            if (Storage::disk('public')->put($user->avatar, $avatarContents)) {
+                $user->forceFill(['has_avatar' => true])->save();
+            }
         }
     }
 
