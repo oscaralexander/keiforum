@@ -11,9 +11,10 @@ class ForumsTableSeeder extends Seeder
     public function run(): void
     {
         $jsonPath = database_path('data/forums.json');
-        
-        if (!file_exists($jsonPath)) {
+
+        if (! file_exists($jsonPath)) {
             $this->command->error("JSON file not found at: {$jsonPath}");
+
             return;
         }
 
@@ -21,7 +22,8 @@ class ForumsTableSeeder extends Seeder
         $forums = json_decode($json, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            $this->command->error('Invalid JSON in forums.json: ' . json_last_error_msg());
+            $this->command->error('Invalid JSON in forums.json: '.json_last_error_msg());
+
             return;
         }
 
@@ -38,10 +40,11 @@ class ForumsTableSeeder extends Seeder
                 'description' => $forum['description'],
                 'icon' => $forum['icon'],
                 'name' => $forum['name'],
+                'position' => $forum['position'],
                 'slug' => $forum['slug'],
             ]);
         }
 
-        $this->command->info('Seeded ' . count($forums) . ' forums.');
+        $this->command->info('Seeded '.count($forums).' forums.');
     }
 }

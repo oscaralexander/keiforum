@@ -14,6 +14,7 @@ new class extends Component
     public function forums(): Collection
     {
         $forums = Forum::query()
+            ->orderBy('position')
             ->withCount(['topics' => fn ($query) => $query->visible()])
             ->get();
 

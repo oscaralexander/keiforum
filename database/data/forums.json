@@ -3,18 +3,21 @@
         "description": "De online huiskamer van Amersfoort.",
         "icon": "coffee",
         "name": "Algemeen",
-        "slug": "algemeen"
+        "slug": "algemeen",
+        "position": 1
     },
     {
         "description": "Vraag en aanbod van spullen en diensten.",
         "icon": "store",
         "name": "Hulp & handel",
-        "slug": "hulp-en-handel"
+        "slug": "hulp-en-handel",
+        "position": 3
     },
     {
         "description": "Praat mee over het laatste Amersfoortse nieuws.",
         "icon": "newspaper",
         "name": "Nieuws",
-        "slug": "nieuws"
+        "slug": "nieuws",
+        "position": 2
     }
 ]

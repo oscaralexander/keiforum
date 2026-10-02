@@ -37,7 +37,7 @@ new class extends Component
     #[Computed]
     public function forums()
     {
-        return Forum::all();
+        return Forum::query()->orderBy('position')->get();
     }
 
     public function mount(?Forum $forum = null)
