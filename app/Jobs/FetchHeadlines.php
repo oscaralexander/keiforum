@@ -30,8 +30,12 @@ class FetchHeadlines implements ShouldQueue
 
         foreach ($xml->channel->item as $item) {
             $guid = (string) $item->guid;
+            $description = trim((string) $item->description);
+            $headline = Headline::query()->where('guid', $guid)->first();
 
-            if (Headline::query()->where('guid', $guid)->exists()) {
+            if ($headline) {
+                $this->fillMissingDescription($headline, $description);
+
                 continue;
             }
 
@@ -41,7 +45,6 @@ class FetchHeadlines implements ShouldQueue
             }
 
             $link = (string) $item->link;
-            $description = trim((string) $item->description);
 
             Headline::query()->create([
                 'guid' => $guid,
@@ -58,5 +61,25 @@ class FetchHeadlines implements ShouldQueue
             ->whereNull('verdict')
             ->where('pub_date', '>=', now()->subDays(self::PROCESS_WITHIN_DAYS))
             ->each(fn (Headline $headline) => ProcessHeadline::dispatch($headline));
+    }
+
+    /**
+     * Headlines fetched before descriptions were stored get theirs from the
+     * feed, including the opening post of a topic that was already created.
+     */
+    protected function fillMissingDescription(Headline $headline, string $description): void
+    {
+        if ($headline->description !== null || $description === '') {
+            return;
+        }
+
+        $headline->update(['description' => $description]);
+
+        $post = $headline->topic?->firstPost;
+        $descriptionHtml = '<p>'.e($description).'</p>';
+
+        if ($post && ! str_contains($post->body, $descriptionHtml)) {
+            $post->update(['body' => $descriptionHtml.$post->body]);
+        }
     }
 }

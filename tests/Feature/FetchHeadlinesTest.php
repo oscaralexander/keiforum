@@ -6,6 +6,8 @@ use App\Enums\HeadlineVerdict;
 use App\Jobs\FetchHeadlines;
 use App\Jobs\ProcessHeadline;
 use App\Models\Headline;
+use App\Models\Post;
+use App\Models\Topic;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
@@ -179,6 +181,64 @@ class FetchHeadlinesTest extends TestCase
 
         Queue::assertPushed(ProcessHeadline::class, 1);
         Queue::assertPushed(ProcessHeadline::class, fn (ProcessHeadline $job) => $job->headline->is($pending));
+    }
+
+    private function feedWithDescription(string $description): string
+    {
+        return $this->makeFeedXml([
+            [
+                'guid' => 'https://www.nieuwsplein33.nl/nieuws/4097209/-',
+                'title' => 'Windmolens Isselt',
+                'link' => 'https://www.nieuwsplein33.nl/nieuws/4097209/windmolens-isselt',
+                'pubDate' => now()->toRssString(),
+                'description' => $description,
+            ],
+        ]);
+    }
+
+    public function test_it_fills_missing_description_of_existing_headline(): void
+    {
+        Http::fake(['*' => Http::response($this->feedWithDescription('Een besluit is in zicht.'), 200)]);
+        $headline = Headline::factory()->create(['guid' => 'https://www.nieuwsplein33.nl/nieuws/4097209/-', 'description' => null]);
+
+        (new FetchHeadlines)->handle();
+
+        $this->assertSame('Een besluit is in zicht.', $headline->fresh()->description);
+        $this->assertDatabaseCount('headlines', 1);
+    }
+
+    public function test_it_adds_missing_description_to_existing_topic(): void
+    {
+        Http::fake(['*' => Http::response($this->feedWithDescription('Een besluit is in zicht.'), 200)]);
+        $topic = Topic::factory()->create();
+        $post = Post::factory()->create(['topic_id' => $topic->id, 'body' => '<p>Wat vind jij?</p>']);
+        Headline::factory()->verdict(HeadlineVerdict::APPROVED)->create([
+            'guid' => 'https://www.nieuwsplein33.nl/nieuws/4097209/-',
+            'description' => null,
+            'topic_id' => $topic->id,
+        ]);
+
+        (new FetchHeadlines)->handle();
+        (new FetchHeadlines)->handle();
+
+        $this->assertSame('<p>Een besluit is in zicht.</p><p>Wat vind jij?</p>', $post->fresh()->body);
+    }
+
+    public function test_it_keeps_existing_description(): void
+    {
+        Http::fake(['*' => Http::response($this->feedWithDescription('Nieuwe tekst.'), 200)]);
+        $topic = Topic::factory()->create();
+        $post = Post::factory()->create(['topic_id' => $topic->id, 'body' => '<p>Oude tekst.</p>']);
+        $headline = Headline::factory()->create([
+            'guid' => 'https://www.nieuwsplein33.nl/nieuws/4097209/-',
+            'description' => 'Oude tekst.',
+            'topic_id' => $topic->id,
+        ]);
+
+        (new FetchHeadlines)->handle();
+
+        $this->assertSame('Oude tekst.', $headline->fresh()->description);
+        $this->assertSame('<p>Oude tekst.</p>', $post->fresh()->body);
     }
 
     public function test_it_is_scheduled_every_fifteen_minutes(): void
