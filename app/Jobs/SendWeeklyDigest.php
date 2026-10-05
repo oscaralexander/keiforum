@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\AvatarSize;
 use App\Mail\WeeklyDigest;
 use App\Models\Topic;
 use App\Models\User;
@@ -15,6 +16,13 @@ use Illuminate\Support\Facades\Mail;
 class SendWeeklyDigest implements ShouldQueue
 {
     use Queueable;
+
+    /**
+     * Avatars are shown at 32px; twice that keeps them sharp on high-density
+     * screens. A standard avatar size is used, so cached copies are cleared
+     * when a member changes their avatar.
+     */
+    private const AVATAR_SIZE = AvatarSize::S;
 
     public function handle(): void
     {
@@ -38,8 +46,8 @@ class SendWeeklyDigest implements ShouldQueue
      * @return array{
      *     active_topics_count: int,
      *     new_members_count: int,
-     *     new_topics: list<array{title: string, url: string, forum: string, posts_count: int}>,
-     *     popular_topics: list<array{title: string, url: string, forum: string, posts_count: int}>,
+     *     new_topics: list<array{title: string, url: string, forum: string, posts_count: int, avatar_url: string, username: string}>,
+     *     popular_topics: list<array{title: string, url: string, forum: string, posts_count: int, avatar_url: string, username: string}>,
      * }
      */
     public function digest(Carbon $since): array
@@ -80,7 +88,7 @@ class SendWeeklyDigest implements ShouldQueue
     }
 
     /**
-     * @return array{title: string, url: string, forum: string, posts_count: int}
+     * @return array{title: string, url: string, forum: string, posts_count: int, avatar_url: string, username: string}
      */
     private function topicSummary(Topic $topic): array
     {
@@ -89,6 +97,8 @@ class SendWeeklyDigest implements ShouldQueue
             'url' => route('topic.show', [$topic->forum, $topic, $topic->slug]),
             'forum' => $topic->forum->name,
             'posts_count' => $topic->posts_count,
+            'avatar_url' => $topic->user->emailAvatarUrl(self::AVATAR_SIZE->value),
+            'username' => $topic->user->username,
         ];
     }
 }

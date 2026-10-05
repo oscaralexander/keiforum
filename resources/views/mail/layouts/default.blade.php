@@ -6,11 +6,12 @@
         <title>@yield('title', config('app.name'))</title>
         <style>
             body {
+                background-color: #fcf9f6;
                 margin: 0;
             }
 
             .mail {
-                background-color: #fff9f6;
+                background-color: #fcf9f6;
                 border-radius: 0.5rem;
                 color: #666462;
                 font-family: system-ui, sans-serif;
@@ -47,17 +48,33 @@
                 margin: 0 0 0.75rem 0;
             }
 
-            ul.topics {
-                list-style: none;
+            table.topics {
+                border-collapse: collapse;
                 margin: 0 0 1.5rem 0;
-                padding: 0;
             }
 
-            ul.topics li {
-                margin-bottom: 0.75rem;
+            table.topics td {
+                padding: 0 0 0.75rem 0;
+                vertical-align: middle;
             }
 
-            ul.topics small {
+            table.topics td.topics__avatar {
+                padding-right: 12px;
+                width: 32px;
+            }
+
+            table.topics img {
+                border-radius: 50%;
+                display: block;
+                height: 32px;
+                width: 32px;
+            }
+
+            table.topics a {
+                font-weight: 600;
+            }
+
+            table.topics small {
                 color: #979594;
                 font-size: 14px;
             }
@@ -81,8 +98,8 @@
             }
         </style>
     </head>
-    <body>
-        <div class="mail">
+    <body bgcolor="#fcf9f6" style="background-color: #fcf9f6; margin: 0;">
+        <div class="mail" style="background-color: #fcf9f6;">
             <div class="mail__wrapper">
                 @yield('content')
             </div>

@@ -20,8 +20,8 @@ class WeeklyDigest extends Mailable implements ShouldQueue
      * @param  array{
      *     active_topics_count: int,
      *     new_members_count: int,
-     *     new_topics: list<array{title: string, url: string, forum: string, posts_count: int}>,
-     *     popular_topics: list<array{title: string, url: string, forum: string, posts_count: int}>,
+     *     new_topics: list<array{title: string, url: string, forum: string, posts_count: int, avatar_url: string, username: string}>,
+     *     popular_topics: list<array{title: string, url: string, forum: string, posts_count: int, avatar_url: string, username: string}>,
      * }  $digest
      */
     public function __construct(public User $user, public array $digest) {}

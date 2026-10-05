@@ -40,10 +40,12 @@ new class extends Component
     protected function deleteCachedAvatars(string $avatarPath)
     {
         foreach (AvatarSize::cases() as $size) {
-            $cachePath = Image::cacheFilePath($avatarPath, $size->value, $size->value);
+            foreach (array_keys(Image::FORMATS) as $format) {
+                $cachePath = Image::cacheFilePath($avatarPath, $size->value, $size->value, $format);
 
-            if (Storage::disk('public')->exists($cachePath)) {
-                Storage::disk('public')->delete($cachePath);
+                if (Storage::disk('public')->exists($cachePath)) {
+                    Storage::disk('public')->delete($cachePath);
+                }
             }
         }
     }

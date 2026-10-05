@@ -40,6 +40,20 @@ class User extends Authenticatable
 
     public const USERNAME_MAX_LENGTH = 20;
 
+    /**
+     * An absolute avatar URL that email clients without WebP support, such
+     * as Outlook for Windows, can show: JPEG for uploaded avatars, PNG for
+     * the default initials.
+     */
+    public function emailAvatarUrl(int $size = 256): string
+    {
+        $initial = strtolower(is_numeric($this->username[0]) ? '0' : $this->username[0]);
+
+        return $this->has_avatar
+            ? route('img', ['src' => $this->avatar, 'w' => $size, 'h' => $size, 'q' => 80, 'f' => 'jpg'])
+            : asset('assets/img/avatar/'.$initial.'.png');
+    }
+
     public function avatarUrl(int $size = 256): string
     {
         $initial = strtolower(is_numeric($this->username[0]) ? '0' : $this->username[0]);

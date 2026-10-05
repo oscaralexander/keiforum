@@ -17,6 +17,17 @@ class Image
 
     public const CACHE_TTL = 60 * 60 * 24 * 14; // 14 days
 
+    /**
+     * Output formats and their content types. JPEG is for email clients
+     * without WebP support, such as Outlook for Windows.
+     *
+     * @var array<string, string>
+     */
+    public const FORMATS = [
+        'webp' => 'image/webp',
+        'jpg' => 'image/jpeg',
+    ];
+
     public const MAX_FILE_SIZE = 6_144_000;
 
     protected ImageInterface $image;
@@ -43,9 +54,13 @@ class Image
         return ($width ?? 'auto').'x'.($height ?? 'auto');
     }
 
-    public function encode(int $quality = 100): string
+    public function encode(int $quality = 100, string $format = 'webp'): string
     {
-        return $this->image->toWebp(quality: $quality, strip: true)->toString();
+        $encoded = $format === 'jpg'
+            ? $this->image->toJpeg(quality: $quality, strip: true)
+            : $this->image->toWebp(quality: $quality, strip: true);
+
+        return $encoded->toString();
     }
 
     private function fetchImageLocal(string $path): string
@@ -99,15 +114,13 @@ class Image
 
     protected static function readCache(string $path): ?string
     {
-        if (! is_file($path)) {
+        $disk = Storage::disk('public');
+
+        if (! $disk->exists($path) || $disk->lastModified($path) < (time() - self::CACHE_TTL)) {
             return null;
         }
 
-        if (filemtime($path) < (time() - self::CACHE_TTL)) {
-            return null;
-        }
-
-        return Storage::disk('public')->get($path);
+        return $disk->get($path);
     }
 
     public function resize(?int $width = null, ?int $height = null): static
@@ -125,14 +138,14 @@ class Image
         return $this;
     }
 
-    public static function cacheFilePath(string $src, ?int $width, ?int $height): string
+    public static function cacheFilePath(string $src, ?int $width, ?int $height, string $format = 'webp'): string
     {
-        return self::CACHE_ROOT.DIRECTORY_SEPARATOR.static::dimensionsFolder($width, $height).DIRECTORY_SEPARATOR.sha1($src).'.webp';
+        return self::CACHE_ROOT.DIRECTORY_SEPARATOR.static::dimensionsFolder($width, $height).DIRECTORY_SEPARATOR.sha1($src).'.'.$format;
     }
 
-    public static function serve(string $src, ?int $width, ?int $height, int $quality): Response
+    public static function serve(string $src, ?int $width, ?int $height, int $quality, string $format = 'webp'): Response
     {
-        $cachePath = static::cacheFilePath($src, $width, $height);
+        $cachePath = static::cacheFilePath($src, $width, $height, $format);
         $contents = static::readCache($cachePath);
 
         if (! $contents) {
@@ -140,14 +153,14 @@ class Image
             $contents = $image
                 ->read($src)
                 ->resize($width, $height)
-                ->encode($quality);
-        }
+                ->encode($quality, $format);
 
-        Storage::disk('public')->put($cachePath, $contents);
+            Storage::disk('public')->put($cachePath, $contents);
+        }
 
         return response($contents, Response::HTTP_OK, [
             'Cache-Control' => 'public, max-age='.self::CACHE_TTL,
-            'Content-Type' => 'image/webp',
+            'Content-Type' => self::FORMATS[$format],
         ]);
     }
 }

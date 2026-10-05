@@ -127,6 +127,20 @@ class WeeklyDigestTest extends TestCase
         $this->assertGreaterThan(0, $digest['new_members_count']);
     }
 
+    public function test_digest_includes_absolute_avatar_url_of_topic_starter(): void
+    {
+        $withAvatar = User::factory()->create(['username' => 'metfoto', 'has_avatar' => true]);
+        $withoutAvatar = User::factory()->create(['username' => 'zonderfoto', 'has_avatar' => false]);
+        $this->createActiveTopic(['title' => 'Met foto', 'user_id' => $withAvatar->id], posts: 2);
+        $this->createActiveTopic(['title' => 'Zonder foto', 'user_id' => $withoutAvatar->id]);
+
+        $topics = collect((new SendWeeklyDigest)->digest(now()->subDays(7))['popular_topics'])->keyBy('title');
+
+        $this->assertSame('metfoto', $topics['Met foto']['username']);
+        $this->assertSame(route('img', ['src' => 'avatars/metfoto.webp', 'w' => 64, 'h' => 64, 'q' => 80, 'f' => 'jpg']), $topics['Met foto']['avatar_url']);
+        $this->assertSame(asset('assets/img/avatar/z.png'), $topics['Zonder foto']['avatar_url']);
+    }
+
     public function test_new_topics_exclude_popular_topics(): void
     {
         config(['digest.popular_topics' => 1]);
@@ -145,8 +159,8 @@ class WeeklyDigestTest extends TestCase
         $digest = [
             'active_topics_count' => 3,
             'new_members_count' => 2,
-            'new_topics' => [['title' => 'Nieuwe bakker', 'url' => 'https://keiforum.test/a', 'forum' => 'Algemeen', 'posts_count' => 1]],
-            'popular_topics' => [['title' => 'Windmolens Isselt', 'url' => 'https://keiforum.test/b', 'forum' => 'Nieuws', 'posts_count' => 5]],
+            'new_topics' => [['title' => 'Nieuwe bakker', 'url' => 'https://keiforum.test/a', 'forum' => 'Algemeen', 'posts_count' => 1, 'avatar_url' => 'https://keiforum.test/avatar-a.webp', 'username' => 'bakkersfan']],
+            'popular_topics' => [['title' => 'Windmolens Isselt', 'url' => 'https://keiforum.test/b', 'forum' => 'Nieuws', 'posts_count' => 5, 'avatar_url' => 'https://keiforum.test/avatar-b.webp', 'username' => 'windvanger']],
         ];
 
         $mail = new WeeklyDigest($user, $digest);
@@ -156,6 +170,12 @@ class WeeklyDigestTest extends TestCase
         $mail->assertSeeInHtml('5 nieuwe berichten');
         $mail->assertSeeInHtml('Nieuwe bakker');
         $mail->assertSeeInHtml('2 nieuwe leden');
+        $mail->assertSeeInHtml('src="https://keiforum.test/avatar-b.webp"', false);
+        $mail->assertSeeInHtml('src="https://keiforum.test/avatar-a.webp"', false);
+        $mail->assertSeeInHtml('style="padding-right: 12px; width: 32px;"', false);
+        $mail->assertSeeInHtml('height="32"', false);
+        $mail->assertSeeInHtml('style="font-weight: 600;"', false);
+        $mail->assertSeeInHtml('Je ontvangt deze mail omdat je lid bent van Keiforum.');
         $mail->assertSeeInHtml(e($mail->unsubscribeUrl()), false);
         $this->assertSame('<'.$mail->unsubscribeUrl().'>', $mail->headers()->text['List-Unsubscribe']);
     }

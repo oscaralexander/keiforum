@@ -11,25 +11,35 @@
     </p>
     @if ($digest['popular_topics'])
         <h2>Populair deze week</h2>
-        <ul class="topics">
+        <table class="topics" role="presentation">
             @foreach ($digest['popular_topics'] as $topic)
-                <li>
-                    <a href="{{ $topic['url'] }}">{{ $topic['title'] }}</a><br>
-                    <small>{{ $topic['forum'] }} · {{ trans_choice('mail/digest.posts_count', $topic['posts_count'], ['count' => $topic['posts_count']]) }}</small>
-                </li>
+                <tr>
+                    <td class="topics__avatar" style="padding-right: 12px; width: 32px;">
+                        <img alt="{{ $topic['username'] }}" height="32" src="{{ $topic['avatar_url'] }}" style="border-radius: 50%; display: block;" width="32">
+                    </td>
+                    <td>
+                        <a href="{{ $topic['url'] }}" style="font-weight: 600;">{{ $topic['title'] }}</a><br>
+                        <small>{{ $topic['forum'] }} · {{ trans_choice('mail/digest.posts_count', $topic['posts_count'], ['count' => $topic['posts_count']]) }}</small>
+                    </td>
+                </tr>
             @endforeach
-        </ul>
+        </table>
     @endif
     @if ($digest['new_topics'])
         <h2>Nieuwe onderwerpen</h2>
-        <ul class="topics">
+        <table class="topics" role="presentation">
             @foreach ($digest['new_topics'] as $topic)
-                <li>
-                    <a href="{{ $topic['url'] }}">{{ $topic['title'] }}</a><br>
-                    <small>{{ $topic['forum'] }}</small>
-                </li>
+                <tr>
+                    <td class="topics__avatar" style="padding-right: 12px; width: 32px;">
+                        <img alt="{{ $topic['username'] }}" height="32" src="{{ $topic['avatar_url'] }}" style="border-radius: 50%; display: block;" width="32">
+                    </td>
+                    <td>
+                        <a href="{{ $topic['url'] }}" style="font-weight: 600;">{{ $topic['title'] }}</a><br>
+                        <small>{{ $topic['forum'] }}</small>
+                    </td>
+                </tr>
             @endforeach
-        </ul>
+        </table>
     @endif
     @if ($digest['new_members_count'] > 0)
         <p>{{ trans_choice('mail/digest.new_members', $digest['new_members_count'], ['count' => $digest['new_members_count']]) }}</p>
@@ -42,7 +52,7 @@
     </p>
     <a href="{{ config('app.url') }}" target="_blank"><img alt="Keiforum" height="32" src="{{ asset('assets/img/keiforum-mail.png') }}" /></a>
     <p class="footer">
-        Je ontvangt deze wekelijkse update omdat je lid bent van Keiforum.
+        Je ontvangt deze mail omdat je lid bent van Keiforum.
         <a href="{{ $unsubscribeUrl }}">Afmelden voor de wekelijkse update</a>
     </p>
 @endsection
