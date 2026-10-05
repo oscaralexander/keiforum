@@ -52,6 +52,7 @@ $sizes: (
 
     /* Layout */
     --gutter-width: 1.25rem;
+    --nav-padding-left: calc(var(--gutter-width) - 10px);
     --panel-padding-x: 1.25rem;
     --panel-padding-y: 2rem;
 

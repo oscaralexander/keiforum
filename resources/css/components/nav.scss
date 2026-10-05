@@ -5,7 +5,7 @@
     display: flex;
     justify-content: space-between;
     height: var(--nav-height);
-    padding: 0 var(--gutter-width) 0 calc(var(--gutter-width) - 10px);
+    padding: 0 var(--gutter-width) 0 var(--nav-padding-left);
     position: sticky;
     top: 0; // calc((var(--nav-height) * -1) - 1);
     z-index: 10;
