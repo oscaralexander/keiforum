@@ -19,7 +19,7 @@ Gideon linkt onder elk artikel naar `keiforum.nl/praat-mee/{artikel-id}`.
 - [x] Verborgen topics: `noindex` en geen gestructureerde data
 - [x] `/praat-mee/{artikel-id}`: doorsturen naar topic, feed opnieuw ophalen bij onbekend artikel, terugval op forum "Nieuws"
 - [x] Terugkeren naar het topic na inloggen, registreren (ook via Google) en accountactivatie
-- [ ] `ANTHROPIC_API_KEY` instellen op productie
+- [x] `ANTHROPIC_API_KEY` instellen op productie
 - [ ] Afspraken met Gideon op schrift (titels, intro, afbeeldingen)
 - [ ] Gideon de link laten plaatsen onder elk artikel
 
@@ -28,8 +28,8 @@ Gideon linkt onder elk artikel naar `keiforum.nl/praat-mee/{artikel-id}`.
 - [x] E-mailmelding bij een reactie op je topic of een @vermelding (bestond al; nu opt-out)
 - [x] Wekelijkse e-mailsamenvatting (populairste en nieuwe topics; nog zonder agenda)
 - [ ] Uitnodigende lege-staatweergave op rustige pagina's
-- [ ] Open Graph-tags per topic (mooie preview op WhatsApp/Facebook)
-- [ ] Controleren dat topics zonder inloggen te lezen zijn (SEO)
+- [x] Open Graph-tags per topic (mooie preview op WhatsApp/Facebook)
+- [x] Controleren dat topics zonder inloggen te lezen zijn (SEO)
 - [ ] Nagaan of accountactivatie vóór de eerste post echt nodig is
 
 ## Inhoud

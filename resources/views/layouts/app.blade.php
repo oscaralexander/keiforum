@@ -17,7 +17,14 @@
         @stack('meta')
         <meta content="@lang('app.description')" name="description">
         <meta content="@lang('app.description')" property="og:description">
-        <meta content="{{ asset('assets/img/og-image-1.png') }}" property="og:image">
+        @if (isset($ogImage))
+            <meta content="{{ $ogImage }}" property="og:image">
+            <meta content="{{ \App\Lib\OpenGraphImage::WIDTH }}" property="og:image:width">
+            <meta content="{{ \App\Lib\OpenGraphImage::HEIGHT }}" property="og:image:height">
+            <meta content="summary_large_image" name="twitter:card">
+        @else
+            <meta content="{{ asset('assets/img/og-image-1.png') }}" property="og:image">
+        @endif
         <meta content="nl_NL" property="og:locale">
         <meta content="{{ config('app.name') }}" property="og:site_name">
         <meta content="{{ $title ?? config('app.name') }}" property="og:title">

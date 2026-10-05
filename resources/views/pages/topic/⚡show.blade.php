@@ -3,6 +3,7 @@
 use App\Constants\Event;
 use App\Events\PostCreated;
 use App\Events\PostSaved;
+use App\Lib\OpenGraphImage;
 use App\Models\Area;
 use App\Models\Forum;
 use App\Models\Topic;
@@ -94,7 +95,8 @@ new class extends Component
     public function render()
     {
         return $this->view()
-            ->title($this->topic->title);
+            ->title($this->topic->title)
+            ->layoutData(['ogImage' => app(OpenGraphImage::class)->url($this->topic)]);
     }
 
     public function rules()

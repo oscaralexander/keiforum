@@ -47,20 +47,25 @@ class User extends Authenticatable
      */
     public function emailAvatarUrl(int $size = 256): string
     {
-        $initial = strtolower(is_numeric($this->username[0]) ? '0' : $this->username[0]);
-
         return $this->has_avatar
             ? route('img', ['src' => $this->avatar, 'w' => $size, 'h' => $size, 'q' => 80, 'f' => 'jpg'])
-            : asset('assets/img/avatar/'.$initial.'.png');
+            : asset('assets/img/avatar/'.$this->avatarInitial().'.png');
     }
 
     public function avatarUrl(int $size = 256): string
     {
-        $initial = strtolower(is_numeric($this->username[0]) ? '0' : $this->username[0]);
-
         return $this->has_avatar
             ? route('img', ['src' => $this->avatar, 'w' => $size, 'h' => $size, 'q' => 80])
-            : '/assets/img/avatar/webp/'.$initial.'.webp';
+            : '/assets/img/avatar/webp/'.$this->avatarInitial().'.webp';
+    }
+
+    /**
+     * The letter of the default avatar: the first character of the username,
+     * or 0 for usernames starting with a digit.
+     */
+    public function avatarInitial(): string
+    {
+        return strtolower(is_numeric($this->username[0]) ? '0' : $this->username[0]);
     }
 
     public function getRouteKeyName(): string

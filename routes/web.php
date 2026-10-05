@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\User\SearchController;
 use App\Http\Controllers\ImageProxyController;
 use App\Http\Controllers\NewsTopicController;
+use App\Http\Controllers\OpenGraphImageController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\User\GoogleAuthController;
 use App\Http\Controllers\User\LogoutController;
@@ -18,6 +19,7 @@ Route::get('img', ImageProxyController::class)->name('img');
 Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
 Route::livewire('e-mailadres-bevestigen/{user}', 'pages::user.confirm-email-change')->middleware('signed')->name('confirm-email-change');
 Route::livewire('afmelden/wekelijkse-update/{user}', 'pages::user.unsubscribe-digest')->middleware('signed')->name('digest.unsubscribe');
+Route::get('og/onderwerp/{topic}.jpg', OpenGraphImageController::class)->whereNumber('topic')->name('og.topic');
 Route::get('praat-mee/{articleId}', NewsTopicController::class)->whereNumber('articleId')->name('news.topic');
 
 // API

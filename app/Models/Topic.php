@@ -83,6 +83,25 @@ class Topic extends Model
     }
 
     /**
+     * The image shown at the top of the opening post: the article image of a
+     * news topic, or else the first image linked in the post.
+     */
+    public function openingImageUrl(): ?string
+    {
+        if ($this->headline?->showsArticleImage()) {
+            return $this->headline->article_image_url;
+        }
+
+        $body = $this->firstPost?->body ?? '';
+
+        if (preg_match('/<a[^>]*href=["\'](https?:\/\/[^"\']+\.(?:jpe?g|png|webp|avif|gif))["\']/i', $body, $matches)) {
+            return html_entity_decode($matches[1]);
+        }
+
+        return null;
+    }
+
+    /**
      * Scopes
      */
     #[Scope]
