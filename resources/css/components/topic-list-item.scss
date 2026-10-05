@@ -70,10 +70,6 @@
     }
 
     @include screen-min(m) {
-        &__title {
-            font-size: var(--fontSize-l);
-        }
-
         &__icon {
             height: 1.25em;
             top: .25em;
