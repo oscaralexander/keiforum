@@ -131,6 +131,7 @@ new class extends Component
 
             if (Storage::disk('public')->put($avatarPath, $contents)) {
                 $user->has_avatar = true;
+                $user->avatar_updated_at = now();
                 $user->save();
             }
         } catch (\Throwable) {

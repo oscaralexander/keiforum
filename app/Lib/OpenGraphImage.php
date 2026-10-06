@@ -84,7 +84,7 @@ class OpenGraphImage
             self::VERSION,
             $topic->title,
             $user->username,
-            $user->has_avatar ? $user->updated_at?->timestamp : null,
+            $user->has_avatar ? $user->avatar_updated_at?->timestamp : null,
             $this->backgroundSource($topic),
         ]));
 

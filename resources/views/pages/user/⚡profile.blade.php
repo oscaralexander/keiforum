@@ -71,6 +71,7 @@ new class extends Component
 
         $this->deleteCachedAvatars($this->user->avatar);
         $this->user->has_avatar = false;
+        $this->user->avatar_updated_at = now();
         $this->user->save();
     }
 
@@ -127,6 +128,7 @@ new class extends Component
             if (Storage::disk('public')->put($avatarPath, $avatarContents)) {
                 $this->deleteCachedAvatars($avatarPath);
                 $this->user->has_avatar = true;
+                $this->user->avatar_updated_at = now();
                 $this->user->save();
             }
 
@@ -159,9 +161,7 @@ new class extends Component
                 </div>
                 <div class="avatar avatar--l" wire:loading.class="is-loading" wire:target="avatar">
                     @php
-                        $avatarUrl = $user->has_avatar
-                            ? $user->avatarUrl(size: AvatarSize::L->value) . '&t=' . $user->updated_at->timestamp
-                            : $user->avatarUrl(size: AvatarSize::L->value);
+                        $avatarUrl = $user->avatarUrl(size: AvatarSize::L->value);
 
                         if ($avatar && get_class($avatar) === TemporaryUploadedFile::class) {
                             $avatarUrl = $avatar->temporaryUrl();

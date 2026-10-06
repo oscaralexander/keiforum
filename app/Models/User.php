@@ -20,6 +20,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $casts = [
+        'avatar_updated_at' => 'datetime',
         'banned_until' => 'datetime',
         'birthdate' => 'date',
         'email_verified_at' => 'datetime',
@@ -48,15 +49,27 @@ class User extends Authenticatable
     public function emailAvatarUrl(int $size = 256): string
     {
         return $this->has_avatar
-            ? route('img', ['src' => $this->avatar, 'w' => $size, 'h' => $size, 'q' => 80, 'f' => 'jpg'])
+            ? route('img', ['src' => $this->avatar, 'w' => $size, 'h' => $size, 'q' => 80, 'f' => 'jpg', ...$this->avatarVersion()])
             : asset('assets/img/avatar/'.$this->avatarInitial().'.png');
     }
 
     public function avatarUrl(int $size = 256): string
     {
         return $this->has_avatar
-            ? route('img', ['src' => $this->avatar, 'w' => $size, 'h' => $size, 'q' => 80])
+            ? route('img', ['src' => $this->avatar, 'w' => $size, 'h' => $size, 'q' => 80, ...$this->avatarVersion()])
             : '/assets/img/avatar/webp/'.$this->avatarInitial().'.webp';
+    }
+
+    /**
+     * The avatar URL changes whenever a new avatar is uploaded, so browsers
+     * and Cloudflare don't keep showing the old one. `updated_at` can't be
+     * used for this: it changes on every request along with `last_seen_at`.
+     *
+     * @return array{v?: int}
+     */
+    protected function avatarVersion(): array
+    {
+        return $this->avatar_updated_at ? ['v' => $this->avatar_updated_at->timestamp] : [];
     }
 
     /**
