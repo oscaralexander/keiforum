@@ -39,6 +39,8 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public const ONLINE_MINUTES = 5;
+
     public const USERNAME_MAX_LENGTH = 20;
 
     /**
@@ -102,6 +104,15 @@ class User extends Authenticatable
     }
 
     /**
+     * Users who made a request within the last few minutes.
+     */
+    #[Scope]
+    protected function online(Builder $query): void
+    {
+        $query->where('last_seen_at', '>=', now()->subMinutes(self::ONLINE_MINUTES));
+    }
+
+    /**
      * Activated, non-banned members who want the weekly digest.
      */
     #[Scope]
@@ -159,7 +170,7 @@ class User extends Authenticatable
     public function isOnline(): Attribute
     {
         return new Attribute(
-            get: fn (): bool => $this->last_seen_at && $this->last_seen_at->isAfter(now()->subMinutes(5)),
+            get: fn (): bool => $this->last_seen_at && $this->last_seen_at->isAfter(now()->subMinutes(self::ONLINE_MINUTES)),
         );
     }
 

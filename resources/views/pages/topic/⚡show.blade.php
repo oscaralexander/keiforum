@@ -295,6 +295,7 @@ new class extends Component
             </section>
         </div>
         {{ $this->posts->links() }}
+        <livewire:online-members />
     </div>
     @script
         <script>

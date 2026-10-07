@@ -94,5 +94,6 @@ new class extends Component
                 <p>@lang('forum/show.no_topics')</p>
             </div>
         @endif
+        <livewire:online-members />
     </div>
 </div>

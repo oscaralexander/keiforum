@@ -109,11 +109,14 @@ new class extends Component
             <x-btn class="m:show" :href="route('topic.create')" icon="plus" primary>@lang('forum/show.new_topic')</x-btn>
         </x-slot:actions>
     </x-header>
-    <div class="panel">
-        <ul class="forumList">
-            @foreach ($this->forums as $forum)
-                <x-forum-list-item :$forum />
-            @endforeach
-        </ul>
+    <div class="flex flex-col flex-gap-l">
+        <div class="panel">
+            <ul class="forumList">
+                @foreach ($this->forums as $forum)
+                    <x-forum-list-item :$forum />
+                @endforeach
+            </ul>
+        </div>
+        <livewire:online-members />
     </div>
 </div>
