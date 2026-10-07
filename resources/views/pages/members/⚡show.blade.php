@@ -121,19 +121,26 @@ new class extends Component
                 </section>
                 <section class="profile__section">
                     <h3 class="profile__section-title">@lang('members/show.topics')</h3>
-                    <div class="profile__topics">
-                        @forelse ($this->topics as $topic)
-                            <div class="profile__topic">
-                                <a href="{{ route('topic.show', [$topic->forum, $topic, $topic->slug, 'post' => $topic->latest_post_id]) }}" wire:navigate>{{ $topic->title }}</a>
-                                <ul class="meta">
-                                    <li class="meta__item">{{ trans_choice('members/show.topic_posts_count', $topic->posts_count, ['count' => $topic->posts_count]) }}</li>
-                                    <li class="meta__item">{{ time_diff(Carbon\Carbon::parse($topic->latest_post_created_at)) }} @lang('ui.ago')</li>
-                                </ul>
-                            </div>
-                        @empty
-                            <div class="profile__topic text-color-lc">@lang('members/show.no_topics')</div>
-                        @endforelse
-                    </div>
+                    @if ($this->topics->isNotEmpty())
+                        <ul class="profile__topics">
+                            @foreach ($this->topics as $topic)
+                                <li class="profile__topic" wire:key="topic-{{ $topic->id }}">
+                                    <a class="profile__topic-title" href="{{ route('topic.show', [$topic->forum, $topic, $topic->slug, 'post' => $topic->latest_post_id]) }}" wire:navigate>{{ $topic->title }}</a>
+                                    <ul class="meta">
+                                        <li class="meta__item">{{ trans_choice('members/show.topic_posts_count', $topic->posts_count, ['count' => $topic->posts_count]) }}</li>
+                                        <li class="meta__item">
+                                            <a aria-label="@lang('forum/show.latest_post_label', ['topic' => $topic->title])" href="{{ route('topic.show', [$topic->forum, $topic, $topic->slug, 'post' => $topic->latest_post_id]) }}" wire:navigate>
+                                                {{ time_diff(Carbon\Carbon::parse($topic->latest_post_created_at)) }} @lang('ui.ago')
+                                                <x-icon icon="arrow-right" />
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p class="text-color-lc">@lang('members/show.no_topics')</p>
+                    @endif
                 </section>
             </div>
         </div>
