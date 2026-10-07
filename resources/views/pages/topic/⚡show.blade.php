@@ -226,8 +226,8 @@ new class extends Component
     @if (!$topic->is_visible)
         <meta content="noindex" name="robots">
     @endif
-    <meta content="{{ $this->firstPost?->bodyPlainText }}" name="description">
-    <meta content="{{ $this->firstPost?->bodyPlainText }}" property="og:description">
+    <meta content="{{ $topic->description }}" name="description">
+    <meta content="{{ $topic->description }}" property="og:description">
     @if ($this->posts->hasPages())
         @if (!$this->posts->onFirstPage())
             <link href="{{ $this->posts->previousPageUrl() }}" rel="prev">

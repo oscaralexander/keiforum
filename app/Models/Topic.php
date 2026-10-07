@@ -113,6 +113,23 @@ class Topic extends Model
     /**
      * Attributes
      */
+    /**
+     * Plain text summary of the opening post for meta and sharing previews,
+     * without HTML or URLs.
+     */
+    public function description(): Attribute
+    {
+        return new Attribute(
+            get: function (): string {
+                $text = preg_replace('/<\/(?:p|li|ol|ul|h\d|blockquote)>|<br\s*\/?>/i', '$0 ', $this->firstPost?->body ?? '');
+                $text = html_entity_decode(strip_tags($text), ENT_QUOTES | ENT_HTML5);
+                $text = preg_replace('/\b(?:https?:\/\/|www\.)\S+/i', '', $text);
+
+                return Str::limit(Str::squish($text), 200);
+            },
+        );
+    }
+
     public function hasReplies(): Attribute
     {
         return new Attribute(

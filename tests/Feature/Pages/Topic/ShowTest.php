@@ -145,4 +145,37 @@ class ShowTest extends TestCase
 
         $this->assertDatabaseMissing('topic_user', ['topic_id' => $topic->id]);
     }
+
+    public function test_description_strips_html_and_urls(): void
+    {
+        $topic = Topic::factory()->create();
+        Post::factory()->create([
+            'topic_id' => $topic->id,
+            'body' => '<p><a href="https://assets.test/photo.jpg">https://assets.test/photo.jpg</a></p><p>Club Paap is terug &amp; zie <a href="https://example.com">deze site</a> of www.example.com.</p><ul><li>Een</li><li>Twee</li></ul>',
+        ]);
+
+        $this->assertSame('Club Paap is terug & zie deze site of Een Twee', $topic->fresh()->description);
+    }
+
+    public function test_description_is_limited_in_length(): void
+    {
+        $topic = Topic::factory()->create();
+        Post::factory()->create(['topic_id' => $topic->id, 'body' => '<p>'.str_repeat('woord ', 100).'</p>']);
+
+        $this->assertSame(203, mb_strlen($topic->fresh()->description));
+    }
+
+    public function test_description_is_empty_without_posts(): void
+    {
+        $this->assertSame('', Topic::factory()->create()->description);
+    }
+
+    public function test_topic_show_page_renders_clean_meta_description(): void
+    {
+        [$forum, $topic, $post] = $this->createTopicWithPost();
+        $post->update(['body' => '<p><a href="https://assets.test/photo.jpg">https://assets.test/photo.jpg</a></p><p>Hallo Amersfoort</p>']);
+
+        $this->get(route('topic.show', [$forum, $topic, $topic->slug]))
+            ->assertSee('<meta content="Hallo Amersfoort" property="og:description">', false);
+    }
 }
