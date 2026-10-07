@@ -32,17 +32,18 @@ class ShowTest extends TestCase
             ], false);
     }
 
-    public function test_active_topics_are_sorted_by_posts_count(): void
+    public function test_active_topics_are_sorted_by_most_recent_post_of_user(): void
     {
         $user = User::factory()->create();
-        $quietTopic = Topic::factory()->create();
         $busyTopic = Topic::factory()->create();
-        Post::factory()->create(['topic_id' => $quietTopic->id, 'user_id' => $user->id]);
+        $recentTopic = Topic::factory()->create();
         Post::factory()->count(3)->create(['topic_id' => $busyTopic->id, 'user_id' => $user->id]);
+        Post::factory()->create(['topic_id' => $recentTopic->id, 'user_id' => $user->id]);
+        Post::factory()->create(['topic_id' => $busyTopic->id]);
 
         $this->get(route('member.show', $user))
             ->assertOk()
-            ->assertSeeInOrder([e($busyTopic->title), '3 berichten', e($quietTopic->title), '1 bericht'], false);
+            ->assertSeeInOrder([e($recentTopic->title), '1 bericht', e($busyTopic->title), '3 berichten'], false);
     }
 
     public function test_empty_state_is_shown_without_posts(): void

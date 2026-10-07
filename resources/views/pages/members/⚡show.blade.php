@@ -39,7 +39,7 @@ new class extends Component
             ->with('forum')
             ->joinSub($userPostStats, 'user_posts', 'topics.id', '=', 'user_posts.topic_id')
             ->select('topics.*', 'user_posts.posts_count', 'user_posts.latest_post_id', 'user_posts.latest_post_created_at')
-            ->orderByDesc('user_posts.posts_count')
+            ->orderByDesc('user_posts.latest_post_id')
             ->get();
     }
 };
