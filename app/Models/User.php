@@ -90,6 +90,12 @@ class User extends Authenticatable
      * Scopes
      */
     #[Scope]
+    protected function active(Builder $query): void
+    {
+        $query->whereNotNull('email_verified_at');
+    }
+
+    #[Scope]
     protected function members(Builder $query): void
     {
         $query->where('username', '!=', config('news.username'));
@@ -102,8 +108,8 @@ class User extends Authenticatable
     protected function digestRecipients(Builder $query): void
     {
         $query->members()
+            ->active()
             ->where('is_subscribed_to_digest', true)
-            ->whereNotNull('email_verified_at')
             ->where(fn (Builder $query) => $query->whereNull('banned_until')->orWhere('banned_until', '<', now()));
     }
 

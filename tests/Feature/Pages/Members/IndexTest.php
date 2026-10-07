@@ -21,7 +21,7 @@ class IndexTest extends TestCase
         User::factory()->count(3)->create();
 
         Livewire::test('pages::members.index')
-            ->assertSeeInOrder([__('members/index.total_members'), '3']);
+            ->assertSeeInOrder([__('members/index.stats.members_count'), '3']);
     }
 
     public function test_new_members_count_shows_users_created_in_last_7_days(): void
@@ -30,7 +30,7 @@ class IndexTest extends TestCase
         User::factory()->create(['created_at' => now()->subDays(10)]);
 
         Livewire::test('pages::members.index')
-            ->assertSeeInOrder([__('members/index.new_members'), '1']);
+            ->assertSeeInOrder([__('members/index.stats.members_count_week'), '1']);
     }
 
     public function test_new_members_count_excludes_users_older_than_7_days(): void
@@ -38,7 +38,7 @@ class IndexTest extends TestCase
         User::factory()->create(['created_at' => now()->subDays(8)]);
 
         Livewire::test('pages::members.index')
-            ->assertSeeInOrder([__('members/index.new_members'), '0']);
+            ->assertSeeInOrder([__('members/index.stats.members_count_week'), '0']);
     }
 
     public function test_latest_member_username_is_displayed(): void
@@ -47,13 +47,34 @@ class IndexTest extends TestCase
         $latest = User::factory()->create(['created_at' => now()->subDay()]);
 
         Livewire::test('pages::members.index')
-            ->assertSeeInOrder([__('members/index.latest_member'), $latest->username]);
+            ->assertSeeInOrder([__('members/index.stats.latest_member'), $latest->username]);
     }
 
     public function test_latest_member_shows_dash_when_no_members(): void
     {
         Livewire::test('pages::members.index')
             ->assertSee('—');
+    }
+
+    public function test_unverified_users_are_not_listed_or_counted(): void
+    {
+        $verified = User::factory()->create(['created_at' => now()->subDays(2)]);
+        $unverified = User::factory()->unverified()->create(['created_at' => now()->subDay()]);
+
+        Livewire::test('pages::members.index')
+            ->assertSet('totalMembers', 1)
+            ->assertSet('newMembersCount', 1)
+            ->assertSet('latestMember.id', $verified->id)
+            ->assertSee($verified->username)
+            ->assertDontSee($unverified->username);
+    }
+
+    public function test_active_scope_only_includes_verified_users(): void
+    {
+        $verified = User::factory()->create();
+        User::factory()->unverified()->create();
+
+        $this->assertSame([$verified->id], User::query()->active()->members()->pluck('id')->all());
     }
 
     public function test_news_user_is_not_listed_as_member(): void
