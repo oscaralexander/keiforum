@@ -31,6 +31,10 @@
         max-width: 75ch;
     }
 
+    p:has(> a > img) {
+        max-width: none;
+    }
+
     blockquote, p, ol, ul, div {
         &:not(:last-child) {
             margin-bottom: 1.25em;
