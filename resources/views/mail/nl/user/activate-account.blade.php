@@ -15,7 +15,7 @@
     </p>
     <p>
         Werkt de knop niet? Kopieer dan de volgende link en plak hem in je browser:<br />
-        <a href="{{ route('activate-account', ['token' => $user->email_verification_token]) }}">{{ route('activate-account', ['token' => $user->email_verification_token]) }}</a>
+        <a href="{{ route('activate-account', ['token' => $user->email_verification_token]) }}" style="color: #c93020;">{{ route('activate-account', ['token' => $user->email_verification_token]) }}</a>
     </p>
     <p>
         Tot snel!<br>

@@ -174,7 +174,7 @@ class WeeklyDigestTest extends TestCase
         $mail->assertSeeInHtml('src="https://keiforum.test/avatar-a.webp"', false);
         $mail->assertSeeInHtml('style="padding-right: 12px; width: 32px;"', false);
         $mail->assertSeeInHtml('height="32"', false);
-        $mail->assertSeeInHtml('style="font-weight: 600;"', false);
+        $mail->assertSeeInHtml('style="color: #c93020; font-weight: 600;"', false);
         $mail->assertSeeInHtml('Je ontvangt deze mail omdat je lid bent van Keiforum.');
         $mail->assertSeeInHtml(e($mail->unsubscribeUrl()), false);
         $this->assertSame('<'.$mail->unsubscribeUrl().'>', $mail->headers()->text['List-Unsubscribe']);

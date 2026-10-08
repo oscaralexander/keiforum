@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use App\Models\Post;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -11,13 +10,14 @@ use Illuminate\Mail\Mailables\Envelope;
 class LikeThresholdReached extends Mailable
 {
     public $count;
+
     public $post;
 
     public function __construct(Post $post, int $count)
     {
         $this->count = $count;
         $this->post = $post;
-        $this->post->loadMissing(['topic', 'topic.forum']);
+        $this->post->loadMissing(['topic', 'topic.forum', 'user']);
     }
 
     public function envelope(): Envelope
@@ -30,7 +30,7 @@ class LikeThresholdReached extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.' . app()->getLocale() . '.post.like-threshold-reached',
+            view: 'mail.'.app()->getLocale().'.post.like-threshold-reached',
         );
     }
 }

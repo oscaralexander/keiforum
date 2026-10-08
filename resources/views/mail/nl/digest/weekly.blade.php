@@ -18,7 +18,7 @@
                         <img alt="{{ $topic['username'] }}" height="32" src="{{ $topic['avatar_url'] }}" style="border-radius: 50%; display: block;" width="32">
                     </td>
                     <td>
-                        <a href="{{ $topic['url'] }}" style="font-weight: 600;">{{ $topic['title'] }}</a><br>
+                        <a href="{{ $topic['url'] }}" style="color: #c93020; font-weight: 600;">{{ $topic['title'] }}</a><br>
                         <small>{{ $topic['forum'] }} · {{ trans_choice('mail/digest.posts_count', $topic['posts_count'], ['count' => $topic['posts_count']]) }}</small>
                     </td>
                 </tr>
@@ -34,7 +34,7 @@
                         <img alt="{{ $topic['username'] }}" height="32" src="{{ $topic['avatar_url'] }}" style="border-radius: 50%; display: block;" width="32">
                     </td>
                     <td>
-                        <a href="{{ $topic['url'] }}" style="font-weight: 600;">{{ $topic['title'] }}</a><br>
+                        <a href="{{ $topic['url'] }}" style="color: #c93020; font-weight: 600;">{{ $topic['title'] }}</a><br>
                         <small>{{ $topic['forum'] }}</small>
                     </td>
                 </tr>
@@ -53,6 +53,6 @@
     <a href="{{ config('app.url') }}" target="_blank"><img alt="Keiforum" height="32" src="{{ asset('assets/img/keiforum-mail.png') }}" /></a>
     <p class="footer">
         Je ontvangt deze mail omdat je lid bent van Keiforum.
-        <a href="{{ $unsubscribeUrl }}">Afmelden voor de wekelijkse update</a>
+        <a href="{{ $unsubscribeUrl }}" style="color: #c93020;">Afmelden voor de wekelijkse update</a>
     </p>
 @endsection

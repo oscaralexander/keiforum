@@ -19,7 +19,7 @@
     </p>
     <p>
         Werkt de knop niet? Kopieer dan de volgende link en plak hem in je browser:<br />
-        <a href="{{ $resetUrl }}">{{ $resetUrl }}</a>
+        <a href="{{ $resetUrl }}" style="color: #c93020;">{{ $resetUrl }}</a>
     </p>
     <p>
         Deze link is {{ config('auth.passwords.users.expire') }} minuten geldig.

@@ -15,7 +15,7 @@
     </p>
     <p>
         Werkt de knop niet? Kopieer dan de volgende link en plak hem in je browser:<br />
-        <a href="{{ $confirmUrl }}">{{ $confirmUrl }}</a>
+        <a href="{{ $confirmUrl }}" style="color: #c93020;">{{ $confirmUrl }}</a>
     </p>
     <p>
         Deze link is {{ \App\Mail\ConfirmEmailChange::VALID_HOURS }} uur geldig.
