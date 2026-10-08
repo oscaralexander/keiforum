@@ -4,6 +4,13 @@ namespace App\Lib;
 
 class EmbedTransformer
 {
+    /**
+     * Links in posts are user-generated content: `ugc` and `nofollow` tell
+     * search engines not to pass ranking to them, `noopener` keeps the new
+     * window from accessing this one.
+     */
+    public const EXTERNAL_LINK_REL = 'nofollow ugc noopener';
+
     public function transform(string $html): string
     {
         // YouTube
@@ -40,31 +47,43 @@ class EmbedTransformer
             $html
         );
 
-        // Internal links: replace target="_blank" with wire:navigate
-        $appUrl = rtrim(config('app.url'), '/');
+        // Internal links navigate within the app, external links open in a new window
         $html = preg_replace_callback(
-            '/<a([^>]*)>/i',
-            function ($matches) use ($appUrl) {
+            '/<a\b([^>]*)>/i',
+            function ($matches) {
                 $attrs = $matches[1];
 
-                if (!preg_match('/href=["\']([^"\']*)["\']/', $attrs, $hrefMatch)) {
+                if (! preg_match('/\shref=["\']([^"\']*)["\']/i', $attrs, $hrefMatch)) {
                     return $matches[0];
                 }
 
                 $href = $hrefMatch[1];
+                $isInternal = $this->isInternalUrl($href);
 
-                if (!str_starts_with($href, $appUrl)) {
+                if (! $isInternal && ! preg_match('/^https?:\/\//i', $href)) {
                     return $matches[0];
                 }
 
-                $attrs = preg_replace('/\s*target=["\'][^"\']*["\']/', '', $attrs);
-                $attrs = preg_replace('/\s*wire:navigate/', '', $attrs);
+                $attrs = preg_replace('/\s+(?:rel|target)=["\'][^"\']*["\']|\s+wire:navigate\b/i', '', $attrs);
 
-                return '<a' . $attrs . ' wire:navigate>';
+                return $isInternal
+                    ? '<a'.$attrs.' wire:navigate>'
+                    : '<a'.$attrs.' rel="'.self::EXTERNAL_LINK_REL.'" target="_blank">';
             },
             $html
         );
 
         return $html;
+    }
+
+    /**
+     * Root-relative URLs and absolute URLs on the app's own domain.
+     */
+    protected function isInternalUrl(string $href): bool
+    {
+        $appUrl = rtrim(config('app.url'), '/');
+
+        return preg_match('/^\/(?!\/)/', $href) === 1
+            || preg_match('/^'.preg_quote($appUrl, '/').'(?:[\/?#]|$)/i', $href) === 1;
     }
 }
