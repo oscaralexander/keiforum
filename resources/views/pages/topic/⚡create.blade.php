@@ -6,6 +6,7 @@ use App\Models\Area;
 use App\Models\Forum;
 use App\Models\Post;
 use App\Models\Topic;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
@@ -37,7 +38,11 @@ new class extends Component
     #[Computed]
     public function forums()
     {
-        return Forum::query()->orderBy('position')->get();
+        return Forum::query()
+            ->orderBy('position')
+            ->get()
+            ->filter(fn (Forum $forum): bool => auth()->user()->can('createTopic', $forum))
+            ->values();
     }
 
     public function mount(?Forum $forum = null)
@@ -45,6 +50,8 @@ new class extends Component
         $this->forum = $forum;
 
         if ($this->forum) {
+            Gate::authorize('createTopic', $this->forum);
+
             $this->forum_id = $this->forum->id;
 
             if ($this->forum->is_marketplace) {
@@ -75,6 +82,7 @@ new class extends Component
     public function rules(): array
     {
         $rules = [
+            'forum_id' => ['required', Rule::in($this->forums->pluck('id'))],
             'title' => ['required', 'max:255'],
             'topicAreas' => ['nullable', 'array'],
             'topicAreas.*' => ['exists:areas,id'],
