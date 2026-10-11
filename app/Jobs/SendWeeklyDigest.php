@@ -70,7 +70,7 @@ class SendWeeklyDigest implements ShouldQueue
             ->visible()
             ->whereHas('posts', $memberPostsSince)
             ->withCount(['posts' => $memberPostsSince])
-            ->with('forum')
+            ->with(['forum', 'latestPost.user', 'user'])
             ->orderByDesc('posts_count')
             ->latest()
             ->limit(config('digest.popular_topics'))
@@ -82,7 +82,7 @@ class SendWeeklyDigest implements ShouldQueue
             ->when($newsUserId, fn (Builder $query) => $query->where('user_id', '!=', $newsUserId))
             ->whereNotIn('id', $popularTopics->pluck('id'))
             ->withCount(['posts' => $memberPostsSince])
-            ->with('forum')
+            ->with(['forum', 'latestPost.user', 'user'])
             ->latest()
             ->limit(config('digest.new_topics'))
             ->get();
@@ -100,13 +100,15 @@ class SendWeeklyDigest implements ShouldQueue
      */
     private function topicSummary(Topic $topic): array
     {
+        $latestPoster = $topic->latestPost?->user ?? $topic->user;
+
         return [
             'title' => $topic->title,
             'url' => route('topic.show', [$topic->forum, $topic, $topic->slug]),
             'forum' => $topic->forum->name,
             'posts_count' => $topic->posts_count,
-            'avatar_url' => $topic->user->emailAvatarUrl(self::AVATAR_SIZE->value),
-            'username' => $topic->user->username,
+            'avatar_url' => $latestPoster->emailAvatarUrl(self::AVATAR_SIZE->value),
+            'username' => $latestPoster->username,
         ];
     }
 }

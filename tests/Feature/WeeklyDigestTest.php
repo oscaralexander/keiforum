@@ -152,17 +152,19 @@ class WeeklyDigestTest extends TestCase
         $this->assertGreaterThan(0, $digest['new_members_count']);
     }
 
-    public function test_digest_includes_absolute_avatar_url_of_topic_starter(): void
+    public function test_digest_includes_absolute_avatar_url_of_latest_poster(): void
     {
         $withAvatar = User::factory()->create(['username' => 'metfoto', 'has_avatar' => true]);
         $withoutAvatar = User::factory()->create(['username' => 'zonderfoto', 'has_avatar' => false]);
-        $this->createActiveTopic(['title' => 'Met foto', 'user_id' => $withAvatar->id], posts: 2);
-        $this->createActiveTopic(['title' => 'Zonder foto', 'user_id' => $withoutAvatar->id]);
+        $this->createActiveTopic(['title' => 'Met foto', 'user_id' => $withoutAvatar->id], author: $withoutAvatar);
+        Post::factory()->create(['topic_id' => Topic::query()->where('title', 'Met foto')->value('id'), 'user_id' => $withAvatar->id]);
+        $this->createActiveTopic(['title' => 'Zonder foto', 'user_id' => $withAvatar->id], author: $withoutAvatar);
 
         $topics = collect((new SendWeeklyDigest)->digest(now()->subDays(7))['popular_topics'])->keyBy('title');
 
         $this->assertSame('metfoto', $topics['Met foto']['username']);
         $this->assertSame(route('img', ['src' => 'avatars/metfoto.webp', 'w' => 64, 'h' => 64, 'q' => 80, 'f' => 'jpg']), $topics['Met foto']['avatar_url']);
+        $this->assertSame('zonderfoto', $topics['Zonder foto']['username']);
         $this->assertSame(asset('assets/img/avatar/z.png'), $topics['Zonder foto']['avatar_url']);
     }
 
