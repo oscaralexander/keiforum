@@ -34,9 +34,17 @@ class SendWeeklyDigest implements ShouldQueue
             return;
         }
 
+        $position = 0;
+
         User::query()
             ->digestRecipients()
-            ->each(fn (User $user) => Mail::to($user)->queue((new WeeklyDigest($user, $digest))->onQueue('notifications')));
+            ->each(function (User $user) use ($digest, &$position): void {
+                $mail = (new WeeklyDigest($user, $digest))
+                    ->onQueue('notifications')
+                    ->delay(now()->addSeconds($position++ * config('digest.send_interval')));
+
+                Mail::to($user)->queue($mail);
+            });
     }
 
     /**

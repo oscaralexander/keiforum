@@ -69,6 +69,31 @@ class WeeklyDigestTest extends TestCase
         Mail::assertQueued(WeeklyDigest::class, fn (WeeklyDigest $mail) => $mail->hasTo($member->email));
     }
 
+    public function test_digest_mails_are_spaced_out(): void
+    {
+        $this->freezeTime();
+        config(['digest.send_interval' => 2]);
+        $this->createActiveTopics(3);
+
+        (new SendWeeklyDigest)->handle();
+
+        $delays = Mail::queued(WeeklyDigest::class)
+            ->map(fn (WeeklyDigest $mail) => (int) now()->diffInSeconds($mail->delay))
+            ->sort()
+            ->values()
+            ->all();
+
+        $this->assertSame(range(0, (count($delays) - 1) * 2, 2), $delays);
+    }
+
+    public function test_digest_mail_is_retried_with_backoff(): void
+    {
+        $mail = new WeeklyDigest(User::factory()->create(), []);
+
+        $this->assertSame(5, $mail->tries);
+        $this->assertSame([60, 300, 900, 1800], $mail->backoff());
+    }
+
     public function test_digest_skips_unsubscribed_unverified_banned_and_news_users(): void
     {
         $this->createActiveTopics(3);

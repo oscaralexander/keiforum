@@ -17,6 +17,12 @@ class WeeklyDigest extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     /**
+     * Retried with a backoff, so hitting the mail provider's rate limit
+     * doesn't make members miss their digest.
+     */
+    public int $tries = 5;
+
+    /**
      * @param  array{
      *     active_topics_count: int,
      *     new_members_count: int,
@@ -51,6 +57,14 @@ class WeeklyDigest extends Mailable implements ShouldQueue
     public function unsubscribeUrl(): string
     {
         return URL::signedRoute('digest.unsubscribe', $this->user);
+    }
+
+    /**
+     * @return list<int>
+     */
+    public function backoff(): array
+    {
+        return [60, 300, 900, 1800];
     }
 
     public function attachments(): array
