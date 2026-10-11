@@ -205,6 +205,15 @@ class WeeklyDigestTest extends TestCase
         $this->assertSame('<'.$mail->unsubscribeUrl().'>', $mail->headers()->text['List-Unsubscribe']);
     }
 
+    public function test_list_unsubscribe_header_is_not_sent_through_mailersend(): void
+    {
+        config(['mail.default' => 'mailersend']);
+
+        $mail = new WeeklyDigest(User::factory()->create(), []);
+
+        $this->assertArrayNotHasKey('List-Unsubscribe', $mail->headers()->text);
+    }
+
     public function test_unsubscribe_link_requires_valid_signature(): void
     {
         $user = User::factory()->create();

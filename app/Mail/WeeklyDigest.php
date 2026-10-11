@@ -39,10 +39,14 @@ class WeeklyDigest extends Mailable implements ShouldQueue
         );
     }
 
+    /**
+     * MailerSend rejects the List-Unsubscribe header on our plan, so it's
+     * only sent through other mailers.
+     */
     public function headers(): Headers
     {
         return new Headers(
-            text: ['List-Unsubscribe' => '<'.$this->unsubscribeUrl().'>'],
+            text: config('mail.default') === 'mailersend' ? [] : ['List-Unsubscribe' => '<'.$this->unsubscribeUrl().'>'],
         );
     }
 
