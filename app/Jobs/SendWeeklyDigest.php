@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -66,33 +67,56 @@ class SendWeeklyDigest implements ShouldQueue
             ->where('created_at', '>=', $since)
             ->when($newsUserId, fn (Builder $query) => $query->where('user_id', '!=', $newsUserId));
 
-        $popularTopics = Topic::query()
+        $digestTopics = fn () => Topic::query()
             ->visible()
-            ->whereHas('posts', $memberPostsSince)
+            ->whereRelation('forum', fn (Builder $query) => $query->whereIn('slug', config('digest.forums')))
             ->withCount(['posts' => $memberPostsSince])
-            ->with(['forum', 'latestPost.user', 'user'])
-            ->orderByDesc('posts_count')
-            ->latest()
-            ->limit(config('digest.popular_topics'))
-            ->get();
+            ->with(['forum', 'latestPost.user', 'user']);
 
-        $newTopics = Topic::query()
-            ->visible()
-            ->where('created_at', '>=', $since)
-            ->when($newsUserId, fn (Builder $query) => $query->where('user_id', '!=', $newsUserId))
-            ->whereNotIn('id', $popularTopics->pluck('id'))
-            ->withCount(['posts' => $memberPostsSince])
-            ->with(['forum', 'latestPost.user', 'user'])
-            ->latest()
-            ->limit(config('digest.new_topics'))
-            ->get();
+        $popularTopics = $this->fillFromForums(
+            $digestTopics()->whereHas('posts', $memberPostsSince)->orderByDesc('posts_count')->latest(),
+            config('digest.popular_topics'),
+        );
+
+        $newTopics = $this->fillFromForums(
+            $digestTopics()
+                ->where('created_at', '>=', $since)
+                ->when($newsUserId, fn (Builder $query) => $query->where('user_id', '!=', $newsUserId))
+                ->whereNotIn('id', $popularTopics->pluck('id'))
+                ->latest(),
+            config('digest.new_topics'),
+        );
 
         return [
-            'active_topics_count' => Topic::query()->visible()->whereHas('posts', $memberPostsSince)->count(),
+            'active_topics_count' => $digestTopics()->whereHas('posts', $memberPostsSince)->count(),
             'new_members_count' => User::query()->members()->where('created_at', '>=', $since)->count(),
             'new_topics' => $newTopics->map($this->topicSummary(...))->all(),
             'popular_topics' => $popularTopics->map($this->topicSummary(...))->all(),
         ];
+    }
+
+    /**
+     * Takes topics from the first digest forum, and only pads with the
+     * next forums when it has too few.
+     *
+     * @param  Builder<Topic>  $query
+     * @return Collection<int, Topic>
+     */
+    private function fillFromForums(Builder $query, int $limit): Collection
+    {
+        $topics = collect();
+
+        foreach (config('digest.forums') as $slug) {
+            if ($topics->count() >= $limit) {
+                break;
+            }
+
+            $topics = $topics->concat(
+                (clone $query)->whereRelation('forum', 'slug', $slug)->limit($limit - $topics->count())->get()
+            );
+        }
+
+        return $topics;
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Jobs\SendWeeklyDigest;
 use App\Mail\WeeklyDigest;
+use App\Models\Forum;
 use App\Models\Post;
 use App\Models\Topic;
 use App\Models\User;
@@ -30,9 +31,14 @@ class WeeklyDigestTest extends TestCase
         return User::query()->where('username', config('news.username'))->firstOrFail();
     }
 
+    private function forum(string $slug): Forum
+    {
+        return Forum::query()->where('slug', $slug)->first() ?? Forum::factory()->create(['slug' => $slug]);
+    }
+
     private function createActiveTopic(array $attributes = [], int $posts = 1, ?User $author = null): Topic
     {
-        $topic = Topic::factory()->create($attributes);
+        $topic = Topic::factory()->create(['forum_id' => $this->forum('algemeen')->id, ...$attributes]);
 
         Post::factory()->count($posts)->create([
             'topic_id' => $topic->id,
@@ -166,6 +172,35 @@ class WeeklyDigestTest extends TestCase
         $this->assertSame(route('img', ['src' => 'avatars/metfoto.webp', 'w' => 64, 'h' => 64, 'q' => 80, 'f' => 'jpg']), $topics['Met foto']['avatar_url']);
         $this->assertSame('zonderfoto', $topics['Zonder foto']['username']);
         $this->assertSame(asset('assets/img/avatar/z.png'), $topics['Zonder foto']['avatar_url']);
+    }
+
+    public function test_digest_leaves_out_hulp_en_handel(): void
+    {
+        $this->createActiveTopic(['title' => 'Algemeen onderwerp']);
+        $this->createActiveTopic(['title' => 'Te koop', 'forum_id' => $this->forum('hulp-en-handel')->id], posts: 5);
+
+        $digest = (new SendWeeklyDigest)->digest(now()->subDays(7));
+
+        $this->assertSame(['Algemeen onderwerp'], array_column($digest['popular_topics'], 'title'));
+        $this->assertSame([], $digest['new_topics']);
+        $this->assertSame(1, $digest['active_topics_count']);
+    }
+
+    public function test_news_topics_only_pad_when_algemeen_has_too_few(): void
+    {
+        config(['digest.popular_topics' => 2]);
+        $this->createActiveTopic(['title' => 'Algemeen 1']);
+        $this->createActiveTopic(['title' => 'Nieuws druk', 'forum_id' => $this->forum('nieuws')->id], posts: 5);
+
+        $padded = (new SendWeeklyDigest)->digest(now()->subDays(7));
+
+        $this->assertSame(['Algemeen 1', 'Nieuws druk'], array_column($padded['popular_topics'], 'title'));
+
+        $this->createActiveTopic(['title' => 'Algemeen 2']);
+
+        $full = (new SendWeeklyDigest)->digest(now()->subDays(7));
+
+        $this->assertEqualsCanonicalizing(['Algemeen 1', 'Algemeen 2'], array_column($full['popular_topics'], 'title'));
     }
 
     public function test_new_topics_exclude_popular_topics(): void
