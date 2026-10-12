@@ -2,9 +2,14 @@
 
 return [
     'title' => 'Leden',
-    'stats' => [
-        'members_count' => 'Aantal leden',
-        'members_count_week' => 'Laatste 7 dagen',
-        'latest_member' => 'Nieuwste lid',
+    'all_members' => 'Alle leden (:count)',
+    'new_members' => [
+        'title' => 'Nieuwste leden',
+        'empty' => 'Er zijn de afgelopen 7 dagen geen nieuwe leden bijgekomen.',
+    ],
+    'top_posters' => [
+        'title' => 'Meeste berichten',
+        'posts_count' => ':count bericht|:count berichten',
+        'empty' => 'Er zijn nog geen berichten geplaatst.',
     ],
 ];

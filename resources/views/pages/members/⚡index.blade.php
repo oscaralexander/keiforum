@@ -25,23 +25,29 @@ new class extends Component
     }
 
     #[Computed]
-    public function newMembersCount(): int
+    public function newMembers(): Collection
     {
         return User::query()
             ->active()
             ->members()
             ->where('created_at', '>=', now()->subDays(7))
-            ->count();
+            ->latest()
+            ->get();
     }
 
     #[Computed]
-    public function latestMember(): ?User
+    public function topPosters(): Collection
     {
         return User::query()
             ->active()
             ->members()
-            ->latest()
-            ->first();
+            ->where('username', '!=', 'keiforum')
+            ->has('posts')
+            ->withCount('posts')
+            ->orderByDesc('posts_count')
+            ->orderBy('username')
+            ->limit(10)
+            ->get();
     }
 
     public function render()
@@ -56,32 +62,41 @@ new class extends Component
     <x-header hide-path :title="__('members/index.title')" />
     <div class="panel panel--padded">
         <div class="flex flex-col flex-gap-l">
-            <div class="stats">
-                <div class="stats__stat">
-                    <h4 class="stats__stat-title">@lang('members/index.stats.members_count')</h4>
-                    <p class="stats__stat-value">{{ $this->totalMembers }}</p>
-                </div>
-                <div class="stats__stat">
-                    <h4 class="stats__stat-title">@lang('members/index.stats.members_count_week')</h4>
-                    <p class="stats__stat-value">+{{ $this->newMembersCount }}</p>
-                </div>
-                <div class="stats__stat">
-                    <h4 class="stats__stat-title">@lang('members/index.stats.latest_member')</h4>
-                    <p class="stats__stat-value">
-                        @if ($this->latestMember)
-                            <a href="{{ route('member.show', $this->latestMember) }}">{{ $this->latestMember->username }}</a>
-                        @else
-                            <span class="text-color-lc">—</span>
-                        @endif
-                    </p>
-                </div>
+            <div class="memberLists">
+                <section class="memberLists__list">
+                    <h3 class="memberLists__title">@lang('members/index.new_members.title')</h3>
+                    @forelse ($this->newMembers as $member)
+                        <div class="member" wire:key="new-member-{{ $member->id }}">
+                            <x-avatar :user="$member" />
+                            <div class="member__content">
+                                <a class="member__name" href="{{ route('member.show', $member) }}">{{ $member->username }}</a>
+                                <ul class="meta">
+                                    <li class="meta__item">{{ $member->created_at->translatedFormat('j F Y') }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="memberLists__empty text-color-lc">@lang('members/index.new_members.empty')</p>
+                    @endforelse
+                </section>
+                <section class="memberLists__list">
+                    <h3 class="memberLists__title">@lang('members/index.top_posters.title')</h3>
+                    @forelse ($this->topPosters as $member)
+                        <div class="member" wire:key="top-poster-{{ $member->id }}">
+                            <x-avatar :user="$member" />
+                            <div class="member__content">
+                                <a class="member__name" href="{{ route('member.show', $member) }}">{{ $member->username }}</a>
+                                <ul class="meta">
+                                    <li class="meta__item">{{ trans_choice('members/index.top_posters.posts_count', $member->posts_count, ['count' => $member->posts_count]) }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="memberLists__empty text-color-lc">@lang('members/index.top_posters.empty')</p>
+                    @endforelse
+                </section>
             </div>
-            <div class="formatted">
-                <p>
-                    Keiforum is nog volop in ontwikkeling en ook dit onderdeel is nog lang niet klaar,
-                    maar leuk dat je al even komt kijken!
-                </p>
-            </div>
+            <h3>@lang('members/index.all_members', ['count' => $this->totalMembers])</h3>
             <div class="panel__outset panel__outset--padded">
                 <div class="members">
                     @foreach ($this->members as $member)
