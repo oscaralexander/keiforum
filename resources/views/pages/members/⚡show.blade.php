@@ -92,7 +92,7 @@ new class extends Component
                     @auth
                         @if (!empty($user->bio))
                             <div class="formatted profile__bio">
-                                <p>{{ nl2br($user->bio) }}</p>
+                                <p>{!! $user->bio_html !!}</p>
                             </div>
                         @endif
                     @endauth

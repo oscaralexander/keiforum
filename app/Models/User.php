@@ -146,6 +146,45 @@ class User extends Authenticatable
         );
     }
 
+    /**
+     * Top-level domains that bare domains (without scheme or www.) in a bio
+     * must end with to be turned into links.
+     */
+    protected const BIO_LINK_TLDS = ['nl', 'be', 'com', 'org', 'net', 'eu', 'de', 'info', 'nu', 'io', 'app', 'dev', 'tv', 'me'];
+
+    /**
+     * The escaped bio with line breaks and URLs turned into links, showing
+     * the URLs without their scheme and www.
+     */
+    public function bioHtml(): Attribute
+    {
+        return new Attribute(
+            get: function (): string {
+                $end = '[^\s<>"\'.,;:!?)]';
+                $tlds = implode('|', self::BIO_LINK_TLDS);
+                $pattern = '/(?<![\w@.\/-])((?:https?:\/\/|www\.)[^\s<>"\']*'.$end
+                    .'|(?:[a-z0-9-]+\.)+(?:'.$tlds.')(?![\w-])(?:\/(?:[^\s<>"\']*'.$end.')?)?)/i';
+
+                $parts = preg_split($pattern, (string) $this->bio, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+                $html = collect($parts)
+                    ->map(function (string $part, int $index): string {
+                        if ($index % 2 === 0) {
+                            return e($part);
+                        }
+
+                        $url = preg_match('/^https?:\/\//i', $part) ? $part : 'https://'.$part;
+                        $label = rtrim(preg_replace('/^(https?:\/\/)?(www\.)?/i', '', $part), '/');
+
+                        return '<a href="'.e($url).'" rel="nofollow noopener ugc" target="_blank">'.e($label).'</a>';
+                    })
+                    ->implode('');
+
+                return nl2br($html);
+            },
+        );
+    }
+
     public function emailName(): Attribute
     {
         return new Attribute(
