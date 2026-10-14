@@ -3,6 +3,7 @@
 namespace Tests\Feature\Pages\Topic;
 
 use App\Models\Forum;
+use App\Models\Like;
 use App\Models\Post;
 use App\Models\Topic;
 use App\Models\User;
@@ -177,5 +178,24 @@ class ShowTest extends TestCase
 
         $this->get(route('topic.show', [$forum, $topic, $topic->slug]))
             ->assertSee('<meta content="Hallo Amersfoort" property="og:description">', false);
+    }
+
+    public function test_schema_includes_like_count_of_first_post(): void
+    {
+        [, $topic, $post] = $this->createTopicWithPost();
+        Like::create(['post_id' => $post->id, 'user_id' => User::factory()->create()->id]);
+
+        $schema = Livewire::test('pages::topic.show', ['topic' => $topic])->instance()->schema;
+
+        $this->assertSame(1, $schema['interactionStatistic'][1]['userInteractionCount']);
+    }
+
+    public function test_schema_like_count_is_zero_without_likes(): void
+    {
+        [, $topic] = $this->createTopicWithPost();
+
+        $schema = Livewire::test('pages::topic.show', ['topic' => $topic])->instance()->schema;
+
+        $this->assertSame(0, $schema['interactionStatistic'][1]['userInteractionCount']);
     }
 }

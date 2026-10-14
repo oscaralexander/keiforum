@@ -54,6 +54,7 @@ new class extends Component
     {
         $this->topic->loadCount(['posts']);
         $this->topic->loadMissing(['areas', 'firstPost', 'forum', 'poll']);
+        $this->topic->firstPost?->loadCount('likes');
 
         if ($postId = request()->query('post')) {
             $this->paginateToPost((int) $postId);
