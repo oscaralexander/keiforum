@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <meta content="width=device-width,initial-scale=1.0,viewport-fit=cover" name="viewport">
         <meta content="#c93020" name="theme-color">
+        <link href="{{ canonical_url() }}" rel="canonical">
         @stack('meta')
         <title>{{ $title ?? '' }} - {{ config('app.name') }}</title>
         <link href="/favicon.svg" rel="icon" sizes="any" type="image/svg+xml">
@@ -15,7 +16,7 @@
         <meta property="og:site_name" content="{{ config('app.name') }}">
         <meta property="og:title" content="{{ $title ?? config('app.name') }}">
         <meta property="og:type" content="website">
-        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:url" content="{{ canonical_url() }}">
         @stack('schema')
         @stack('scripts.head')
         @vite(['resources/css/app.scss', 'resources/js/app.js'])

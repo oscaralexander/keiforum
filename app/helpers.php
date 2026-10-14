@@ -87,3 +87,16 @@ if (! function_exists('versioned_asset')) {
         return $hashes[$path] ? asset($path).'?v='.$hashes[$path] : asset($path);
     }
 }
+
+if (! function_exists('canonical_url')) {
+    /**
+     * The current URL without its query string, keeping only the page
+     * number of paginated pages beyond the first.
+     */
+    function canonical_url(?int $page = null): string
+    {
+        $page ??= (int) request()->query('p');
+
+        return $page > 1 ? url()->current().'?p='.$page : url()->current();
+    }
+}

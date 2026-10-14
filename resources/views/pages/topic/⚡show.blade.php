@@ -96,7 +96,10 @@ new class extends Component
     {
         return $this->view()
             ->title($this->topic->title)
-            ->layoutData(['ogImage' => app(OpenGraphImage::class)->url($this->topic)]);
+            ->layoutData([
+                'canonical' => canonical_url($this->posts->currentPage()),
+                'ogImage' => app(OpenGraphImage::class)->url($this->topic),
+            ]);
     }
 
     public function rules()
