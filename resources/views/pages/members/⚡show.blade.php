@@ -45,6 +45,12 @@ new class extends Component
 };
 ?>
 
+@push('meta')
+    @if ($user->posts_count === 0)
+        <meta content="noindex" name="robots">
+    @endif
+@endpush
+
 <div>
     <x-header
         :path="[['label' => __('members/index.title'), 'href' => route('members')]]"

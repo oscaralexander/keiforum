@@ -55,4 +55,33 @@ class ShowTest extends TestCase
             ->assertSee(__('members/show.no_topics'))
             ->assertDontSee('profile__topics');
     }
+
+    public function test_profile_without_posts_is_not_indexed(): void
+    {
+        $user = User::factory()->create();
+
+        $this->get(route('member.show', $user))
+            ->assertOk()
+            ->assertSee('<meta content="noindex" name="robots">', false);
+    }
+
+    public function test_profile_with_only_deleted_posts_is_not_indexed(): void
+    {
+        $user = User::factory()->create();
+        Post::factory()->create(['user_id' => $user->id])->delete();
+
+        $this->get(route('member.show', $user))
+            ->assertOk()
+            ->assertSee('<meta content="noindex" name="robots">', false);
+    }
+
+    public function test_profile_with_posts_is_indexed(): void
+    {
+        $user = User::factory()->create();
+        Post::factory()->create(['user_id' => $user->id]);
+
+        $this->get(route('member.show', $user))
+            ->assertOk()
+            ->assertDontSee('name="robots"', false);
+    }
 }
