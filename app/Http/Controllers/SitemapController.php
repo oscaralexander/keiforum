@@ -12,8 +12,8 @@ class SitemapController extends Controller
     public function __invoke(): Response
     {
         $forums = Forum::query()->orderBy('position')->withCount(['topics' => fn ($query) => $query->visible()])->get();
-        $topics = Topic::query()->visible()->withCount('posts')->with('forum')->get();
-        $users = User::query()->select('username')->get();
+        $topics = Topic::query()->visible()->withCount('posts')->withMax('posts', 'created_at')->with('forum')->get();
+        $users = User::query()->active()->members()->has('posts')->select('username')->get();
 
         return response()
             ->view('sitemap', compact('forums', 'topics', 'users'))

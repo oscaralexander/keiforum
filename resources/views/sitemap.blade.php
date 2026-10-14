@@ -36,15 +36,20 @@
 
     {{-- Topic pages (paginated) --}}
     @foreach ($topics as $topic)
-        @php $topicPages = max(1, (int) ceil($topic->posts_count / \App\Models\Post::PAGINATE_COUNT)); @endphp
+        @php
+            $topicPages = max(1, (int) ceil($topic->posts_count / \App\Models\Post::PAGINATE_COUNT));
+            $topicLastmod = \Illuminate\Support\Carbon::parse($topic->posts_max_created_at ?? $topic->updated_at)->toAtomString();
+        @endphp
         <url>
             <loc>{{ route('topic.show', [$topic->forum, $topic, $topic->slug]) }}</loc>
+            <lastmod>{{ $topicLastmod }}</lastmod>
             <changefreq>weekly</changefreq>
             <priority>0.6</priority>
         </url>
         @for ($page = 2; $page <= $topicPages; $page++)
             <url>
                 <loc>{{ route('topic.show', [$topic->forum, $topic, $topic->slug]) }}?p={{ $page }}</loc>
+                <lastmod>{{ $topicLastmod }}</lastmod>
                 <changefreq>weekly</changefreq>
                 <priority>0.5</priority>
             </url>
