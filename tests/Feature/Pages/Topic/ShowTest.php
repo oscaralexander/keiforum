@@ -198,4 +198,25 @@ class ShowTest extends TestCase
 
         $this->assertSame(0, $schema['interactionStatistic'][1]['userInteractionCount']);
     }
+
+    public function test_topic_show_page_renders_a_single_meta_description(): void
+    {
+        [$forum, $topic, $post] = $this->createTopicWithPost();
+        $post->update(['body' => '<p>Hallo Amersfoort</p>']);
+
+        $html = $this->get(route('topic.show', [$forum, $topic, $topic->slug]))->getContent();
+
+        $this->assertSame(1, substr_count($html, 'name="description"'));
+        $this->assertSame(1, substr_count($html, 'property="og:description"'));
+        $this->assertStringContainsString('<meta content="Hallo Amersfoort" name="description">', $html);
+    }
+
+    public function test_topic_without_description_falls_back_to_site_description(): void
+    {
+        $forum = Forum::factory()->create();
+        $topic = Topic::factory()->create(['forum_id' => $forum->id]);
+
+        $this->get(route('topic.show', [$forum, $topic, $topic->slug]))
+            ->assertSee('<meta content="'.e(__('app.description')).'" name="description">', false);
+    }
 }

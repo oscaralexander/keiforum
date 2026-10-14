@@ -99,6 +99,7 @@ new class extends Component
             ->title($this->topic->title)
             ->layoutData([
                 'canonical' => canonical_url($this->posts->currentPage()),
+                'description' => $this->topic->description ?: null,
                 'ogImage' => app(OpenGraphImage::class)->url($this->topic),
             ]);
     }
@@ -230,8 +231,6 @@ new class extends Component
     @if (!$topic->is_visible)
         <meta content="noindex" name="robots">
     @endif
-    <meta content="{{ $topic->description }}" name="description">
-    <meta content="{{ $topic->description }}" property="og:description">
     @if ($this->posts->hasPages())
         @if (!$this->posts->onFirstPage())
             <link href="{{ $this->posts->previousPageUrl() }}" rel="prev">

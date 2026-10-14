@@ -16,8 +16,8 @@
         <link href="{{ asset('google-touch-icon.png') }}" rel="google-touch-icon" sizes="180x180">
         <link href="{{ $canonical ?? canonical_url() }}" rel="canonical">
         @stack('meta')
-        <meta content="@lang('app.description')" name="description">
-        <meta content="@lang('app.description')" property="og:description">
+        <meta content="{{ $description ?? __('app.description') }}" name="description">
+        <meta content="{{ $description ?? __('app.description') }}" property="og:description">
         @if (isset($ogImage))
             <meta content="{{ $ogImage }}" property="og:image">
             <meta content="{{ \App\Lib\OpenGraphImage::WIDTH }}" property="og:image:width">
