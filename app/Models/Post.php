@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Lib\EmbedTransformer;
+use App\Lib\HtmlSanitizer;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -34,7 +35,7 @@ class Post extends Model
 
     public function bodyPlainText(): Attribute
     {
-        $bodyPlainText = preg_replace('/<\/([ol|p|ul])>/', "<$1>\n\n", $this->body);
+        $bodyPlainText = preg_replace('/<\/([ol|p|ul])>/', "<$1>\n\n", $this->body_sanitized);
         $bodyPlainText = trim(strip_tags($bodyPlainText));
 
         return new Attribute(
@@ -42,10 +43,21 @@ class Post extends Model
         );
     }
 
+    /**
+     * The body reduced to the tags and attributes the editor produces, so
+     * HTML sent in a tampered request is never rendered.
+     */
+    public function bodySanitized(): Attribute
+    {
+        return new Attribute(
+            get: fn () => (new HtmlSanitizer)->sanitize((string) $this->body),
+        );
+    }
+
     public function bodyTransformed(): Attribute
     {
         return new Attribute(
-            get: fn () => (new EmbedTransformer)->transform($this->body),
+            get: fn () => (new EmbedTransformer)->transform($this->bodySanitized),
         );
     }
 

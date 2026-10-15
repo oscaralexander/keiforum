@@ -133,7 +133,7 @@ new class extends Component
     public function mount()
     {
         $this->post->loadMissing('likes');
-        $this->body = $this->post->body;
+        $this->body = $this->post->body_sanitized;
         $this->isLiked = $this->post->likes->contains('user_id', auth()->id());
     }
 

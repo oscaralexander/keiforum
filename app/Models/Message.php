@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Lib\EmbedTransformer;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,25 +19,25 @@ class Message extends Model
 
     public function bodyPlainText(): Attribute
     {
-        $body = trim(strip_tags($this->body_transformed));
+        $body = html_entity_decode(strip_tags($this->body_transformed), ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
         return new Attribute(
-            get: fn () => trim(strip_tags($body)),
+            get: fn () => trim($body),
         );
     }
 
     public function bodyTransformed(): Attribute
     {
         $body = preg_replace(
-            '/(https?:\/\/[^\s<]+)/i',
+            '/(https?:\/\/(?:(?!&quot;|&#039;)[^\s<])+)/i',
             '<a href="$1" rel="nofollow" target="_blank">$1</a>',
-            $this->body
+            e($this->body)
         );
         $body = preg_replace('/\*([^\r\n*]+)\*/', '<b>$1</b>', $body);
         $body = preg_replace('/\_([^\r\n*]+)\_/', '<i>$1</i>', $body);
         $body = nl2br($body);
-        $body = '<p>' . $body . '</p>';
-        
+        $body = '<p>'.$body.'</p>';
+
         return new Attribute(
             get: fn () => $body,
         );
@@ -47,7 +46,6 @@ class Message extends Model
     /**
      * Relationships
      */
-
     public function conversation(): BelongsTo
     {
         return $this->belongsTo(Conversation::class);

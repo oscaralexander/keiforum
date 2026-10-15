@@ -121,7 +121,7 @@ class Topic extends Model
     {
         return new Attribute(
             get: function (): string {
-                $text = preg_replace('/<\/(?:p|li|ol|ul|h\d|blockquote)>|<br\s*\/?>/i', '$0 ', $this->firstPost?->body ?? '');
+                $text = preg_replace('/<\/(?:p|li|ol|ul|h\d|blockquote)>|<br\s*\/?>/i', '$0 ', $this->firstPost?->body_sanitized ?? '');
                 $text = html_entity_decode(strip_tags($text), ENT_QUOTES | ENT_HTML5);
                 $text = preg_replace('/\b(?:https?:\/\/|www\.)\S+/i', '', $text);
 
