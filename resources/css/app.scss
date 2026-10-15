@@ -7,8 +7,10 @@
 
 @use './global';
 
+@use './components/activity';
 @use './components/alert';
 @use './components/area-list';
+@use './components/autocomplete';
 @use './components/avatar';
 @use './components/avatar-list';
 @use './components/btn';

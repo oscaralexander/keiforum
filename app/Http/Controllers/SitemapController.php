@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\Forum;
 use App\Models\Topic;
 use App\Models\User;
@@ -13,10 +14,11 @@ class SitemapController extends Controller
     {
         $forums = Forum::query()->orderBy('position')->withCount(['topics' => fn ($query) => $query->visible()])->get();
         $topics = Topic::query()->visible()->withCount('posts')->withMax('posts', 'created_at')->with('forum')->get();
+        $activities = Activity::query()->published()->upcoming()->with('user')->get();
         $users = User::query()->active()->members()->has('posts')->select('username')->get();
 
         return response()
-            ->view('sitemap', compact('forums', 'topics', 'users'))
+            ->view('sitemap', compact('activities', 'forums', 'topics', 'users'))
             ->header('Content-Type', 'application/xml');
     }
 }

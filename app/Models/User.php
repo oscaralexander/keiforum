@@ -241,6 +241,11 @@ class User extends Authenticatable
     /**
      * Relationships
      */
+    public function activities(): HasMany
+    {
+        return $this->hasMany(Activity::class);
+    }
+
     public function area(): BelongsTo
     {
         return $this->belongsTo(Area::class);

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Activity;
 use App\Models\Forum;
 use App\Models\Post;
 use App\Models\Topic;
@@ -125,5 +126,19 @@ class SitemapControllerTest extends TestCase
     public function test_robots_txt_references_sitemap(): void
     {
         $this->assertStringContainsString('Sitemap: https://keiforum.nl/sitemap.xml', file_get_contents(public_path('robots.txt')));
+    }
+
+    public function test_sitemap_contains_upcoming_published_activities_only(): void
+    {
+        $upcoming = Activity::factory()->create();
+        $past = Activity::factory()->past()->create();
+        $unpublished = Activity::factory()->unpublished()->create();
+
+        $response = $this->get('/sitemap.xml');
+
+        $response->assertOk();
+        $response->assertSee($upcoming->url(), false);
+        $response->assertDontSee($past->url(), false);
+        $response->assertDontSee($unpublished->url(), false);
     }
 }

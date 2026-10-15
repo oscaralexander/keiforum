@@ -27,6 +27,7 @@
         width: 1rem;
     }
     
+    &.is-active,
     &:has(input:checked) {
         background: rgba(var(--color-1-rgb), .1);
         border-color: rgba(var(--color-1-rgb), .25);

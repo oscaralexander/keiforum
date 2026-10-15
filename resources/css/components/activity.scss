@@ -1,0 +1,223 @@
+@use '@css/mixins' as *;
+
+.activityPoster {
+    align-items: center;
+    aspect-ratio: 210 / 297;
+    background: var(--color-bg-tint);
+    border: 1px solid var(--color-border-lc);
+    border-radius: var(--borderRadius-m);
+    color: var(--color-text-placeholder);
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    width: 100%;
+
+    &__img {
+        display: block;
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .icon {
+        height: 2rem;
+        width: 2rem;
+    }
+}
+
+.activityListItem {
+    align-items: flex-start;
+    display: flex;
+    gap: var(--size-m);
+
+    &__poster {
+        flex: 0 0 4.5rem;
+    }
+
+    &__content {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+    }
+
+    &__category {
+        color: var(--color-1);
+        font-size: var(--fontSize-xs);
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    &__title {
+        font-size: var(--fontSize-l);
+
+        a {
+            color: var(--color-text-hc);
+            text-decoration: none;
+        }
+    }
+
+    @include screen-min(m) {
+        &__poster {
+            flex-basis: 6rem;
+        }
+    }
+}
+
+.agendaFilters {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-m);
+
+    &__categories {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--size-s);
+
+        .chip {
+            padding: 0 1rem;
+            text-decoration: none;
+        }
+    }
+
+    @include screen-min(m) {
+        align-items: center;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+.agendaDay {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-m);
+
+    &__title {
+        border-bottom: 1px solid var(--color-border-lc);
+        padding-bottom: var(--size-s);
+    }
+
+    &__activities {
+        display: flex;
+        flex-direction: column;
+        gap: var(--size-l);
+    }
+}
+
+.activity {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-xl);
+
+    &__poster {
+        max-width: 24rem;
+    }
+
+    &__main {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: var(--size-l);
+        min-width: 0;
+    }
+
+    &__details {
+        display: flex;
+        flex-direction: column;
+        gap: var(--size-s);
+    }
+
+    &__detail {
+        align-items: flex-start;
+        display: flex;
+        gap: var(--size-s);
+
+        dt {
+            color: var(--color-text-lc);
+            display: flex;
+            padding-top: 2px;
+
+            .icon {
+                height: 1.25rem;
+                width: 1.25rem;
+            }
+        }
+
+        dd {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    &__address {
+        color: var(--color-text-lc);
+        font-size: var(--fontSize-s);
+    }
+
+    &__attendance {
+        border-bottom: 1px solid var(--color-border-lc);
+        border-top: 1px solid var(--color-border-lc);
+        display: flex;
+        flex-direction: column;
+        gap: var(--size-s);
+        padding: var(--size-m) 0;
+    }
+
+    &__attendanceButtons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--size-s);
+    }
+
+    &__attendees {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--size-xs);
+    }
+
+    @include screen-min(m) {
+        flex-direction: row;
+
+        &__poster {
+            flex: 0 0 18rem;
+        }
+    }
+}
+
+.activityForm {
+    display: grid;
+    gap: var(--size-xl);
+    grid-template-columns: minmax(0, 1fr);
+
+    &__poster {
+        max-width: 16rem;
+
+        .activityPoster {
+            margin-bottom: var(--size-s);
+        }
+    }
+
+    &__fields {
+        min-width: 0;
+    }
+
+    &__row {
+        display: grid;
+        gap: var(--size-m);
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include screen-min(m) {
+        align-items: start;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+
+        &__poster {
+            max-width: none;
+        }
+
+        &__fields {
+            grid-column: span 2;
+        }
+    }
+}

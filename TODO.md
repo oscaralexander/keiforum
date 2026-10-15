@@ -23,7 +23,44 @@ Gideon linkt onder elk artikel naar `keiforum.nl/praat-mee/{artikel-id}`.
 - [ ] Afspraken met Gideon op schrift (titels, intro, afbeeldingen)
 - [ ] Gideon de link laten plaatsen onder elk artikel
 
+## Agenda (branch `agenda`)
+
+Self-service agenda waarop bars, theaters en andere locaties hun eigen activiteiten plaatsen. Elke venue heeft een eigen account; plaatsen gaat geld kosten via Stripe.
+
+- [x] Activiteiten met titel, beschrijving, categorie, datum en tijd, locatie, prijs en poster (A4)
+- [x] Overzicht per dag, per categorie (`/agenda/club`), per venue (`/agenda/@venue`) en beide
+- [x] Detailpagina (`/agenda/@venue/2026-10-14/slug`) met gestructureerde data voor Google
+- [x] "Ik ben erbij" en "Ik ga misschien"
+- [x] Activiteiten toevoegen (`/agenda/nieuw`)
+- [x] Komende activiteiten in de sitemap
+- [x] Places-autocomplete via `GOOGLE_API_KEY` (lokaal getest)
+- [ ] `GOOGLE_API_KEY` op productie: Maps JavaScript API + Places API (New) aan en `keiforum.nl` toegestaan
+- [ ] Lokaal in de browser testen, ook op mobiel en met Places-autocomplete
+- [ ] Activiteiten bewerken en verwijderen (policy bestaat al)
+- [ ] Seeder met voorbeeldactiviteiten
+- [ ] Stripe: prijsmodel bepalen (per activiteit, bundel of abonnement)
+- [ ] Stripe: Cashier of Checkout kiezen en de dependency toevoegen
+- [ ] Stripe: activiteit pas publiceren na betaling (`published_at` vullen via webhook)
+- [ ] Stripe: bevestigingsmail en factuur naar de venue
+- [ ] Overzicht "Mijn activiteiten" voor venues
+- [ ] Venueprofiel: naam, logo en adres bij het account (nu alleen gebruikersnaam)
+- [ ] Moderatie: activiteiten kunnen melden en door een admin laten verwijderen
+- [ ] Agenda opnemen in de wekelijkse e-mailsamenvatting
+- [ ] Agenda op de homepage tonen (bijv. "Vandaag en morgen")
+- [ ] Oude posters opruimen van afgelopen of verwijderde activiteiten
+- [ ] Migraties draaien op productie bij de deploy
+
+## Search Console
+
+- [ ] Na deploy: "Oplossing valideren" bij "Dubbele pagina zonder door de gebruiker geselecteerde canonieke versie"
+- [ ] Na deploy: "Oplossing valideren" bij de `userInteractionCount`-melding (Discussieforum)
+- [ ] Na deploy: sitemap opnieuw indienen
+- [ ] Over een paar weken: aantal niet-geïndexeerde pagina's opnieuw bekijken
+
 ## Bouwen
+
+- [x] **Beveiliging:** post bodies saniteren met `HtmlSanitizer` en berichten in gesprekken escapen (stored XSS)
+- [ ] De 28 al falende tests repareren (o.a. gesprekken, image proxy, gebiedspagina's)
 
 - [x] E-mailmelding bij een reactie op je topic of een @vermelding (bestond al; nu opt-out)
 - [x] Wekelijkse e-mailsamenvatting (populairste en nieuwe topics; nog zonder agenda)
