@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class SendWeeklyDigest implements ShouldQueue
@@ -29,12 +28,6 @@ class SendWeeklyDigest implements ShouldQueue
     {
         $digest = $this->digest(now()->subDays(config('digest.days')));
 
-        if ($digest['active_topics_count'] < config('digest.min_active_topics')) {
-            Log::info('Weekly digest skipped: too little activity.', ['active_topics' => $digest['active_topics_count']]);
-
-            return;
-        }
-
         $position = 0;
 
         User::query()
@@ -50,7 +43,8 @@ class SendWeeklyDigest implements ShouldQueue
 
     /**
      * Posts by the news account don't count as activity: news topics only
-     * count once a member replied.
+     * count once a member replied. In a week without activity, the popular
+     * topics are those a member most recently replied to.
      *
      * @return array{
      *     active_topics_count: int,
@@ -63,9 +57,10 @@ class SendWeeklyDigest implements ShouldQueue
     {
         $newsUserId = User::query()->where('username', config('news.username'))->value('id');
 
-        $memberPostsSince = fn (Builder $query) => $query
-            ->where('created_at', '>=', $since)
+        $memberPosts = fn (Builder $query) => $query
             ->when($newsUserId, fn (Builder $query) => $query->where('user_id', '!=', $newsUserId));
+
+        $memberPostsSince = fn (Builder $query) => $memberPosts($query)->where('created_at', '>=', $since);
 
         $digestTopics = fn () => Topic::query()
             ->visible()
@@ -77,6 +72,16 @@ class SendWeeklyDigest implements ShouldQueue
             $digestTopics()->whereHas('posts', $memberPostsSince)->orderByDesc('posts_count')->latest(),
             config('digest.popular_topics'),
         );
+
+        if ($popularTopics->isEmpty()) {
+            $popularTopics = $this->fillFromForums(
+                $digestTopics()
+                    ->whereHas('posts', $memberPosts)
+                    ->withMax(['posts as latest_member_post_at' => $memberPosts], 'created_at')
+                    ->orderByDesc('latest_member_post_at'),
+                config('digest.popular_topics'),
+            );
+        }
 
         $newTopics = $this->fillFromForums(
             $digestTopics()

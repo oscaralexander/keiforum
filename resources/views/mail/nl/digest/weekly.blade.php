@@ -10,7 +10,7 @@
         Benieuwd waar Amersfoort het deze week over had? Hier is een overzicht.
     </p>
     @if ($digest['popular_topics'])
-        <h2>Populair deze week</h2>
+        <h2>{{ $digest['active_topics_count'] > 0 ? 'Populair deze week' : 'Laatste reacties' }}</h2>
         <table class="topics" role="presentation">
             @foreach ($digest['popular_topics'] as $topic)
                 <tr>
@@ -19,7 +19,7 @@
                     </td>
                     <td>
                         <a href="{{ $topic['url'] }}" style="color: #c93020; font-weight: 600;">{{ $topic['title'] }}</a><br>
-                        <small>{{ $topic['forum'] }} · {{ trans_choice('mail/digest.posts_count', $topic['posts_count'], ['count' => $topic['posts_count']]) }}</small>
+                        <small>{{ $topic['forum'] }}@if ($topic['posts_count'] > 0) · {{ trans_choice('mail/digest.posts_count', $topic['posts_count'], ['count' => $topic['posts_count']]) }}@endif</small>
                     </td>
                 </tr>
             @endforeach

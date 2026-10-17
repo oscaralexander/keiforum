@@ -55,14 +55,13 @@ class WeeklyDigestTest extends TestCase
         }
     }
 
-    public function test_digest_is_not_sent_with_too_little_activity(): void
+    public function test_digest_is_sent_without_activity(): void
     {
-        $this->createActiveTopics(2);
-        User::factory()->create();
+        $member = User::factory()->create();
 
         (new SendWeeklyDigest)->handle();
 
-        Mail::assertNothingQueued();
+        Mail::assertQueued(WeeklyDigest::class, fn (WeeklyDigest $mail) => $mail->hasTo($member->email));
     }
 
     public function test_digest_is_sent_to_subscribed_members(): void
@@ -122,9 +121,9 @@ class WeeklyDigestTest extends TestCase
         $this->createActiveTopics(2);
         $this->createActiveTopic(['user_id' => $this->newsUser()->id], author: $this->newsUser());
 
-        (new SendWeeklyDigest)->handle();
+        $digest = (new SendWeeklyDigest)->digest(now()->subDays(7));
 
-        Mail::assertNothingQueued();
+        $this->assertSame(2, $digest['active_topics_count']);
     }
 
     public function test_hidden_topics_and_old_posts_do_not_count_as_activity(): void
@@ -133,9 +132,9 @@ class WeeklyDigestTest extends TestCase
         $this->createActiveTopic(['is_visible' => false]);
         Post::factory()->create(['created_at' => now()->subDays(8)]);
 
-        (new SendWeeklyDigest)->handle();
+        $digest = (new SendWeeklyDigest)->digest(now()->subDays(7));
 
-        Mail::assertNothingQueued();
+        $this->assertSame(2, $digest['active_topics_count']);
     }
 
     public function test_digest_contents(): void
@@ -203,6 +202,39 @@ class WeeklyDigestTest extends TestCase
         $this->assertEqualsCanonicalizing(['Algemeen 1', 'Algemeen 2'], array_column($full['popular_topics'], 'title'));
     }
 
+    public function test_quiet_week_shows_topics_with_most_recent_member_replies(): void
+    {
+        $older = $this->createActiveTopic(['title' => 'Ouder', 'created_at' => now()->subMonth()]);
+        $recent = $this->createActiveTopic(['title' => 'Recent', 'created_at' => now()->subMonth()]);
+        $newsReply = $this->createActiveTopic(['title' => 'Nieuwsreactie', 'created_at' => now()->subMonth()]);
+        $older->posts()->update(['created_at' => now()->subDays(20)]);
+        $recent->posts()->update(['created_at' => now()->subDays(10)]);
+        $newsReply->posts()->update(['created_at' => now()->subDays(30)]);
+        Post::factory()->create(['topic_id' => $newsReply->id, 'user_id' => $this->newsUser()->id, 'created_at' => now()->subDays(9)]);
+
+        $digest = (new SendWeeklyDigest)->digest(now()->subDays(7));
+
+        $this->assertSame(0, $digest['active_topics_count']);
+        $this->assertSame(['Recent', 'Ouder', 'Nieuwsreactie'], array_column($digest['popular_topics'], 'title'));
+        $this->assertSame(0, $digest['popular_topics'][0]['posts_count']);
+    }
+
+    public function test_quiet_week_mail_shows_latest_replies_without_post_count(): void
+    {
+        $mail = new WeeklyDigest(User::factory()->create(), [
+            'active_topics_count' => 0,
+            'new_members_count' => 0,
+            'new_topics' => [],
+            'popular_topics' => [['title' => 'Oud onderwerp', 'url' => 'https://keiforum.test/a', 'forum' => 'Algemeen', 'posts_count' => 0, 'avatar_url' => 'https://keiforum.test/avatar.webp', 'username' => 'lid']],
+        ]);
+
+        $mail->assertSeeInHtml('Laatste reacties');
+        $mail->assertDontSeeInHtml('Populair deze week');
+        $mail->assertSeeInHtml('Oud onderwerp');
+        $mail->assertDontSeeInHtml('nieuwe berichten');
+        $mail->assertDontSeeInHtml('nieuw bericht');
+    }
+
     public function test_new_topics_exclude_popular_topics(): void
     {
         config(['digest.popular_topics' => 1]);
@@ -228,6 +260,7 @@ class WeeklyDigestTest extends TestCase
         $mail = new WeeklyDigest($user, $digest);
 
         $mail->assertHasSubject(__('mail/digest.subject'));
+        $mail->assertSeeInHtml('Populair deze week');
         $mail->assertSeeInHtml('Windmolens Isselt');
         $mail->assertSeeInHtml('5 nieuwe berichten');
         $mail->assertSeeInHtml('Nieuwe bakker');
