@@ -15,7 +15,7 @@ class SitemapController extends Controller
         $forums = Forum::query()->orderBy('position')->withCount(['topics' => fn ($query) => $query->visible()])->get();
         $topics = Topic::query()->visible()->withCount('posts')->withMax('posts', 'created_at')->with('forum')->get();
         $activities = Activity::query()->published()->upcoming()->with('user')->get();
-        $users = User::query()->active()->members()->has('posts')->select('username')->get();
+        $users = User::query()->active()->members()->has('posts', '>=', User::INDEXABLE_POSTS_COUNT)->select('username')->get();
 
         return response()
             ->view('sitemap', compact('activities', 'forums', 'topics', 'users'))

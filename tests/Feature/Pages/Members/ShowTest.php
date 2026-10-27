@@ -75,10 +75,20 @@ class ShowTest extends TestCase
             ->assertSee('<meta content="noindex" name="robots">', false);
     }
 
-    public function test_profile_with_posts_is_indexed(): void
+    public function test_profile_with_too_few_posts_is_not_indexed(): void
     {
         $user = User::factory()->create();
-        Post::factory()->create(['user_id' => $user->id]);
+        Post::factory()->count(User::INDEXABLE_POSTS_COUNT - 1)->create(['user_id' => $user->id]);
+
+        $this->get(route('member.show', $user))
+            ->assertOk()
+            ->assertSee('<meta content="noindex" name="robots">', false);
+    }
+
+    public function test_profile_with_enough_posts_is_indexed(): void
+    {
+        $user = User::factory()->create();
+        Post::factory()->count(User::INDEXABLE_POSTS_COUNT)->create(['user_id' => $user->id]);
 
         $this->get(route('member.show', $user))
             ->assertOk()

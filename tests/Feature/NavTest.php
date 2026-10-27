@@ -22,6 +22,19 @@ class NavTest extends TestCase
             ], false);
     }
 
+    public function test_guest_login_links_are_nofollow(): void
+    {
+        $content = $this->get(route('home'))->assertOk()->getContent();
+
+        preg_match_all('/<a\b[^>]*href="'.preg_quote(route('login'), '/').'"[^>]*>/', $content, $loginLinks);
+
+        $this->assertNotEmpty($loginLinks[0]);
+
+        foreach ($loginLinks[0] as $loginLink) {
+            $this->assertStringContainsString('rel="nofollow"', $loginLink);
+        }
+    }
+
     public function test_guests_do_not_see_settings_link(): void
     {
         $this->get(route('home'))

@@ -52,10 +52,13 @@ Self-service agenda waarop bars, theaters en andere locaties hun eigen activitei
 
 ## Search Console
 
-- [ ] Na deploy: "Oplossing valideren" bij "Dubbele pagina zonder door de gebruiker geselecteerde canonieke versie"
+- [x] Na deploy: "Oplossing valideren" bij "Dubbele pagina zonder door de gebruiker geselecteerde canonieke versie"
 - [ ] Na deploy: "Oplossing valideren" bij de `userInteractionCount`-melding (Discussieforum)
 - [ ] Na deploy: sitemap opnieuw indienen
-- [ ] Over een paar weken: aantal niet-geïndexeerde pagina's opnieuw bekijken
+- [x] Over een paar weken: aantal niet-geïndexeerde pagina's opnieuw bekijken (26-10: 268 niet / 107 wel; ~200 terecht)
+- [x] Inloglinks `nofollow`, `/auth/` uitgesloten in `robots.txt`, profielen pas indexeren vanaf 3 berichten
+- [ ] Email Obfuscation uitzetten in Cloudflare (404 op `/cdn-cgi/l/email-protection`)
+- [ ] Indexering aanvragen voor belangrijke onderwerpen en nieuwsberichten die "Gevonden/Gecrawld - momenteel niet geïndexeerd" zijn
 
 ## Bouwen
 

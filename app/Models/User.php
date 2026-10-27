@@ -39,6 +39,8 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public const INDEXABLE_POSTS_COUNT = 3;
+
     public const ONLINE_MINUTES = 5;
 
     public const USERNAME_MAX_LENGTH = 20;

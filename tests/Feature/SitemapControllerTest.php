@@ -85,7 +85,7 @@ class SitemapControllerTest extends TestCase
     public function test_sitemap_contains_member_pages(): void
     {
         $user = User::factory()->create();
-        Post::factory()->create(['user_id' => $user->id]);
+        Post::factory()->count(User::INDEXABLE_POSTS_COUNT)->create(['user_id' => $user->id]);
 
         $response = $this->get('/sitemap.xml');
 
@@ -93,18 +93,21 @@ class SitemapControllerTest extends TestCase
         $response->assertSee(route('member.show', $user), false);
     }
 
-    public function test_sitemap_excludes_members_without_posts_and_unverified_users(): void
+    public function test_sitemap_excludes_members_without_enough_posts_and_unverified_users(): void
     {
         $withoutPosts = User::factory()->create();
+        $withTooFewPosts = User::factory()->create();
+        Post::factory()->count(User::INDEXABLE_POSTS_COUNT - 1)->create(['user_id' => $withTooFewPosts->id]);
         $withDeletedPost = User::factory()->create();
         Post::factory()->create(['user_id' => $withDeletedPost->id])->delete();
         $unverified = User::factory()->unverified()->create();
-        Post::factory()->create(['user_id' => $unverified->id]);
+        Post::factory()->count(User::INDEXABLE_POSTS_COUNT)->create(['user_id' => $unverified->id]);
 
         $response = $this->get('/sitemap.xml');
 
         $response->assertOk();
         $response->assertDontSee(route('member.show', $withoutPosts), false);
+        $response->assertDontSee(route('member.show', $withTooFewPosts), false);
         $response->assertDontSee(route('member.show', $withDeletedPost), false);
         $response->assertDontSee(route('member.show', $unverified), false);
     }
@@ -126,6 +129,11 @@ class SitemapControllerTest extends TestCase
     public function test_robots_txt_references_sitemap(): void
     {
         $this->assertStringContainsString('Sitemap: https://keiforum.nl/sitemap.xml', file_get_contents(public_path('robots.txt')));
+    }
+
+    public function test_robots_txt_disallows_auth_routes(): void
+    {
+        $this->assertStringContainsString('Disallow: /auth/', file_get_contents(public_path('robots.txt')));
     }
 
     public function test_sitemap_contains_upcoming_published_activities_only(): void

@@ -46,7 +46,7 @@ new class extends Component
 ?>
 
 @push('meta')
-    @if ($user->posts_count === 0)
+    @if ($user->posts_count < User::INDEXABLE_POSTS_COUNT)
         <meta content="noindex" name="robots">
     @endif
 @endpush

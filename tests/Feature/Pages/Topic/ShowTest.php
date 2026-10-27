@@ -67,6 +67,16 @@ class ShowTest extends TestCase
             ->assertSee(__('topic/show.reply_login'));
     }
 
+    public function test_guest_reply_login_link_is_nofollow(): void
+    {
+        [$forum, $topic] = $this->createTopicWithPost();
+        $topicPath = '/'.ltrim(parse_url(route('topic.show', [$forum, $topic, $topic->slug]), PHP_URL_PATH), '/');
+
+        $this->get(route('topic.show', [$forum, $topic, $topic->slug]))
+            ->assertOk()
+            ->assertSee('<a href="'.route('login', ['redirect' => $topicPath]).'" rel="nofollow" wire:navigate>Log in</a> om te reageren.', false);
+    }
+
     public function test_authenticated_user_can_submit_reply(): void
     {
         [$forum, $topic] = $this->createTopicWithPost();
