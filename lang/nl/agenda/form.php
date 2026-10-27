@@ -46,4 +46,8 @@ return [
     'title' => [
         'label' => 'Titel',
     ],
+    'website_url' => [
+        'label' => 'Website',
+        'placeholder' => 'https://',
+    ],
 ];

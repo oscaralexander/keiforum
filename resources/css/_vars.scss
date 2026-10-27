@@ -102,7 +102,8 @@ $sizes: (
     --fontSize-m: 1rem;
     --fontSize-l: 1.125rem;
     --fontSize-xl: 1.25rem;
-    --fontSize-xxl: 1.75rem;
+    --fontSize-xxl: 1.5rem;
+    --fontSize-3xl: 1.75rem;
 
     /* Nav height */
     --nav-height: 4rem;
@@ -145,6 +146,7 @@ $sizes: (
         --gutter-width: 3rem;
         --panel-padding-x: 1.5rem;
         --panel-padding-y: 2rem;
-        --fontSize-xxl: 2.5rem;
+        --fontSize-xxl: 2rem;
+        --fontSize-3xl: 2.5rem;
     }
 }

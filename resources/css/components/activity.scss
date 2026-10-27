@@ -4,8 +4,6 @@
     align-items: center;
     aspect-ratio: 210 / 297;
     background: var(--color-bg-tint);
-    border: 1px solid var(--color-border-lc);
-    border-radius: var(--borderRadius-m);
     color: var(--color-text-placeholder);
     display: flex;
     justify-content: center;
@@ -19,6 +17,14 @@
         width: 100%;
     }
 
+    &:has(&__img) {
+        box-shadow: var(--boxShadow-s);
+    }
+
+    &--placeholder {
+        border: 1px solid var(--color-border-lc);
+    }
+
     .icon {
         height: 2rem;
         width: 2rem;
@@ -26,89 +32,103 @@
 }
 
 .activityListItem {
-    align-items: flex-start;
     display: flex;
-    gap: var(--size-m);
+    flex-direction: column;
+    gap: var(--size-s);
+    min-width: 0;
 
     &__poster {
-        flex: 0 0 4.5rem;
+        display: block;
     }
 
     &__content {
         display: flex;
-        flex: 1;
         flex-direction: column;
         gap: 2px;
         min-width: 0;
     }
 
     &__category {
-        color: var(--color-1);
-        font-size: var(--fontSize-xs);
-        font-weight: 600;
-        text-transform: uppercase;
+        align-self: flex-start;
+        color: var(--color-text-lc);
+        font-size: var(--fontSize-s);
+        text-decoration: none;
     }
 
     &__title {
         font-size: var(--fontSize-l);
 
         a {
-            color: var(--color-text-hc);
             text-decoration: none;
-        }
-    }
-
-    @include screen-min(m) {
-        &__poster {
-            flex-basis: 6rem;
         }
     }
 }
 
 .agendaFilters {
-    display: flex;
-    flex-direction: column;
-    gap: var(--size-m);
-
     &__categories {
         display: flex;
-        flex-wrap: wrap;
         gap: var(--size-s);
+        margin: 0 calc(-1 * var(--panel-padding-x));
+        overflow-x: auto;
+        padding: 0 var(--panel-padding-x);
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
 
         .chip {
+            flex-shrink: 0;
+            justify-content: center;
             padding: 0 1rem;
             text-decoration: none;
+            white-space: nowrap;
         }
     }
 
     @include screen-min(m) {
-        align-items: center;
-        flex-direction: row;
-        justify-content: space-between;
+        &__categories {
+            margin: 0;
+            overflow-x: visible;
+            padding: 0;
+
+            .chip {
+                flex: 1;
+            }
+        }
     }
 }
 
 .agendaDay {
     display: flex;
     flex-direction: column;
-    gap: var(--size-m);
+    gap: var(--size-l);
 
     &__title {
-        border-bottom: 1px solid var(--color-border-lc);
-        padding-bottom: var(--size-s);
+        border-top: 1px solid var(--color-border-lc);
+        font-size: var(--fontSize-xxl);
+        padding-top: var(--size-m);
     }
 
     &__activities {
-        display: flex;
-        flex-direction: column;
-        gap: var(--size-l);
+        display: grid;
+        gap: var(--size-l) var(--size-m);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        @include screen-min(s) {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        @include screen-min(m) {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
     }
 }
 
 .activity {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: var(--size-xl);
+    grid-template-columns: minmax(0, 1fr);
 
     &__poster {
         max-width: 24rem;
@@ -116,9 +136,8 @@
 
     &__main {
         display: flex;
-        flex: 1;
         flex-direction: column;
-        gap: var(--size-l);
+        gap: var(--size-xl);
         min-width: 0;
     }
 
@@ -129,14 +148,14 @@
     }
 
     &__detail {
-        align-items: flex-start;
+        align-items: center;
         display: flex;
         gap: var(--size-s);
+        line-height: var(--lineHeight-l);
 
         dt {
             color: var(--color-text-lc);
             display: flex;
-            padding-top: 2px;
 
             .icon {
                 height: 1.25rem;
@@ -156,12 +175,9 @@
     }
 
     &__attendance {
-        border-bottom: 1px solid var(--color-border-lc);
-        border-top: 1px solid var(--color-border-lc);
         display: flex;
         flex-direction: column;
         gap: var(--size-s);
-        padding: var(--size-m) 0;
     }
 
     &__attendanceButtons {
@@ -177,10 +193,17 @@
     }
 
     @include screen-min(m) {
-        flex-direction: row;
+        align-items: start;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
 
         &__poster {
-            flex: 0 0 18rem;
+            max-width: none;
+            position: sticky;
+            top: calc(var(--nav-height) + var(--panel-padding-y));
+        }
+
+        &__main {
+            grid-column: span 2;
         }
     }
 }
@@ -208,12 +231,33 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
+    &__location {
+        .input {
+            &:first-child {
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+
+            &:last-child {
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+                margin-top: -1px;
+            }
+
+            &:has(:focus) {
+                z-index: 2;
+            }
+        }
+    }
+
     @include screen-min(m) {
         align-items: start;
         grid-template-columns: repeat(3, minmax(0, 1fr));
 
         &__poster {
             max-width: none;
+            position: sticky;
+            top: calc(var(--nav-height) + var(--panel-padding-y));
         }
 
         &__fields {

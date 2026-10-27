@@ -29,7 +29,7 @@ class CreateTest extends TestCase
             ->test('pages::agenda.create')
             ->set('form.title', 'Jazz op de Hof')
             ->set('form.description', '<p>Live jazz</p>')
-            ->set('form.category', ActivityCategory::LIVE_MUSIC->value)
+            ->set('form.category', ActivityCategory::MUSIC->value)
             ->set('form.starts_on', today()->addWeek()->format('Y-m-d'))
             ->set('form.starts_at', '20:00')
             ->set('form.ends_at', '23:30')
@@ -115,7 +115,7 @@ class CreateTest extends TestCase
         $activity = Activity::sole();
 
         $this->assertSame('Jazz op de Hof', $activity->title);
-        $this->assertSame(ActivityCategory::LIVE_MUSIC, $activity->category);
+        $this->assertSame(ActivityCategory::MUSIC, $activity->category);
         $this->assertSame(1250, $activity->price);
         $this->assertSame('23:30', $activity->ends_at_time);
         $this->assertTrue($activity->starts_on->isSameDay($activity->ends_on));
@@ -143,12 +143,57 @@ class CreateTest extends TestCase
         $this->assertSame(0, Activity::count());
     }
 
-    public function test_poster_is_required_and_must_be_an_image(): void
+    public function test_poster_must_be_an_image(): void
     {
         $this->validForm()
             ->set('poster', UploadedFile::fake()->create('poster.pdf', 100, 'application/pdf'))
             ->call('submit')
             ->assertHasErrors('poster');
+    }
+
+    public function test_poster_is_optional(): void
+    {
+        $this->validForm()
+            ->set('poster', null)
+            ->call('submit')
+            ->assertHasNoErrors();
+
+        $this->assertNull(Activity::sole()->poster_path);
+    }
+
+    public function test_website_url_is_stored(): void
+    {
+        $this->validForm()
+            ->set('form.website_url', 'https://www.podiumfluor.nl/agenda')
+            ->call('submit')
+            ->assertHasNoErrors();
+
+        $activity = Activity::sole();
+
+        $this->assertSame('https://www.podiumfluor.nl/agenda', $activity->website_url);
+        $this->assertSame('podiumfluor.nl', $activity->website_host);
+    }
+
+    public function test_website_url_is_optional(): void
+    {
+        $this->validForm()
+            ->call('submit')
+            ->assertHasNoErrors();
+
+        $this->assertNull(Activity::sole()->website_url);
+    }
+
+    public function test_website_url_must_be_an_http_url(): void
+    {
+        $this->validForm()
+            ->set('form.website_url', 'javascript:alert(1)')
+            ->call('submit')
+            ->assertHasErrors('form.website_url');
+
+        $this->validForm()
+            ->set('form.website_url', 'geen url')
+            ->call('submit')
+            ->assertHasErrors('form.website_url');
     }
 
     public function test_start_date_cannot_be_in_the_past(): void

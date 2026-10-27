@@ -94,9 +94,16 @@ new class extends Component
         :hide-path="! $user && ! $category"
         :path="[['label' => __('agenda/index.title'), 'href' => route('agenda')]]"
         :title="$this->title"
-    />
+    >
+        <x-slot:actions>
+            @can('create', App\Models\Activity::class)
+                <x-btn class="m:hide" :href="route('agenda.create')" icon="plus" primary small>@lang('agenda/index.create')</x-btn>
+                <x-btn class="m:show" :href="route('agenda.create')" icon="plus" primary>@lang('agenda/index.create')</x-btn>
+            @endcan
+        </x-slot:actions>
+    </x-header>
     <div class="panel panel--padded">
-        <div class="flex flex-col flex-gap-l">
+        <div class="flex flex-col flex-gap-xl">
             <div class="agendaFilters">
                 <nav class="agendaFilters__categories">
                     <a
@@ -113,21 +120,18 @@ new class extends Component
                         >{{ $categoryOption->label() }}</a>
                     @endforeach
                 </nav>
-                @can('create', App\Models\Activity::class)
-                    <x-btn href="{{ route('agenda.create') }}" icon="plus" primary>@lang('agenda/index.create')</x-btn>
-                @endcan
             </div>
             @forelse ($this->activitiesByDay as $day => $dayActivities)
                 <section class="agendaDay" wire:key="day-{{ $day }}">
-                    <h3 class="agendaDay__title">
+                    <h2 class="agendaDay__title">
                         @if ($day === today()->format('Y-m-d'))
-                            @lang('agenda/index.today')
+                            @lang('agenda/index.today') <span class="text-color-lc">{{ today()->translatedFormat('j F Y') }}</span>
                         @elseif ($day === today()->addDay()->format('Y-m-d'))
-                            @lang('agenda/index.tomorrow')
+                            @lang('agenda/index.tomorrow') <span class="text-color-lc">{{ today()->addDay()->translatedFormat('j F Y') }}</span>
                         @else
                             {{ ucfirst(\Illuminate\Support\Carbon::parse($day)->translatedFormat('l j F')) }}
                         @endif
-                    </h3>
+                    </h2>
                     <div class="agendaDay__activities">
                         @foreach ($dayActivities as $activity)
                             <x-activity-list-item :activity="$activity" wire:key="activity-{{ $activity->id }}" />

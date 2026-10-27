@@ -6,10 +6,11 @@ use Illuminate\Support\Collection;
 
 enum ActivityCategory: string
 {
-    case FILM = 'film';
-    case THEATER = 'theater';
-    case LIVE_MUSIC = 'live-muziek';
     case CLUB = 'club';
+    case DANCE = 'dans';
+    case ART = 'kunst';
+    case MUSIC = 'muziek';
+    case THEATER = 'theater';
     case OTHER = 'anders';
 
     public function label(): string

@@ -6,7 +6,7 @@ return [
     'title_user' => 'Agenda van @:username',
     'title_user_category' => 'Agenda van @:username: :category',
     'all' => 'Alles',
-    'create' => 'Activiteit toevoegen',
+    'create' => 'Nieuwe activiteit',
     'empty' => 'Er staan hier nog geen activiteiten op de agenda.',
     'today' => 'Vandaag',
     'tomorrow' => 'Morgen',

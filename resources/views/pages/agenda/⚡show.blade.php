@@ -122,7 +122,7 @@ new class extends Component
     public function render()
     {
         return $this->view()
-            ->title($this->activity->title)
+            ->title($this->activity->title.' - '.$this->activity->starts_on->translatedFormat('j F Y'))
             ->layoutData([
                 'description' => str(strip_tags($this->activity->description))->squish()->limit(160)->toString() ?: null,
             ]);
@@ -137,7 +137,24 @@ new class extends Component
             ['label' => $activity->category->label(), 'href' => route('agenda.category', $activity->category->value)],
         ]"
         :title="$activity->title"
-    />
+    >
+        <x-slot:meta>
+            <div class="headerMeta__item">
+                <x-icon class="headerMeta__icon" icon="calendar" />
+                <span>{{ $activity->starts_formatted }}</span>
+            </div>
+            <div class="headerMeta__item">
+                <x-icon class="headerMeta__icon" icon="map-pin" />
+                <a href="{{ $this->mapsUrl }}" rel="noopener" target="_blank">{{ $activity->location_name }}</a>
+            </div>
+        </x-slot:meta>
+        <x-slot:actions>
+            @can('update', $activity)
+                <x-btn class="m:hide" :href="$activity->editUrl()" icon="pencil" small>@lang('ui.edit')</x-btn>
+                <x-btn class="m:show" :href="$activity->editUrl()" icon="pencil">@lang('ui.edit')</x-btn>
+            @endcan
+        </x-slot:actions>
+    </x-header>
     <x-schema :data="$this->schema" />
     <div class="panel panel--padded">
         <div class="activity">
@@ -149,6 +166,8 @@ new class extends Component
                             class="activityPoster__img"
                             src="{{ route('img', ['src' => $activity->poster_path, 'w' => 620, 'h' => 877, 'q' => 85]) }}"
                         >
+                    @else
+                        <x-icon icon="image" />
                     @endif
                 </div>
             </div>
@@ -161,9 +180,9 @@ new class extends Component
                         <dt aria-label="@lang(\'agenda/show.date\')" title="@lang(\'agenda/show.date\')"><x-icon icon="calendar" /></dt>
                         <dd>
                             @if ($activity->is_multi_day)
-                                {{ $activity->starts_on->translatedFormat('l j F') }} – {{ $activity->ends_on->translatedFormat('l j F Y') }}
+                                {{ ucfirst($activity->starts_on->translatedFormat('l, j F')) }} – {{ $activity->ends_on->translatedFormat('l, j F Y') }}
                             @else
-                                {{ ucfirst($activity->starts_on->translatedFormat('l j F Y')) }}
+                                {{ ucfirst($activity->starts_on->translatedFormat('l, j F Y')) }}
                             @endif
                         </dd>
                     </div>
@@ -181,14 +200,17 @@ new class extends Component
                         </dd>
                     </div>
                     <div class="activity__detail">
-                        <dt aria-label="@lang(\'agenda/show.price\')" title="@lang(\'agenda/show.price\')"><x-icon icon="euro" /></dt>
+                        <dt aria-label="@lang(\'agenda/show.price\')" title="@lang(\'agenda/show.price\')"><x-icon icon="ticket" /></dt>
                         <dd>{{ $activity->price_formatted }}</dd>
                     </div>
-                    <div class="activity__detail">
-                        <dt aria-label="@lang(\'agenda/show.organizer\')" title="@lang(\'agenda/show.organizer\')"><x-icon icon="user" /></dt>
-                        <dd><a href="{{ route('agenda.user', $activity->user) }}" wire:navigate>{{ '@'.$activity->user->username }}</a></dd>
-                    </div>
+                    @if ($activity->website_url)
+                        <div class="activity__detail">
+                            <dt aria-label="@lang(\'agenda/show.website\')" title="@lang(\'agenda/show.website\')"><x-icon icon="link" /></dt>
+                            <dd><a href="{{ $activity->website_url }}" rel="noopener nofollow" target="_blank">{{ $activity->website_host }}</a></dd>
+                        </div>
+                    @endif
                 </dl>
+                <div class="formatted">{!! $activity->description !!}</div>
                 <div class="activity__attendance">
                     <div class="activity__attendanceButtons">
                         @auth
@@ -216,14 +238,13 @@ new class extends Component
                     @if ($this->goingUsers->isNotEmpty())
                         <div class="activity__attendees">
                             @foreach ($this->goingUsers as $attendee)
-                                <a href="{{ route('member.show', $attendee) }}" title="{{ $attendee->username }}" wire:key="going-{{ $attendee->id }}" wire:navigate>
-                                    <x-avatar img-only :user="$attendee" />
+                                <a href="{{ route('member.show', $attendee) }}" wire:key="going-{{ $attendee->id }}" wire:navigate>
+                                    <x-avatar img-only :user="$attendee" x-data="tooltip('{{ $attendee->username }}')" />
                                 </a>
                             @endforeach
                         </div>
                     @endif
                 </div>
-                <div class="formatted">{!! $activity->description !!}</div>
             </div>
         </div>
     </div>

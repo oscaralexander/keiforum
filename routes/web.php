@@ -55,6 +55,7 @@ Route::middleware('auth')->group(function () {
 
     // Agenda
     Route::livewire('agenda/nieuw', 'pages::agenda.create')->name('agenda.create');
+    Route::livewire('agenda/@{user}/{date}/{slug}/bewerken', 'pages::agenda.edit')->where('date', '\d{4}-\d{2}-\d{2}')->name('agenda.edit');
 });
 
 // Member

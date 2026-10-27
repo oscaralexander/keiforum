@@ -1,9 +1,10 @@
 <?php
 
 return [
-    'film' => 'Film',
-    'theater' => 'Theater',
-    'live-muziek' => 'Live muziek',
     'club' => 'Club',
+    'dans' => 'Dans',
+    'kunst' => 'Kunst',
+    'muziek' => 'Muziek',
+    'theater' => 'Theater',
     'anders' => 'Anders',
 ];

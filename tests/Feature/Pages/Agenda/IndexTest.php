@@ -39,12 +39,12 @@ class IndexTest extends TestCase
     public function test_category_page_only_lists_that_category(): void
     {
         $club = Activity::factory()->create(['category' => ActivityCategory::CLUB]);
-        $film = Activity::factory()->create(['category' => ActivityCategory::FILM]);
+        $dance = Activity::factory()->create(['category' => ActivityCategory::DANCE]);
 
         $this->get('/agenda/club')
             ->assertOk()
             ->assertSee($club->title)
-            ->assertDontSee($film->title);
+            ->assertDontSee($dance->title);
     }
 
     public function test_user_page_only_lists_activities_of_that_user(): void
@@ -64,13 +64,13 @@ class IndexTest extends TestCase
     {
         $venue = User::factory()->create();
         $ownClub = Activity::factory()->for($venue)->create(['category' => ActivityCategory::CLUB]);
-        $ownFilm = Activity::factory()->for($venue)->create(['category' => ActivityCategory::FILM]);
+        $ownDance = Activity::factory()->for($venue)->create(['category' => ActivityCategory::DANCE]);
         $otherClub = Activity::factory()->create(['category' => ActivityCategory::CLUB]);
 
         $this->get('/agenda/@'.$venue->username.'/club')
             ->assertOk()
             ->assertSee($ownClub->title)
-            ->assertDontSee($ownFilm->title)
+            ->assertDontSee($ownDance->title)
             ->assertDontSee($otherClub->title);
     }
 
@@ -79,7 +79,7 @@ class IndexTest extends TestCase
         $venue = User::factory()->create();
 
         $this->get('/agenda/@'.$venue->username)
-            ->assertSee('href="'.route('agenda.user.category', [$venue, 'live-muziek']).'"', false);
+            ->assertSee('href="'.route('agenda.user.category', [$venue, 'muziek']).'"', false);
     }
 
     public function test_unknown_category_and_user_return_404(): void
@@ -94,11 +94,76 @@ class IndexTest extends TestCase
 
         $this->actingAs(User::factory()->create())
             ->get(route('agenda'))
-            ->assertSee(route('agenda.create'));
+            ->assertSee(route('agenda.create'))
+            ->assertSeeInOrder(['class="header__actions"', route('agenda.create'), 'Nieuwe activiteit'], false);
     }
 
     public function test_empty_agenda_shows_message(): void
     {
         $this->get(route('agenda'))->assertSee(__('agenda/index.empty'));
+    }
+
+    public function test_activity_card_shows_category_title_location_and_start_time(): void
+    {
+        $activity = Activity::factory()->create([
+            'category' => ActivityCategory::CLUB,
+            'title' => 'Spätkauf',
+            'starts_on' => today()->addDay(),
+            'ends_on' => today()->addDay(),
+            'starts_at' => '23:00',
+            'location_name' => 'Podium FLUOR',
+        ]);
+
+        $this->get(route('agenda'))
+            ->assertSeeInOrder([
+                ActivityCategory::CLUB->label(),
+                'Spätkauf',
+                'Podium FLUOR',
+                '23:00',
+            ]);
+    }
+
+    public function test_activity_card_links_to_its_category(): void
+    {
+        Activity::factory()->create(['category' => ActivityCategory::CLUB]);
+
+        $this->get(route('agenda'))
+            ->assertSee('class="activityListItem__category" href="'.route('agenda.category', 'club').'"', false);
+    }
+
+    public function test_card_without_a_poster_shows_a_placeholder(): void
+    {
+        Activity::factory()->create(['poster_path' => null]);
+
+        $this->get(route('agenda'))->assertSee('activityPoster activityPoster--placeholder', false);
+    }
+
+    public function test_card_with_a_poster_has_no_placeholder(): void
+    {
+        Activity::factory()->create(['poster_path' => 'posters/poster.webp']);
+
+        $this->get(route('agenda'))->assertDontSee('activityPoster--placeholder', false);
+    }
+
+    public function test_categories_are_listed_alphabetically_with_other_last(): void
+    {
+        $this->assertSame(
+            ['Club', 'Dans', 'Kunst', 'Muziek', 'Theater', 'Anders'],
+            ActivityCategory::options()->values()->all(),
+        );
+    }
+
+    public function test_relative_day_headers_show_the_date(): void
+    {
+        Activity::factory()->create(['starts_on' => today(), 'ends_on' => today()]);
+        Activity::factory()->create(['starts_on' => today()->addDay(), 'ends_on' => today()->addDay()]);
+
+        $this->get(route('agenda'))
+            ->assertSeeInOrder([
+                __('agenda/index.today'),
+                today()->translatedFormat('j F Y'),
+                __('agenda/index.tomorrow'),
+                today()->addDay()->translatedFormat('j F Y'),
+            ]);
     }
 }

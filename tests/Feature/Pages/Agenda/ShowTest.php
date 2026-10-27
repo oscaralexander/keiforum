@@ -33,6 +33,88 @@ class ShowTest extends TestCase
             ->assertSee('"@type": "Event"', false);
     }
 
+    public function test_page_title_includes_the_start_date(): void
+    {
+        $activity = Activity::factory()->create([
+            'title' => 'Spätkauf',
+            'starts_on' => '2099-10-24',
+            'ends_on' => '2099-10-24',
+        ]);
+
+        $this->get($activity->url())
+            ->assertSee('Spätkauf - 24 oktober 2099 - '.config('app.name'));
+    }
+
+    public function test_header_shows_the_start_before_the_location(): void
+    {
+        $activity = Activity::factory()->create([
+            'location_name' => 'Podium FLUOR',
+            'starts_on' => '2099-10-24',
+            'ends_on' => '2099-10-25',
+            'starts_at' => '23:00',
+            'ends_at' => '05:00',
+        ]);
+
+        $this->get($activity->url())
+            ->assertSeeInOrder(['class="headerMeta"', '24 okt. 2099, 23:00', 'Podium FLUOR'], false);
+    }
+
+    public function test_night_activity_only_shows_the_start_date(): void
+    {
+        $activity = Activity::factory()->create([
+            'starts_on' => '2099-10-24',
+            'ends_on' => '2099-10-25',
+            'starts_at' => '23:00',
+            'ends_at' => '05:00',
+        ]);
+
+        $this->get($activity->url())
+            ->assertSee('Zaterdag, 24 oktober 2099')
+            ->assertDontSee('25 oktober');
+    }
+
+    public function test_multi_day_activity_shows_both_dates(): void
+    {
+        $activity = Activity::factory()->create([
+            'starts_on' => '2099-10-24',
+            'ends_on' => '2099-10-25',
+            'starts_at' => '20:00',
+            'ends_at' => '18:00',
+        ]);
+
+        $this->get($activity->url())
+            ->assertSee('Zaterdag, 24 oktober – zondag, 25 oktober 2099');
+    }
+
+    public function test_owner_sees_the_edit_button(): void
+    {
+        $activity = Activity::factory()->create();
+
+        $this->actingAs($activity->user)
+            ->get($activity->url())
+            ->assertSee($activity->editUrl());
+    }
+
+    public function test_admins_see_the_edit_button(): void
+    {
+        $activity = Activity::factory()->create();
+
+        $this->actingAs(User::factory()->admin()->create())
+            ->get($activity->url())
+            ->assertSee($activity->editUrl());
+    }
+
+    public function test_other_users_and_guests_do_not_see_the_edit_button(): void
+    {
+        $activity = Activity::factory()->create();
+
+        $this->get($activity->url())->assertDontSee($activity->editUrl());
+
+        $this->actingAs(User::factory()->create())
+            ->get($activity->url())
+            ->assertDontSee($activity->editUrl());
+    }
+
     public function test_free_activity_shows_free(): void
     {
         $activity = Activity::factory()->create(['price' => 0]);
