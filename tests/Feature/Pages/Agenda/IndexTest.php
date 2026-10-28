@@ -89,11 +89,15 @@ class IndexTest extends TestCase
         $this->get('/agenda/@bestaatniet')->assertNotFound();
     }
 
-    public function test_create_button_is_only_shown_to_members(): void
+    public function test_create_button_is_only_shown_to_organizers(): void
     {
         $this->get(route('agenda'))->assertDontSee(route('agenda.create'));
 
         $this->actingAs(User::factory()->create())
+            ->get(route('agenda'))
+            ->assertDontSee(route('agenda.create'));
+
+        $this->actingAs(User::factory()->organizer()->create())
             ->get(route('agenda'))
             ->assertSee(route('agenda.create'))
             ->assertSeeInOrder(['class="header__actions"', route('agenda.create'), 'Nieuwe activiteit'], false);
@@ -188,62 +192,82 @@ class IndexTest extends TestCase
             ->assertSee('Zaterdag <span class="text-color-lc">2 januari 2027</span>', false);
     }
 
-    public function test_agenda_only_lists_the_week_starting_today(): void
+    public function test_agenda_shows_upcoming_activities_far_ahead(): void
     {
-        $lastDay = Activity::factory()->create(['starts_on' => today()->addDays(6), 'ends_on' => today()->addDays(6)]);
-        $nextWeek = Activity::factory()->create(['starts_on' => today()->addWeek(), 'ends_on' => today()->addWeek()]);
+        $farAhead = Activity::factory()->create(['starts_on' => today()->addMonths(3), 'ends_on' => today()->addMonths(3)]);
 
         $this->get(route('agenda'))
-            ->assertSee($lastDay->title)
-            ->assertDontSee($nextWeek->title)
+            ->assertSee($farAhead->title)
+            ->assertDontSee(__('agenda/index.empty'))
+            ->assertDontSee(__('agenda/index.next'))
             ->assertDontSee('noindex');
     }
 
-    public function test_next_week_starts_seven_days_from_today(): void
+    public function test_page_ends_after_the_last_day_with_the_paginate_count(): void
     {
         $this->travelTo(Carbon::parse('2026-10-27'));
-        $thisWeek = Activity::factory()->create(['starts_on' => '2026-11-02', 'ends_on' => '2026-11-02']);
-        $nextWeek = Activity::factory()->create(['starts_on' => '2026-11-03', 'ends_on' => '2026-11-03']);
+        Activity::factory()->count(Activity::PAGINATE_COUNT - 1)->create(['starts_on' => '2026-10-28', 'ends_on' => '2026-10-28']);
+        Activity::factory()->count(2)->create(['starts_on' => '2026-11-05', 'ends_on' => '2026-11-05']);
+        $nextPage = Activity::factory()->create(['starts_on' => '2026-11-12', 'ends_on' => '2026-11-12']);
 
-        $this->get(route('agenda', ['week' => 1]))
-            ->assertSee('Dinsdag <span class="text-color-lc">3 november</span>', false)
-            ->assertSee($nextWeek->title)
-            ->assertDontSee($thisWeek->title)
+        Livewire::test('pages::agenda.index')
+            ->assertSet('activities', fn ($activities) => $activities->count() === Activity::PAGINATE_COUNT + 1)
+            ->assertSet('nextStart', fn ($date) => $date->format('Y-m-d') === '2026-11-06')
+            ->assertDontSee($nextPage->title)
+            ->assertSee(route('agenda', ['vanaf' => '2026-11-06']), false);
+    }
+
+    public function test_next_page_starts_at_the_given_date(): void
+    {
+        $this->travelTo(Carbon::parse('2026-10-27'));
+        $before = Activity::factory()->create(['starts_on' => '2026-11-05', 'ends_on' => '2026-11-05']);
+        $after = Activity::factory()->create(['starts_on' => '2026-11-12', 'ends_on' => '2026-11-12']);
+
+        $this->get(route('agenda', ['vanaf' => '2026-11-06']))
+            ->assertSee('Donderdag <span class="text-color-lc">12 november</span>', false)
+            ->assertSee($after->title)
+            ->assertDontSee($before->title)
+            ->assertSee(route('agenda'), false)
+            ->assertSee(__('agenda/index.back_to_today'))
             ->assertSee('<meta content="noindex" name="robots">', false);
     }
 
-    public function test_previous_week_starts_seven_days_before_today(): void
-    {
-        $this->travelTo(Carbon::parse('2026-10-27'));
-        $previousWeek = Activity::factory()->create(['starts_on' => '2026-10-20', 'ends_on' => '2026-10-20']);
-        $tooEarly = Activity::factory()->create(['starts_on' => '2026-10-19', 'ends_on' => '2026-10-19']);
-
-        $this->get(route('agenda', ['week' => -1]))
-            ->assertSee('Dinsdag <span class="text-color-lc">20 oktober</span>', false)
-            ->assertSee($previousWeek->title)
-            ->assertDontSee($tooEarly->title);
-    }
-
-    public function test_activity_running_into_the_week_is_listed_under_its_first_day(): void
+    public function test_activity_running_into_the_page_is_listed_under_its_first_day(): void
     {
         $this->travelTo(Carbon::parse('2026-10-27'));
         $running = Activity::factory()->create(['starts_on' => '2026-11-01', 'ends_on' => '2026-11-04']);
 
-        Livewire::test('pages::agenda.index', ['week' => 1])
+        Livewire::test('pages::agenda.index', ['start' => '2026-11-03'])
             ->assertSet('activitiesByDay', fn ($days) => $days->keys()->all() === ['2026-11-03'])
             ->assertSee($running->title);
     }
 
-    public function test_week_buttons_link_to_the_previous_and_next_week_keeping_the_filters(): void
+    public function test_start_before_today_or_invalid_starts_today(): void
     {
+        $this->travelTo(Carbon::parse('2026-10-27'));
+        $past = Activity::factory()->create(['starts_on' => '2026-10-20', 'ends_on' => '2026-10-20']);
+
+        foreach (['2026-10-01', 'morgen', '2026-13-45x'] as $start) {
+            $this->get(route('agenda', ['vanaf' => $start]))
+                ->assertOk()
+                ->assertDontSee($past->title)
+                ->assertDontSee(__('agenda/index.back_to_today'));
+        }
+    }
+
+    public function test_next_page_link_keeps_the_filters(): void
+    {
+        $this->travelTo(Carbon::parse('2026-10-27'));
         $user = User::factory()->create();
+        Activity::factory()->for($user)->count(Activity::PAGINATE_COUNT + 1)->sequence(
+            fn ($sequence) => ['starts_on' => today()->addDays($sequence->index + 1), 'ends_on' => today()->addDays($sequence->index + 1)]
+        )->create(['category' => ActivityCategory::MUSIC]);
+        Activity::factory()->count(Activity::PAGINATE_COUNT)->create(['category' => ActivityCategory::CLUB]);
 
-        $this->get(route('agenda.user.category', [$user, ActivityCategory::MUSIC->value, 'week' => 1]))
-            ->assertSee(route('agenda.user.category', [$user, ActivityCategory::MUSIC->value]), false)
-            ->assertSee(route('agenda.user.category', [$user, ActivityCategory::MUSIC->value, 'week' => 2]), false);
+        $this->get(route('agenda.user.category', [$user, ActivityCategory::MUSIC->value]))
+            ->assertSee(route('agenda.user.category', [$user, ActivityCategory::MUSIC->value, 'vanaf' => '2026-11-17']), false);
 
-        $this->get(route('agenda'))
-            ->assertSee(route('agenda', ['week' => -1]), false)
-            ->assertSee(route('agenda', ['week' => 1]), false);
+        $this->get(route('agenda.category', ActivityCategory::DANCE->value))
+            ->assertDontSee(__('agenda/index.next'));
     }
 }

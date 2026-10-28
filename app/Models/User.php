@@ -27,6 +27,7 @@ class User extends Authenticatable
         'gender' => Gender::class,
         'has_avatar' => 'boolean',
         'is_admin' => 'boolean',
+        'is_organizer' => 'boolean',
         'is_subscribed_to_digest' => 'boolean',
         'last_seen_at' => 'datetime',
         'password' => 'hashed',

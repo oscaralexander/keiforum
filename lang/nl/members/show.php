@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'is_organizer' => 'Mag activiteiten op de agenda plaatsen',
     'last_seen' => 'Laatst gezien',
     'member_since' => 'Lid sinds',
     'no_topics' => 'Nog geen berichten geplaatst.',

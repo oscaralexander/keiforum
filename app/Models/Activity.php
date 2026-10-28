@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Enums\ActivityCategory;
 use App\Enums\AttendanceStatus;
 use App\Lib\HtmlSanitizer;
-use Carbon\CarbonInterface;
 use Database\Factories\ActivityFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -36,6 +35,12 @@ class Activity extends Model
      * Activities ending the next day before this time count as one night.
      */
     public const NIGHT_ENDS_AT = '06:00';
+
+    /**
+     * The minimum number of activities on an agenda page; the last day is
+     * always shown in full.
+     */
+    public const PAGINATE_COUNT = 20;
 
     protected $casts = [
         'category' => ActivityCategory::class,
@@ -142,15 +147,6 @@ class Activity extends Model
     protected function upcoming(Builder $query): void
     {
         $query->whereDate('ends_on', '>=', today());
-    }
-
-    /**
-     * Activities that take place on at least one day of the given period.
-     */
-    #[Scope]
-    protected function during(Builder $query, CarbonInterface $from, CarbonInterface $until): void
-    {
-        $query->whereDate('starts_on', '<=', $until)->whereDate('ends_on', '>=', $from);
     }
 
     #[Scope]

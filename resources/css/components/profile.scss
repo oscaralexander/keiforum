@@ -52,7 +52,8 @@
         gap: var(--size-m);
     }
 
-    &__bio {
+    &__bio,
+    &__organizer {
         margin-top: var(--size-xl);
     }
 

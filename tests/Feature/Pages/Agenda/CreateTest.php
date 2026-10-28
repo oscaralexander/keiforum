@@ -25,7 +25,7 @@ class CreateTest extends TestCase
 
     private function validForm(): Testable
     {
-        return Livewire::actingAs(User::factory()->create())
+        return Livewire::actingAs(User::factory()->organizer()->create())
             ->test('pages::agenda.create')
             ->set('form.title', 'Jazz op de Hof')
             ->set('form.description', '<p>Live jazz</p>')
@@ -46,14 +46,35 @@ class CreateTest extends TestCase
 
     public function test_unverified_users_cannot_create_activities(): void
     {
-        $this->actingAs(User::factory()->unverified()->create())
+        $this->actingAs(User::factory()->unverified()->organizer()->create())
             ->get(route('agenda.create'))
             ->assertForbidden();
     }
 
-    public function test_poster_instructions_mention_the_dimensions(): void
+    public function test_members_who_are_not_organizers_cannot_create_activities(): void
     {
         $this->actingAs(User::factory()->create())
+            ->get(route('agenda.create'))
+            ->assertForbidden();
+    }
+
+    public function test_banned_organizers_cannot_create_activities(): void
+    {
+        $this->actingAs(User::factory()->organizer()->banned()->create())
+            ->get(route('agenda.create'))
+            ->assertForbidden();
+    }
+
+    public function test_admins_can_create_activities(): void
+    {
+        $this->actingAs(User::factory()->admin()->create())
+            ->get(route('agenda.create'))
+            ->assertOk();
+    }
+
+    public function test_poster_instructions_mention_the_dimensions(): void
+    {
+        $this->actingAs(User::factory()->organizer()->create())
             ->get(route('agenda.create'))
             ->assertOk()
             ->assertSee('Poster of flyer in A4-verhoudingen, bij voorkeur 1080 x 1528 pixels.');
@@ -63,7 +84,7 @@ class CreateTest extends TestCase
     {
         config(['services.google.api_key' => 'test-key']);
 
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->organizer()->create())
             ->get(route('agenda.create'))
             ->assertOk()
             ->assertSee('maps.googleapis.com/maps/api/js?key=test-key', false)
@@ -75,7 +96,7 @@ class CreateTest extends TestCase
     {
         config(['services.google.api_key' => null]);
 
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->organizer()->create())
             ->get(route('agenda.create'))
             ->assertOk()
             ->assertDontSee('maps.googleapis.com', false)
@@ -85,7 +106,7 @@ class CreateTest extends TestCase
 
     public function test_dates_default_to_today(): void
     {
-        Livewire::actingAs(User::factory()->create())
+        Livewire::actingAs(User::factory()->organizer()->create())
             ->test('pages::agenda.create')
             ->assertSet('form.starts_on', today()->format('Y-m-d'))
             ->assertSet('form.ends_on', today()->format('Y-m-d'))
@@ -94,7 +115,7 @@ class CreateTest extends TestCase
 
     public function test_end_date_follows_start_date_until_changed(): void
     {
-        $component = Livewire::actingAs(User::factory()->create())
+        $component = Livewire::actingAs(User::factory()->organizer()->create())
             ->test('pages::agenda.create')
             ->set('form.starts_on', '2099-05-01')
             ->assertSet('form.ends_on', '2099-05-01')
@@ -135,7 +156,7 @@ class CreateTest extends TestCase
 
     public function test_required_fields_are_validated(): void
     {
-        Livewire::actingAs(User::factory()->create())
+        Livewire::actingAs(User::factory()->organizer()->create())
             ->test('pages::agenda.create')
             ->call('submit')
             ->assertHasErrors(['form.title', 'form.description', 'form.category', 'form.starts_at', 'form.location_name']);

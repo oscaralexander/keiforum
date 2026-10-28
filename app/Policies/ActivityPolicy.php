@@ -7,9 +7,15 @@ use App\Models\User;
 
 class ActivityPolicy
 {
+    /**
+     * Only organizers, who are granted the right by an admin, and admins
+     * place activities.
+     */
     public function create(User $user): bool
     {
-        return $user->email_verified_at !== null && ! $user->is_banned;
+        return $user->email_verified_at !== null
+            && ! $user->is_banned
+            && ($user->is_organizer || $user->is_admin);
     }
 
     public function update(User $user, Activity $activity): bool

@@ -2,10 +2,12 @@
 
 namespace Tests\Feature\Pages\Members;
 
+use App\Models\Activity;
 use App\Models\Post;
 use App\Models\Topic;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class ShowTest extends TestCase
@@ -93,5 +95,54 @@ class ShowTest extends TestCase
         $this->get(route('member.show', $user))
             ->assertOk()
             ->assertDontSee('name="robots"', false);
+    }
+
+    public function test_admins_see_the_organizer_toggle(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs(User::factory()->admin()->create())
+            ->get(route('member.show', $user))
+            ->assertSee(__('members/show.is_organizer'));
+    }
+
+    public function test_members_and_guests_do_not_see_the_organizer_toggle(): void
+    {
+        $user = User::factory()->create();
+
+        $this->get(route('member.show', $user))->assertDontSee(__('members/show.is_organizer'));
+
+        $this->actingAs($user)
+            ->get(route('member.show', $user))
+            ->assertDontSee(__('members/show.is_organizer'));
+    }
+
+    public function test_admin_can_grant_and_revoke_the_organizer_right(): void
+    {
+        $user = User::factory()->create();
+
+        $component = Livewire::actingAs(User::factory()->admin()->create())
+            ->test('pages::members.show', ['user' => $user])
+            ->assertSet('isOrganizer', false)
+            ->set('isOrganizer', true);
+
+        $this->assertTrue($user->refresh()->is_organizer);
+        $this->assertTrue($user->can('create', Activity::class));
+
+        $component->set('isOrganizer', false);
+
+        $this->assertFalse($user->refresh()->is_organizer);
+    }
+
+    public function test_members_cannot_grant_themselves_the_organizer_right(): void
+    {
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test('pages::members.show', ['user' => $user])
+            ->set('isOrganizer', true)
+            ->assertForbidden();
+
+        $this->assertFalse($user->refresh()->is_organizer);
     }
 }
