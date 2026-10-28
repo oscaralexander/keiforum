@@ -56,7 +56,7 @@ class CreateTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->get(route('agenda.create'))
             ->assertOk()
-            ->assertSee(__('agenda/create.request.text'))
+            ->assertSee(__('agenda/create.request.text'), false)
             ->assertSee(__('agenda/create.request.submit'))
             ->assertDontSee(__('agenda/create.submit'));
     }
