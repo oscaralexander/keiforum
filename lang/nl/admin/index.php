@@ -9,7 +9,7 @@ return [
         'hidden' => 'Verborgen tot er reacties zijn',
         'reject' => 'Weigeren',
         'rejected' => 'Het artikel is geweigerd en het onderwerp is verwijderd.',
-        'title' => 'Nieuwsplein33',
+        'title' => 'Nieuws',
         'verdict' => [
             'approved' => 'Geaccepteerd',
             'blocked' => 'Geweigerd',
@@ -19,6 +19,15 @@ return [
         'view_topic' => 'Bekijk onderwerp',
         'visible' => 'Zichtbaar',
     ],
+    'organizer_requests' => [
+        'approve' => 'Goedkeuren',
+        'approved' => 'De aanvraag is goedgekeurd en de gebruiker heeft een e-mail ontvangen.',
+        'confirm_deny' => 'Weet je zeker dat je deze aanvraag wilt afwijzen? De gebruiker ontvangt hierover een e-mail.',
+        'deny' => 'Afwijzen',
+        'denied' => 'De aanvraag is afgewezen en de gebruiker heeft een e-mail ontvangen.',
+        'empty' => 'Er zijn geen openstaande aanvragen.',
+        'title' => 'Agenda',
+    ],
     'no_reported_posts' => 'Geen gemelde berichten ✌🏻',
-    'reported_posts' => 'Gemelde berichten',
+    'reported_posts' => 'Berichten',
 ];

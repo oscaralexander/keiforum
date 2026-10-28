@@ -29,7 +29,7 @@ new class extends Component
     {
         abort_unless(auth()->user()?->is_admin, 403);
 
-        $this->user->update(['is_organizer' => $value]);
+        $this->user->update(['is_organizer' => $value, 'organizer_requested_at' => null]);
     }
 
     public function render()

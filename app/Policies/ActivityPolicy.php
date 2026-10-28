@@ -18,6 +18,18 @@ class ActivityPolicy
             && ($user->is_organizer || $user->is_admin);
     }
 
+    /**
+     * Members who cannot place activities yet can ask the admins for the
+     * right to do so.
+     */
+    public function requestToCreate(User $user): bool
+    {
+        return $user->email_verified_at !== null
+            && ! $user->is_banned
+            && ! $user->is_organizer
+            && ! $user->is_admin;
+    }
+
     public function update(User $user, Activity $activity): bool
     {
         return $user->id == $activity->user_id || $user->is_admin;

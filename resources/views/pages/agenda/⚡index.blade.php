@@ -186,10 +186,8 @@ new class extends Component
         :title="$this->title"
     >
         <x-slot:actions>
-            @can('create', App\Models\Activity::class)
-                <x-btn class="m:hide" :href="route('agenda.create')" icon="plus" primary small>@lang('agenda/index.create')</x-btn>
-                <x-btn class="m:show" :href="route('agenda.create')" icon="plus" primary>@lang('agenda/index.create')</x-btn>
-            @endcan
+            <x-btn class="m:hide" :href="route('agenda.create')" icon="plus" primary small>@lang('agenda/index.create')</x-btn>
+            <x-btn class="m:show" :href="route('agenda.create')" icon="plus" primary>@lang('agenda/index.create')</x-btn>
         </x-slot:actions>
     </x-header>
     <div class="panel panel--padded">

@@ -119,7 +119,7 @@ class ShowTest extends TestCase
 
     public function test_admin_can_grant_and_revoke_the_organizer_right(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['organizer_requested_at' => now()]);
 
         $component = Livewire::actingAs(User::factory()->admin()->create())
             ->test('pages::members.show', ['user' => $user])
@@ -127,6 +127,7 @@ class ShowTest extends TestCase
             ->set('isOrganizer', true);
 
         $this->assertTrue($user->refresh()->is_organizer);
+        $this->assertNull($user->organizer_requested_at);
         $this->assertTrue($user->can('create', Activity::class));
 
         $component->set('isOrganizer', false);

@@ -89,17 +89,12 @@ class IndexTest extends TestCase
         $this->get('/agenda/@bestaatniet')->assertNotFound();
     }
 
-    public function test_create_button_is_only_shown_to_organizers(): void
+    public function test_create_button_is_always_shown(): void
     {
-        $this->get(route('agenda'))->assertDontSee(route('agenda.create'));
+        $this->get(route('agenda'))->assertSee(route('agenda.create'));
 
         $this->actingAs(User::factory()->create())
             ->get(route('agenda'))
-            ->assertDontSee(route('agenda.create'));
-
-        $this->actingAs(User::factory()->organizer()->create())
-            ->get(route('agenda'))
-            ->assertSee(route('agenda.create'))
             ->assertSeeInOrder(['class="header__actions"', route('agenda.create'), 'Nieuwe activiteit'], false);
     }
 

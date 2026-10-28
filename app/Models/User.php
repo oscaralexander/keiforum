@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Gender;
+use App\Mail\OrganizerRequestDecided;
 use App\Mail\ResetPassword;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,6 +31,7 @@ class User extends Authenticatable
         'is_organizer' => 'boolean',
         'is_subscribed_to_digest' => 'boolean',
         'last_seen_at' => 'datetime',
+        'organizer_requested_at' => 'datetime',
         'password' => 'hashed',
     ];
 
@@ -125,6 +127,36 @@ class User extends Authenticatable
             ->active()
             ->where('is_subscribed_to_digest', true)
             ->where(fn (Builder $query) => $query->whereNull('banned_until')->orWhere('banned_until', '<', now()));
+    }
+
+    /**
+     * Users waiting for an admin to let them place activities.
+     */
+    #[Scope]
+    protected function requestedOrganizer(Builder $query): void
+    {
+        $query->whereNotNull('organizer_requested_at')->where('is_organizer', false);
+    }
+
+    /**
+     * Ask the admins for the right to place activities on the agenda.
+     */
+    public function requestOrganizer(): void
+    {
+        $this->update(['organizer_requested_at' => now()]);
+    }
+
+    /**
+     * Grant or deny a request to place activities and let the user know.
+     */
+    public function decideOrganizerRequest(bool $isApproved): void
+    {
+        $this->update([
+            'is_organizer' => $isApproved,
+            'organizer_requested_at' => null,
+        ]);
+
+        Mail::to($this->email)->send(new OrganizerRequestDecided($this, $isApproved));
     }
 
     public function sendPasswordResetNotification($token): void

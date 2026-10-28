@@ -51,10 +51,58 @@ class CreateTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_members_who_are_not_organizers_cannot_create_activities(): void
+    public function test_members_who_are_not_organizers_see_the_request_instead_of_the_form(): void
     {
         $this->actingAs(User::factory()->create())
             ->get(route('agenda.create'))
+            ->assertOk()
+            ->assertSee(__('agenda/create.request.text'))
+            ->assertSee(__('agenda/create.request.submit'))
+            ->assertDontSee(__('agenda/create.submit'));
+    }
+
+    public function test_member_can_request_the_organizer_right(): void
+    {
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test('pages::agenda.create')
+            ->call('requestOrganizer')
+            ->assertSee(__('agenda/create.request.pending'))
+            ->assertDontSee(__('agenda/create.request.submit'));
+
+        $this->assertNotNull($user->refresh()->organizer_requested_at);
+    }
+
+    public function test_pending_request_shows_a_disabled_button(): void
+    {
+        $this->actingAs(User::factory()->create(['organizer_requested_at' => now()]))
+            ->get(route('agenda.create'))
+            ->assertSeeInOrder(['disabled', __('agenda/create.request.pending')], false);
+    }
+
+    public function test_requesting_again_keeps_the_original_date(): void
+    {
+        $user = User::factory()->create(['organizer_requested_at' => now()->subWeek()]);
+
+        Livewire::actingAs($user)->test('pages::agenda.create')->call('requestOrganizer');
+
+        $this->assertTrue($user->refresh()->organizer_requested_at->isSameDay(now()->subWeek()));
+    }
+
+    public function test_members_who_are_not_organizers_cannot_submit_activities(): void
+    {
+        Livewire::actingAs(User::factory()->create())
+            ->test('pages::agenda.create')
+            ->call('submit')
+            ->assertForbidden();
+    }
+
+    public function test_organizers_cannot_request_the_right_again(): void
+    {
+        Livewire::actingAs(User::factory()->organizer()->create())
+            ->test('pages::agenda.create')
+            ->call('requestOrganizer')
             ->assertForbidden();
     }
 
