@@ -39,6 +39,7 @@ new class extends Component
     public function forums()
     {
         return Forum::query()
+            ->listed()
             ->orderBy('position')
             ->get()
             ->filter(fn (Forum $forum): bool => auth()->user()->can('createTopic', $forum))

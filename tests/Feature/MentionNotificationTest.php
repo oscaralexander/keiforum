@@ -185,7 +185,7 @@ class MentionNotificationTest extends TestCase
         Post::factory()->create(['topic_id' => $topic->id]);
 
         Livewire::actingAs($author)
-            ->test('pages::topic.show', ['topic' => $topic])
+            ->test('replies', ['topic' => $topic])
             ->set('body', '<p>Hello world</p>')
             ->call('submit');
 

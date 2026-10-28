@@ -104,7 +104,7 @@ class TopicUserTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test('pages::topic.show', ['topic' => $topic])
+            ->test('replies', ['topic' => $topic])
             ->set('subscribe', true);
 
         $pivot = $topic->trackedByUsers()->where('user_id', $user->id)->first()?->pivot;
@@ -121,7 +121,7 @@ class TopicUserTest extends TestCase
         $topic->trackedByUsers()->attach($user->id, ['is_subscribed' => true]);
 
         Livewire::actingAs($user)
-            ->test('pages::topic.show', ['topic' => $topic])
+            ->test('replies', ['topic' => $topic])
             ->set('subscribe', false);
 
         $pivot = $topic->trackedByUsers()->where('user_id', $user->id)->first()?->pivot;
@@ -137,7 +137,7 @@ class TopicUserTest extends TestCase
         $topic->trackedByUsers()->attach($user->id, ['is_subscribed' => true]);
 
         Livewire::actingAs($user)
-            ->test('pages::topic.show', ['topic' => $topic])
+            ->test('replies', ['topic' => $topic])
             ->assertSet('subscribe', true);
     }
 
@@ -145,7 +145,7 @@ class TopicUserTest extends TestCase
     {
         $topic = Topic::factory()->create();
 
-        Livewire::test('pages::topic.show', ['topic' => $topic])
+        Livewire::test('replies', ['topic' => $topic])
             ->set('subscribe', true)
             ->assertForbidden();
     }
@@ -156,7 +156,7 @@ class TopicUserTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test('pages::topic.show', ['topic' => $topic])
+            ->test('replies', ['topic' => $topic])
             ->assertSet('subscribe', true);
     }
 
@@ -168,7 +168,7 @@ class TopicUserTest extends TestCase
         $topic->trackedByUsers()->attach($user->id);
 
         Livewire::actingAs($user)
-            ->test('pages::topic.show', ['topic' => $topic])
+            ->test('replies', ['topic' => $topic])
             ->assertSet('subscribe', true);
     }
 
@@ -179,7 +179,7 @@ class TopicUserTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test('pages::topic.show', ['topic' => $topic]);
+            ->test('replies', ['topic' => $topic]);
 
         $this->assertFalse($topic->subscribers()->where('users.id', $user->id)->exists());
     }
@@ -192,7 +192,7 @@ class TopicUserTest extends TestCase
         $topic->trackedByUsers()->attach($user->id, ['is_subscribed' => false]);
 
         Livewire::actingAs($user)
-            ->test('pages::topic.show', ['topic' => $topic])
+            ->test('replies', ['topic' => $topic])
             ->assertSet('subscribe', false);
     }
 
@@ -202,7 +202,7 @@ class TopicUserTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test('pages::topic.show', ['topic' => $topic])
+            ->test('replies', ['topic' => $topic])
             ->set('body', '<p>Reactie</p>')
             ->call('submit');
 
@@ -217,7 +217,7 @@ class TopicUserTest extends TestCase
         $topic->trackedByUsers()->attach($user->id, ['is_subscribed' => false]);
 
         Livewire::actingAs($user)
-            ->test('pages::topic.show', ['topic' => $topic])
+            ->test('replies', ['topic' => $topic])
             ->set('body', '<p>Reactie</p>')
             ->call('submit');
 

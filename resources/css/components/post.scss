@@ -187,9 +187,12 @@
         margin-bottom: 1px;
 
         &:first-child {
+            margin-top: -1px;
+        }
+
+        :first-child > &:first-child {
             border-top-left-radius: var(--borderRadius-l);
             border-top-right-radius: var(--borderRadius-l);
-            margin-top: -1px;
 
             &:last-child {
                 border-bottom-left-radius: 0;

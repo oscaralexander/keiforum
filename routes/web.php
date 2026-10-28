@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ActivityCategory;
 use App\Http\Controllers\Api\User\SearchController;
 use App\Http\Controllers\ImageProxyController;
 use App\Http\Controllers\NewsTopicController;
@@ -14,6 +15,10 @@ Route::livewire('algemene-voorwaarden', 'pages::terms')->name('terms');
 Route::livewire('privacy', 'pages::privacy')->name('privacy');
 Route::livewire('leden', 'pages::members.index')->name('members');
 Route::livewire('agenda', 'pages::agenda.index')->name('agenda');
+Route::livewire('agenda/{category}', 'pages::agenda.index')->whereIn('category', ActivityCategory::values())->name('agenda.category');
+Route::livewire('agenda/@{user}', 'pages::agenda.index')->name('agenda.user');
+Route::livewire('agenda/@{user}/{category}', 'pages::agenda.index')->whereIn('category', ActivityCategory::values())->name('agenda.user.category');
+Route::livewire('agenda/@{user}/{date}/{slug}', 'pages::agenda.show')->where('date', '\d{4}-\d{2}-\d{2}')->name('agenda.show');
 
 Route::get('img', ImageProxyController::class)->name('img');
 Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
@@ -47,6 +52,10 @@ Route::middleware('auth')->group(function () {
 
     // Topic
     Route::livewire('nieuw-onderwerp/{forum?}', 'pages::topic.create')->name('topic.create');
+
+    // Agenda
+    Route::livewire('agenda/nieuw', 'pages::agenda.create')->name('agenda.create');
+    Route::livewire('agenda/@{user}/{date}/{slug}/bewerken', 'pages::agenda.edit')->where('date', '\d{4}-\d{2}-\d{2}')->name('agenda.edit');
 });
 
 // Member

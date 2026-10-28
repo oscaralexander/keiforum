@@ -8,10 +8,10 @@
         Hi {{ $post->user->emailName }},<br>
         <br>
         Je bericht in
-        <a href="{{ route('topic.show', ['forum' => $post->topic->forum, 'topic' => $post->topic, 'slug' => $post->topic->slug, 'post' => $post->id]) }}" style="color: #c93020;">{{ $post->topic->title }}</a>
+        <a href="{{ $post->topic->url(['post' => $post->id]) }}" style="color: #c93020;">{{ $post->topic->title }}</a>
         kreeg {{ $count }} likes!
     </p>
     <p>
-        <a class="btn" href="{{ route('topic.show', ['forum' => $post->topic->forum, 'topic' => $post->topic, 'slug' => $post->topic->slug, 'post' => $post->id]) }}">Bekijk mijn bericht</a>
+        <a class="btn" href="{{ $post->topic->url(['post' => $post->id]) }}">Bekijk mijn bericht</a>
     </p>
 @endsection

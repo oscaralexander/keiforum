@@ -40,25 +40,28 @@ new class extends Component
 <div>
     <x-header hide-path title="Admin" />
     <div class="flex flex-col flex-gap-l">
+        <section class="flex flex-col flex-gap-m">
+            <h2>@lang('admin/index.reported_posts')</h2>
+            @if ($this->posts->isNotEmpty())
+                <div class="panel">
+                    <ol>
+                        @foreach ($this->posts as $post)
+                            <livewire:post
+                                :post="$post"
+                                :number="(($this->posts->currentPage() - 1) * Post::PAGINATE_COUNT) + ($loop->iteration)"
+                                wire:key="post-{{ $post->id }}"
+                            />
+                        @endforeach
+                    </ol>
+                </div>
+                {{ $this->posts->links() }}
+            @else
+                <div class="panel panel--padded">
+                    <p>@lang('admin/index.no_reported_posts')</p>
+                </div>
+            @endif
+        </section>
+        <livewire:admin.organizer-requests />
         <livewire:admin.headlines />
-        <h2>@lang('admin/index.reported_posts')</h2>
-        @if ($this->posts->isNotEmpty())
-            <div class="panel">
-                <ol>
-                    @foreach ($this->posts as $post)
-                        <livewire:post
-                            :post="$post"
-                            :number="(($this->posts->currentPage() - 1) * Post::PAGINATE_COUNT) + ($loop->iteration)"
-                            wire:key="post-{{ $post->id }}"
-                        />
-                    @endforeach
-                </ol>
-            </div>
-            {{ $this->posts->links() }}
-        @else
-            <div class="panel panel--padded">
-                <p>@lang('admin/index.no_reported_posts')</p>
-            </div>
-        @endif
     </div>
 </div>

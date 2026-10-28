@@ -56,6 +56,14 @@
         @endfor
     @endforeach
 
+    {{-- Agenda pages --}}
+    @foreach ($activities as $activity)
+        <url>
+            <loc>{{ $activity->url() }}</loc>
+            <lastmod>{{ $activity->updated_at->toAtomString() }}</lastmod>
+        </url>
+    @endforeach
+
     {{-- Member pages --}}
     @foreach ($users as $user)
         <url>

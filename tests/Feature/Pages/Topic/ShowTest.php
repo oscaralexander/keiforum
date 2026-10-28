@@ -67,13 +67,23 @@ class ShowTest extends TestCase
             ->assertSee(__('topic/show.reply_login'));
     }
 
+    public function test_guest_reply_login_link_is_nofollow(): void
+    {
+        [$forum, $topic] = $this->createTopicWithPost();
+        $topicPath = '/'.ltrim(parse_url(route('topic.show', [$forum, $topic, $topic->slug]), PHP_URL_PATH), '/');
+
+        $this->get(route('topic.show', [$forum, $topic, $topic->slug]))
+            ->assertOk()
+            ->assertSee('<a href="'.route('login', ['redirect' => $topicPath]).'" rel="nofollow" wire:navigate>Log in</a> om te reageren.', false);
+    }
+
     public function test_authenticated_user_can_submit_reply(): void
     {
         [$forum, $topic] = $this->createTopicWithPost();
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test('pages::topic.show', ['topic' => $topic])
+            ->test('replies', ['topic' => $topic])
             ->set('body', '<p>Test reply</p>')
             ->call('submit')
             ->assertRedirect();
@@ -89,7 +99,7 @@ class ShowTest extends TestCase
     {
         [$forum, $topic] = $this->createTopicWithPost();
 
-        Livewire::test('pages::topic.show', ['topic' => $topic])
+        Livewire::test('replies', ['topic' => $topic])
             ->set('body', '<p>Test reply</p>')
             ->call('submit')
             ->assertForbidden();
@@ -110,7 +120,7 @@ class ShowTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test('pages::topic.show', ['topic' => $topic]);
+            ->test('replies', ['topic' => $topic]);
 
         $this->assertDatabaseHas('topic_user', [
             'topic_id' => $topic->id,
@@ -129,7 +139,7 @@ class ShowTest extends TestCase
 
         // Visit page 1 which has a lower max post ID than what was already tracked
         Livewire::actingAs($user)
-            ->test('pages::topic.show', ['topic' => $topic]);
+            ->test('replies', ['topic' => $topic]);
 
         $this->assertDatabaseHas('topic_user', [
             'topic_id' => $topic->id,
@@ -142,7 +152,7 @@ class ShowTest extends TestCase
     {
         [$forum, $topic] = $this->createTopicWithPost();
 
-        Livewire::test('pages::topic.show', ['topic' => $topic]);
+        Livewire::test('replies', ['topic' => $topic]);
 
         $this->assertDatabaseMissing('topic_user', ['topic_id' => $topic->id]);
     }

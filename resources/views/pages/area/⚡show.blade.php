@@ -22,7 +22,7 @@ new class extends Component
     #[Computed]
     public function forums(): Collection
     {
-        return Forum::query()->orderBy('position')->get();
+        return Forum::query()->listed()->orderBy('position')->get();
     }
 
     public function mount(Area $area): void

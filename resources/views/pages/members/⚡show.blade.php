@@ -12,11 +12,24 @@ use Illuminate\Support\Collection;
 new class extends Component
 {
     public User $user;
-    
+
+    public bool $isOrganizer = false;
+
     public function mount(User $user)
     {
         $this->user = $user;
         $this->user->load('area')->loadCount('posts');
+        $this->isOrganizer = (bool) $user->is_organizer;
+    }
+
+    /**
+     * Admins grant or revoke the right to place activities on the agenda.
+     */
+    public function updatedIsOrganizer(bool $value): void
+    {
+        abort_unless(auth()->user()?->is_admin, 403);
+
+        $this->user->update(['is_organizer' => $value, 'organizer_requested_at' => null]);
     }
 
     public function render()
@@ -46,7 +59,7 @@ new class extends Component
 ?>
 
 @push('meta')
-    @if ($user->posts_count === 0)
+    @if ($user->posts_count < User::INDEXABLE_POSTS_COUNT)
         <meta content="noindex" name="robots">
     @endif
 @endpush
@@ -99,6 +112,11 @@ new class extends Component
                         @if (!empty($user->bio))
                             <div class="formatted profile__bio">
                                 <p>{!! $user->bio_html !!}</p>
+                            </div>
+                        @endif
+                        @if (auth()->user()->is_admin)
+                            <div class="profile__organizer">
+                                <x-input.toggle id="isOrganizer" :label="__('members/show.is_organizer')" wire:model.live="isOrganizer" />
                             </div>
                         @endif
                     @endauth

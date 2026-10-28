@@ -2,11 +2,11 @@
     'areas' => [],
 ])
 
-<div class="areaList">
-    <x-icon class="areaList__icon" icon="map-pin" />
-    <div class="areaList__list">
+<div class="headerMeta__item">
+    <x-icon class="headerMeta__icon" icon="map-pin" />
+    <div>
         @foreach ($areas as $area)
-            <a class="areaList__list-item" href="{{ route('area.show', $area) }}" wire:navigate>{{ $area->name }}</a>@if(!$loop->last), @endif
+            <a href="{{ route('area.show', $area) }}" wire:navigate>{{ $area->name }}</a>@if(!$loop->last), @endif
         @endforeach
     </div>
 </div>

@@ -25,8 +25,13 @@
             @if (!empty($intro))
                 <p class="header__intro">{!! $intro !!}</p>
             @endif
-            @if ($areas->isNotEmpty())
-                <x-header.area-list :areas="$areas" />
+            @if ($areas->isNotEmpty() || (isset($meta) && $meta->hasActualContent()))
+                <div class="headerMeta">
+                    @if ($areas->isNotEmpty())
+                        <x-header.area-list :areas="$areas" />
+                    @endif
+                    {{ $meta ?? '' }}
+                </div>
             @endif
         </div>
     </div>

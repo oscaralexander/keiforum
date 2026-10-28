@@ -1,10 +1,12 @@
 // Register Alpine components
 import Editor from './components/alpine/Editor';
 import MultiSelect from './components/alpine/MultiSelect';
+import PlaceAutocomplete from './components/alpine/PlaceAutocomplete';
 
 const registerAlpineComponents = () => {
     Alpine.data('editor', Editor);
     Alpine.data('multiSelect', MultiSelect);
+    Alpine.data('placeAutocomplete', PlaceAutocomplete);
 };
 
 // In Safari, @livewireScripts (a regular script) boots Alpine and fires

@@ -1,0 +1,29 @@
+.headerMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem 1rem;
+
+    &__item {
+        align-items: center;
+        color: rgba(var(--color-1-rgb), .75);
+        display: flex;
+        flex-wrap: wrap;
+        font-size: var(--fontSize-l);
+        gap: .35em;
+
+        a {
+            color: rgba(var(--color-1-rgb), .75);
+            text-decoration: none;
+
+            &:hover {
+                color: var(--color-1);
+            }
+        }
+    }
+
+    &__icon {
+        flex: 0 0 1.25rem;
+        height: 1.25rem;
+        width: 1.25rem;
+    }
+}
