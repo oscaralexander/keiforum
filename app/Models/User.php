@@ -255,6 +255,16 @@ class User extends Authenticatable
         );
     }
 
+    /**
+     * The name shown as an activity organizer, falling back to the username.
+     */
+    public function organizerName(): Attribute
+    {
+        return new Attribute(
+            get: fn (): string => $this->name ?: $this->username,
+        );
+    }
+
     public function unreadMessagesCount(): Attribute
     {
         $attribute = new Attribute(

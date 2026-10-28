@@ -72,12 +72,6 @@ new class extends Component
     }
 
     #[Computed]
-    public function organizerName(): string
-    {
-        return $this->activity->user->name ?: $this->activity->user->username;
-    }
-
-    #[Computed]
     public function mapsUrl(): string
     {
         return 'https://www.google.com/maps/search/?'.http_build_query(array_filter([
@@ -118,7 +112,7 @@ new class extends Component
             ],
             'organizer' => [
                 '@type' => 'Organization',
-                'name' => $this->organizerName,
+                'name' => $activity->user->organizer_name,
                 'url' => route('agenda.user', $activity->user),
             ],
             'url' => $activity->url(),
@@ -168,7 +162,7 @@ new class extends Component
             </div>
             <div class="headerMeta__item">
                 <x-icon class="headerMeta__icon" icon="user" />
-                <a href="{{ route('agenda.user', $activity->user) }}" wire:navigate>{{ $this->organizerName }}</a>
+                <a href="{{ route('agenda.user', $activity->user) }}" wire:navigate>{{ $activity->user->organizer_name }}</a>
             </div>
         </x-slot:meta>
         <x-slot:actions>
@@ -235,7 +229,7 @@ new class extends Component
                                 </div>
                             @endif
                         </dl>
-                        <a class="activity__organizerLarge m:show" href="{{ route('agenda.user', $activity->user) }}" title="{{ $this->organizerName }}" wire:navigate>
+                        <a class="activity__organizerLarge m:show" href="{{ route('agenda.user', $activity->user) }}" title="{{ $activity->user->organizer_name }}" wire:navigate>
                             <x-avatar img-only :size="AvatarSize::L" :user="$activity->user" />
                         </a>
                     </div>
@@ -280,7 +274,7 @@ new class extends Component
         @if ($this->moreActivities->isNotEmpty())
             <section class="panel__body activityMore">
                 <header class="activityMore__header">
-                    <h3>@lang('agenda/show.more_from', ['name' => $this->organizerName])</h3>
+                    <h3>@lang('agenda/show.more_from', ['name' => $activity->user->organizer_name])</h3>
                     <a class="activityMore__all" href="{{ route('agenda.user', $activity->user) }}" wire:navigate>
                         @lang('agenda/show.view_all')
                         <x-icon icon="arrow-right" />

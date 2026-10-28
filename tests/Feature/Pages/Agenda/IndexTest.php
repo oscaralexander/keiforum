@@ -56,9 +56,28 @@ class IndexTest extends TestCase
 
         $this->get('/agenda/@'.$venue->username)
             ->assertOk()
-            ->assertSee(__('agenda/index.title_user', ['username' => $venue->username]))
             ->assertSee($own->title)
             ->assertDontSee($other->title);
+    }
+
+    public function test_user_page_title_shows_the_name(): void
+    {
+        User::factory()->create(['name' => 'Podium FLUOR', 'username' => 'podiumfluor']);
+
+        $this->get('/agenda/@podiumfluor')
+            ->assertSee('Agenda van Podium FLUOR')
+            ->assertDontSee('Agenda van podiumfluor');
+
+        $this->get('/agenda/@podiumfluor/club')
+            ->assertSee('Agenda van Podium FLUOR: '.ActivityCategory::CLUB->label());
+    }
+
+    public function test_user_page_title_falls_back_to_the_username(): void
+    {
+        User::factory()->create(['name' => '', 'username' => 'podiumfluor']);
+
+        $this->get('/agenda/@podiumfluor')
+            ->assertSee('Agenda van podiumfluor');
     }
 
     public function test_user_category_page_combines_both_filters(): void

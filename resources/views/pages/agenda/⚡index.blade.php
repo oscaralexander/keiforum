@@ -143,8 +143,8 @@ new class extends Component
     public function title(): string
     {
         return match (true) {
-            $this->user && $this->category => __('agenda/index.title_user_category', ['username' => $this->user->username, 'category' => $this->category->label()]),
-            (bool) $this->user => __('agenda/index.title_user', ['username' => $this->user->username]),
+            $this->user && $this->category => __('agenda/index.title_user_category', ['name' => $this->user->organizer_name, 'category' => $this->category->label()]),
+            (bool) $this->user => __('agenda/index.title_user', ['name' => $this->user->organizer_name]),
             (bool) $this->category => __('agenda/index.title_category', ['category' => $this->category->label()]),
             default => __('agenda/index.title'),
         };
