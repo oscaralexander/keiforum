@@ -38,5 +38,6 @@ return [
             'label' => 'Gebruikersnaam',
         ],
     ],
+    'activation_email_sent_title' => 'Check je mail',
     'activation_email_sent_text' => 'We hebben een activatielink naar je e-mail verstuurd. Klik op de link in de mail om je account te activeren. Niks ontvangen? Check even je spam en <a href="mailto:mail@keiforum.nl">neem contact met ons op.</a>',
 ];
