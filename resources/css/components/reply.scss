@@ -1,8 +1,0 @@
-.reply {
-    padding: 1.5rem;
-
-    ol + &,
-    .panel__body + & {
-        border-top: 1px solid var(--color-border);
-    }
-}

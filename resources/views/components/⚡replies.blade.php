@@ -171,7 +171,7 @@ new class extends Component
                 @endforeach
             </ol>
         @endif
-        <section class="reply">
+        <section class="panel__body reply">
             @auth
                 <div class="flex flex-col flex-gap-m">
                     <div class="m:hide">

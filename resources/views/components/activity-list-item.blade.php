@@ -1,4 +1,7 @@
-@props(['activity'])
+@props([
+    'activity',
+    'isDateVisible' => false,
+])
 
 <article {{ $attributes->class(['activityListItem']) }}>
     <a class="activityListItem__poster" href="{{ $activity->url() }}" tabindex="-1" wire:navigate>
@@ -21,8 +24,13 @@
             <a href="{{ $activity->url() }}" wire:navigate>{{ $activity->title }}</a>
         </h4>
         <ul class="meta">
+            @if ($isDateVisible)
+                <li class="meta__item">{{ $activity->starts_on->translatedFormat('j M') }}</li>
+            @endif
             <li class="meta__item">{{ $activity->location_name }}</li>
-            <li class="meta__item">{{ $activity->starts_at_time }}</li>
+            @unless ($isDateVisible)
+                <li class="meta__item">{{ $activity->starts_at_time }}</li>
+            @endunless
         </ul>
     </div>
 </article>

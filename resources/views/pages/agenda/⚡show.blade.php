@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\AttendanceStatus;
+use App\Enums\AvatarSize;
 use App\Models\Activity;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -54,6 +55,28 @@ new class extends Component
         return $this->activity->maybeUsers()->orderByPivot('created_at')->get();
     }
 
+    /**
+     * Up to four other upcoming activities by the same organizer.
+     */
+    #[Computed]
+    public function moreActivities(): Collection
+    {
+        return $this->activity->user->activities()
+            ->published()
+            ->upcoming()
+            ->chronological()
+            ->whereKeyNot($this->activity->id)
+            ->limit(4)
+            ->get()
+            ->each(fn (Activity $activity) => $activity->setRelation('user', $this->activity->user));
+    }
+
+    #[Computed]
+    public function organizerName(): string
+    {
+        return $this->activity->user->name ?: $this->activity->user->username;
+    }
+
     #[Computed]
     public function mapsUrl(): string
     {
@@ -95,7 +118,7 @@ new class extends Component
             ],
             'organizer' => [
                 '@type' => 'Organization',
-                'name' => $activity->user->name ?: $activity->user->username,
+                'name' => $this->organizerName,
                 'url' => route('agenda.user', $activity->user),
             ],
             'url' => $activity->url(),
@@ -141,11 +164,11 @@ new class extends Component
         <x-slot:meta>
             <div class="headerMeta__item">
                 <x-icon class="headerMeta__icon" icon="calendar" />
-                <span>{{ $activity->starts_formatted }}</span>
+                <span>{{ $activity->starts_on->translatedFormat('j M Y') }}</span>
             </div>
             <div class="headerMeta__item">
-                <x-icon class="headerMeta__icon" icon="map-pin" />
-                <a href="{{ $this->mapsUrl }}" rel="noopener" target="_blank">{{ $activity->location_name }}</a>
+                <x-icon class="headerMeta__icon" icon="user" />
+                <a href="{{ route('agenda.user', $activity->user) }}" wire:navigate>{{ $this->organizerName }}</a>
             </div>
         </x-slot:meta>
         <x-slot:actions>
@@ -176,41 +199,46 @@ new class extends Component
                     @unless ($activity->published_at?->isPast())
                         <x-callout icon="circle-alert" :text="e(__('agenda/show.unpublished'))" />
                     @endunless
-                    <dl class="activity__details">
-                        <div class="activity__detail">
-                            <dt aria-label="@lang(\'agenda/show.date\')" title="@lang(\'agenda/show.date\')"><x-icon icon="calendar" /></dt>
-                            <dd>
-                                @if ($activity->is_multi_day)
-                                    {{ ucfirst($activity->starts_on->translatedFormat('l, j F')) }} – {{ $activity->ends_on->translatedFormat('l, j F Y') }}
-                                @else
-                                    {{ ucfirst($activity->starts_on->translatedFormat('l, j F Y')) }}
-                                @endif
-                            </dd>
-                        </div>
-                        <div class="activity__detail">
-                            <dt aria-label="@lang(\'agenda/show.time\')" title="@lang(\'agenda/show.time\')"><x-icon icon="clock" /></dt>
-                            <dd>{{ $activity->starts_at_time }}@if ($activity->ends_at_time) – {{ $activity->ends_at_time }}@endif</dd>
-                        </div>
-                        <div class="activity__detail">
-                            <dt aria-label="@lang(\'agenda/show.location\')" title="@lang(\'agenda/show.location\')"><x-icon icon="map-pin" /></dt>
-                            <dd>
-                                <a href="{{ $this->mapsUrl }}" rel="noopener" target="_blank">{{ $activity->location_name }}</a>
-                                @if ($activity->location_address)
-                                    <span class="activity__address">{{ $activity->location_address }}</span>
-                                @endif
-                            </dd>
-                        </div>
-                        <div class="activity__detail">
-                            <dt aria-label="@lang(\'agenda/show.price\')" title="@lang(\'agenda/show.price\')"><x-icon icon="ticket" /></dt>
-                            <dd>{{ $activity->price_formatted }}</dd>
-                        </div>
-                        @if ($activity->website_url)
+                    <div class="activity__summary">
+                        <dl class="activity__details">
                             <div class="activity__detail">
-                                <dt aria-label="@lang(\'agenda/show.website\')" title="@lang(\'agenda/show.website\')"><x-icon icon="link" /></dt>
-                                <dd><a href="{{ $activity->website_url }}" rel="noopener nofollow" target="_blank">{{ $activity->website_host }}</a></dd>
+                                <dt aria-label="@lang('agenda/show.location')" title="@lang('agenda/show.location')"><x-icon icon="map-pin" /></dt>
+                                <dd>
+                                    <a href="{{ $this->mapsUrl }}" rel="noopener" target="_blank">{{ $activity->location_name }}</a>
+                                    @if ($activity->location_address)
+                                        <span class="activity__address">{{ $activity->location_address }}</span>
+                                    @endif
+                                </dd>
                             </div>
-                        @endif
-                    </dl>
+                            <div class="activity__detail">
+                                <dt aria-label="@lang('agenda/show.date')" title="@lang('agenda/show.date')"><x-icon icon="calendar" /></dt>
+                                <dd>
+                                    @if ($activity->is_multi_day)
+                                        {{ ucfirst($activity->starts_on->translatedFormat('l, j F')) }} – {{ $activity->ends_on->translatedFormat('l, j F Y') }}
+                                    @else
+                                        {{ ucfirst($activity->starts_on->translatedFormat('l, j F Y')) }}
+                                    @endif
+                                </dd>
+                            </div>
+                            <div class="activity__detail">
+                                <dt aria-label="@lang('agenda/show.time')" title="@lang('agenda/show.time')"><x-icon icon="clock" /></dt>
+                                <dd>{{ $activity->starts_at_time }}@if ($activity->ends_at_time) – {{ $activity->ends_at_time }}@endif</dd>
+                            </div>
+                            <div class="activity__detail">
+                                <dt aria-label="@lang('agenda/show.price')" title="@lang('agenda/show.price')"><x-icon icon="ticket" /></dt>
+                                <dd>{{ $activity->price_formatted }}</dd>
+                            </div>
+                            @if ($activity->website_url)
+                                <div class="activity__detail">
+                                    <dt aria-label="@lang('agenda/show.website')" title="@lang('agenda/show.website')"><x-icon icon="link" /></dt>
+                                    <dd><a href="{{ $activity->website_url }}" rel="noopener nofollow" target="_blank">{{ $activity->website_host }}</a></dd>
+                                </div>
+                            @endif
+                        </dl>
+                        <a class="activity__organizerLarge m:show" href="{{ route('agenda.user', $activity->user) }}" title="{{ $this->organizerName }}" wire:navigate>
+                            <x-avatar img-only :size="AvatarSize::L" :user="$activity->user" />
+                        </a>
+                    </div>
                     <div class="formatted">{!! $activity->description !!}</div>
                     <div class="activity__attendance">
                         <div class="activity__attendanceButtons">
@@ -249,5 +277,21 @@ new class extends Component
                 </div>
             </div>
         </div>
+        @if ($this->moreActivities->isNotEmpty())
+            <section class="panel__body activityMore">
+                <header class="activityMore__header">
+                    <h3>@lang('agenda/show.more_from', ['name' => $this->organizerName])</h3>
+                    <a class="activityMore__all" href="{{ route('agenda.user', $activity->user) }}" wire:navigate>
+                        @lang('agenda/show.view_all')
+                        <x-icon icon="arrow-right" />
+                    </a>
+                </header>
+                <div class="activityMore__activities">
+                    @foreach ($this->moreActivities as $moreActivity)
+                        <x-activity-list-item :activity="$moreActivity" is-date-visible wire:key="more-{{ $moreActivity->id }}" />
+                    @endforeach
+                </div>
+            </section>
+        @endif
     </livewire:replies>
 </div>

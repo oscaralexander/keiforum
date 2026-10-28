@@ -203,16 +203,6 @@ class Activity extends Model
     }
 
     /**
-     * The start date and time, e.g. "24 okt. 2026, 23:00".
-     */
-    public function startsFormatted(): Attribute
-    {
-        return new Attribute(
-            get: fn (): string => $this->starts_on->translatedFormat('j M Y').', '.$this->starts_at_time,
-        );
-    }
-
-    /**
      * The website's host name without "www.", e.g. "podiumfluor.nl".
      */
     public function websiteHost(): Attribute

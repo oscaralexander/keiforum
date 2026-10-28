@@ -45,10 +45,11 @@ class ShowTest extends TestCase
             ->assertSee('Spätkauf - 24 oktober 2099 - '.config('app.name'));
     }
 
-    public function test_header_shows_the_start_before_the_location(): void
+    public function test_header_shows_the_start_date_without_time_before_the_organizer(): void
     {
-        $activity = Activity::factory()->create([
-            'location_name' => 'Podium FLUOR',
+        $organizer = User::factory()->create(['name' => 'Podium FLUOR']);
+        $activity = Activity::factory()->for($organizer)->create([
+            'location_name' => 'Elders',
             'starts_on' => '2099-10-24',
             'ends_on' => '2099-10-25',
             'starts_at' => '23:00',
@@ -56,7 +57,75 @@ class ShowTest extends TestCase
         ]);
 
         $this->get($activity->url())
-            ->assertSeeInOrder(['class="headerMeta"', '24 okt. 2099, 23:00', 'Podium FLUOR'], false);
+            ->assertSeeInOrder(['class="headerMeta"', '24 okt. 2099', 'Podium FLUOR', 'class="activity"'], false)
+            ->assertDontSee('24 okt. 2099, 23:00');
+    }
+
+    public function test_details_list_the_location_first(): void
+    {
+        $activity = Activity::factory()->create(['location_name' => 'Podium FLUOR']);
+
+        $this->get($activity->url())
+            ->assertSeeInOrder(['class="activity__details"', '#map-pin', 'Podium FLUOR', '#calendar', '#clock'], false)
+            ->assertSee('aria-label="Locatie" title="Locatie"', false)
+            ->assertDontSee('@lang', false);
+    }
+
+    public function test_organizer_is_shown_by_name(): void
+    {
+        $organizer = User::factory()->create(['name' => "Anna's Bookcafé", 'username' => 'annasbookcafe']);
+        $activity = Activity::factory()->for($organizer)->create();
+
+        $this->get($activity->url())
+            ->assertSeeInOrder(['class="headerMeta"', route('agenda.user', $organizer), 'Anna&#039;s Bookcafé</a>'], false);
+    }
+
+    public function test_organizer_falls_back_to_username_without_name(): void
+    {
+        $organizer = User::factory()->create(['name' => '', 'username' => 'podiumfluor']);
+        $activity = Activity::factory()->for($organizer)->create();
+
+        $this->get($activity->url())
+            ->assertSeeInOrder(['class="headerMeta"', 'podiumfluor</a>'], false);
+    }
+
+    public function test_more_from_organizer_lists_up_to_four_other_upcoming_activities(): void
+    {
+        $organizer = User::factory()->create(['name' => 'Podium FLUOR']);
+        $activity = Activity::factory()->for($organizer)->create(['title' => 'Huidige avond']);
+        $upcoming = collect(range(1, 5))->map(fn (int $day) => Activity::factory()->for($organizer)->create([
+            'title' => 'Avond '.$day,
+            'starts_on' => now()->addWeeks(2)->addDays($day),
+            'ends_on' => now()->addWeeks(2)->addDays($day),
+        ]));
+        Activity::factory()->for($organizer)->past()->create(['title' => 'Voorbije avond']);
+        Activity::factory()->for($organizer)->unpublished()->create(['title' => 'Geheime avond']);
+        Activity::factory()->create(['title' => 'Andermans avond']);
+
+        $response = $this->get($activity->url())
+            ->assertSee('Meer van Podium FLUOR')
+            ->assertSeeInOrder(['class="panel__body activityMore"', route('agenda.user', $organizer), 'Bekijk alles'], false);
+
+        Livewire::test('pages::agenda.show', [
+            'user' => $organizer,
+            'date' => $activity->starts_on->format('Y-m-d'),
+            'slug' => $activity->slug,
+        ])->assertSet('moreActivities', fn ($activities): bool => $activities->pluck('id')->all() === $upcoming->take(4)->pluck('id')->all());
+
+        $response->assertSeeInOrder(['Avond 1', 'Avond 2', 'Avond 3', 'Avond 4'])
+            ->assertSee($upcoming->first()->starts_on->translatedFormat('j M'))
+            ->assertDontSee('<li class="meta__item">20:00</li>', false)
+            ->assertDontSee('Avond 5')
+            ->assertDontSee('Voorbije avond')
+            ->assertDontSee('Geheime avond')
+            ->assertDontSee('Andermans avond');
+    }
+
+    public function test_more_from_organizer_is_hidden_without_other_upcoming_activities(): void
+    {
+        $activity = Activity::factory()->create();
+
+        $this->get($activity->url())->assertDontSee('class="panel__body activityMore"', false);
     }
 
     public function test_night_activity_only_shows_the_start_date(): void
