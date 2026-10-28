@@ -6,6 +6,7 @@ use App\Enums\ActivityCategory;
 use App\Models\Activity;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -161,9 +162,88 @@ class IndexTest extends TestCase
         $this->get(route('agenda'))
             ->assertSeeInOrder([
                 __('agenda/index.today'),
-                today()->translatedFormat('j F Y'),
+                today()->translatedFormat('j F'),
                 __('agenda/index.tomorrow'),
-                today()->addDay()->translatedFormat('j F Y'),
+                today()->addDay()->translatedFormat('j F'),
             ]);
+    }
+
+    public function test_other_day_headers_show_the_weekday_and_the_date_without_the_current_year(): void
+    {
+        $this->travelTo(Carbon::parse('2026-03-02'));
+        Activity::factory()->create(['starts_on' => '2026-03-05', 'ends_on' => '2026-03-05']);
+
+        $this->get(route('agenda'))
+            ->assertSee('Donderdag <span class="text-color-lc">5 maart</span>', false);
+    }
+
+    public function test_day_headers_show_the_year_when_it_is_not_the_current_year(): void
+    {
+        $this->travelTo(Carbon::parse('2026-12-30'));
+        Activity::factory()->create(['starts_on' => '2026-12-31', 'ends_on' => '2026-12-31']);
+        Activity::factory()->create(['starts_on' => '2027-01-02', 'ends_on' => '2027-01-02']);
+
+        $this->get(route('agenda'))
+            ->assertSee(__('agenda/index.tomorrow').' <span class="text-color-lc">31 december</span>', false)
+            ->assertSee('Zaterdag <span class="text-color-lc">2 januari 2027</span>', false);
+    }
+
+    public function test_agenda_only_lists_the_week_starting_today(): void
+    {
+        $lastDay = Activity::factory()->create(['starts_on' => today()->addDays(6), 'ends_on' => today()->addDays(6)]);
+        $nextWeek = Activity::factory()->create(['starts_on' => today()->addWeek(), 'ends_on' => today()->addWeek()]);
+
+        $this->get(route('agenda'))
+            ->assertSee($lastDay->title)
+            ->assertDontSee($nextWeek->title)
+            ->assertDontSee('noindex');
+    }
+
+    public function test_next_week_starts_seven_days_from_today(): void
+    {
+        $this->travelTo(Carbon::parse('2026-10-27'));
+        $thisWeek = Activity::factory()->create(['starts_on' => '2026-11-02', 'ends_on' => '2026-11-02']);
+        $nextWeek = Activity::factory()->create(['starts_on' => '2026-11-03', 'ends_on' => '2026-11-03']);
+
+        $this->get(route('agenda', ['week' => 1]))
+            ->assertSee('Dinsdag <span class="text-color-lc">3 november</span>', false)
+            ->assertSee($nextWeek->title)
+            ->assertDontSee($thisWeek->title)
+            ->assertSee('<meta content="noindex" name="robots">', false);
+    }
+
+    public function test_previous_week_starts_seven_days_before_today(): void
+    {
+        $this->travelTo(Carbon::parse('2026-10-27'));
+        $previousWeek = Activity::factory()->create(['starts_on' => '2026-10-20', 'ends_on' => '2026-10-20']);
+        $tooEarly = Activity::factory()->create(['starts_on' => '2026-10-19', 'ends_on' => '2026-10-19']);
+
+        $this->get(route('agenda', ['week' => -1]))
+            ->assertSee('Dinsdag <span class="text-color-lc">20 oktober</span>', false)
+            ->assertSee($previousWeek->title)
+            ->assertDontSee($tooEarly->title);
+    }
+
+    public function test_activity_running_into_the_week_is_listed_under_its_first_day(): void
+    {
+        $this->travelTo(Carbon::parse('2026-10-27'));
+        $running = Activity::factory()->create(['starts_on' => '2026-11-01', 'ends_on' => '2026-11-04']);
+
+        Livewire::test('pages::agenda.index', ['week' => 1])
+            ->assertSet('activitiesByDay', fn ($days) => $days->keys()->all() === ['2026-11-03'])
+            ->assertSee($running->title);
+    }
+
+    public function test_week_buttons_link_to_the_previous_and_next_week_keeping_the_filters(): void
+    {
+        $user = User::factory()->create();
+
+        $this->get(route('agenda.user.category', [$user, ActivityCategory::MUSIC->value, 'week' => 1]))
+            ->assertSee(route('agenda.user.category', [$user, ActivityCategory::MUSIC->value]), false)
+            ->assertSee(route('agenda.user.category', [$user, ActivityCategory::MUSIC->value, 'week' => 2]), false);
+
+        $this->get(route('agenda'))
+            ->assertSee(route('agenda', ['week' => -1]), false)
+            ->assertSee(route('agenda', ['week' => 1]), false);
     }
 }

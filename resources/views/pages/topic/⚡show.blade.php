@@ -1,15 +1,12 @@
 <?php
 
 use App\Constants\Event;
-use App\Events\PostCreated;
-use App\Events\PostSaved;
 use App\Lib\OpenGraphImage;
-use App\Models\Area;
-use App\Models\Forum;
 use App\Models\Topic;
 use App\Models\Post;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\RedirectResponse;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -19,11 +16,7 @@ new class extends Component
 {   
     use WithPagination;
 
-    public string $body;
-
     public string $pageName = 'p';
-
-    public bool $subscribe = true;
 
     public Topic $topic;
 
@@ -41,7 +34,7 @@ new class extends Component
             ->withCount('likes')
             ->withTrashed()
             ->paginate(Post::PAGINATE_COUNT, pageName: 'p')
-            ->setPath(route('topic.show', [$this->topic->forum, $this->topic, $this->topic->slug]));
+            ->setPath($this->topic->url());
 
         foreach ($paginator->items() as $post) {
             $post->setRelation('topic', $this->topic);
@@ -52,42 +45,15 @@ new class extends Component
 
     public function mount(Topic $topic)
     {
+        if ($this->topic->activity_id) {
+            throw new HttpResponseException(new RedirectResponse($this->topic->url(array_filter(['post' => request()->query('post')])), 301));
+        }
+
         $this->topic->loadCount(['posts']);
         $this->topic->loadMissing(['areas', 'firstPost', 'forum', 'poll']);
         $this->topic->firstPost?->loadCount('likes');
 
-        if ($postId = request()->query('post')) {
-            $this->paginateToPost((int) $postId);
-        }
-
-        if (auth()->check()) {
-            $pivot = $this->topic->trackedByUsers()->where('user_id', auth()->id())->first()?->pivot;
-            $this->subscribe = $pivot?->is_subscribed ?? true;
-
-            $highestPostId = $this->posts->getCollection()->max('id');
-
-            if ($highestPostId > ($pivot?->last_read_post_id ?? 0)) {
-                $this->topic->trackedByUsers()->syncWithoutDetaching([
-                    auth()->id() => ['last_read_post_id' => $highestPostId],
-                ]);
-            }
-        }
-    }
-
-    protected function paginateToPost(int $postId): void
-    {
-        $post = $this->topic->posts()->find($postId);
-        
-        if (!$post) {
-            return;
-        }
-
-        $postPosition = $this->topic->posts()
-            ->where('id', '<=', $postId)
-            ->count();
-
-        if ($postPosition > 0) {
-            $page = (int) ceil($postPosition / Post::PAGINATE_COUNT);
+        if ($page = $this->topic->pageOfPost((int) request()->query('post'))) {
             $this->setPage($page, pageName: 'p');
         }
     }
@@ -102,13 +68,6 @@ new class extends Component
                 'description' => $this->topic->description ?: null,
                 'ogImage' => app(OpenGraphImage::class)->url($this->topic),
             ]);
-    }
-
-    public function rules()
-    {
-        return [
-            'body' => 'required|string',
-        ];
     }
 
     #[Computed]
@@ -172,60 +131,8 @@ new class extends Component
             'url' => route('topic.show', [$this->topic->forum, $this->topic, $this->topic->slug]),
         ];
     }
-
-    public function submit()
-    {
-        Gate::authorize('create', Post::class);
-
-        $this->validate();
-
-        $post = Post::create([
-            'body' => $this->body,
-            'topic_id' => $this->topic->id,
-            'user_id' => auth()->id(),
-        ]);
-
-        PostSaved::dispatch($post);
-
-        if ($post->wasRecentlyCreated) {
-            PostCreated::dispatch($post);
-        }
-
-        $this->topic->trackedByUsers()->syncWithoutDetaching([
-            auth()->id() => ['is_subscribed' => $this->subscribe],
-        ]);
-
-        $this->redirect(route('topic.show', [
-            'forum' => $this->topic->forum,
-            'topic' => $this->topic,
-            'slug' => $this->topic->slug,
-            'post' => $post->id,
-        ]), navigate: true);
-    }
-
-    public function updatedSubscribe(bool $value): void
-    {
-        Gate::authorize('create', Post::class);
-
-        $this->topic->trackedByUsers()->syncWithoutDetaching([
-            auth()->id() => ['is_subscribed' => $value],
-        ]);
-    }
-
-    #[On(Event::REPLY_TO_POST)]
-    public function replyToPost(string $username, int $number, string $postUrl): void
-    {
-        $this->body = sprintf('<p><a href="%s" data-mention="true">@%s#%d</a></p>', $postUrl, $username, $number);
-        $this->js("document.querySelector('.reply').scrollIntoView({ behavior: 'smooth', block: 'start' })");
-    }
 };
 ?>
-
-@auth
-    @push('scripts.auth')
-        @vite(['resources/js/auth.js'])
-    @endpush
-@endauth
 
 @push('meta')
     @if (!$topic->is_visible)
@@ -257,70 +164,7 @@ new class extends Component
         @if ($topic->poll)
             <livewire:poll :topic="$topic" wire:key="poll-{{ $topic->id }}" />
         @endif
-        <div class="panel">
-            <ol>
-                @foreach ($this->posts as $post)
-                    @if (!$post->trashed())
-                        <livewire:post
-                            :is-first-post="$post->id === $topic->firstPost?->id"
-                            :number="(($this->posts->currentPage() - 1) * Post::PAGINATE_COUNT) + ($loop->index + 1)"
-                            :post="$post"
-                            wire:key="post-{{ $post->id }}"
-                        />
-                    @else
-                        <x-deleted-post :post="$post" />
-                    @endif
-                @endforeach
-            </ol>
-            <section class="reply">
-                @auth
-                    <div class="flex flex-col flex-gap-m">
-                        <div class="m:hide">
-                            <x-input.toggle id="subscribeMobile" :label="__('post/create.subscribe')" wire:model.live="subscribe" />
-                        </div>
-                        <form class="flex flex-col flex-gap-m" wire:submit="submit">
-                            <x-field model="body">
-                                <x-editor model="body" />
-                            </x-field>
-                            <div class="flex flex-align-center flex-justify-spaceBetween">
-                                <x-btn primary submit>@lang('post/create.reply')</x-btn>
-                                <div class="m:show">
-                                    <x-input.toggle id="subscribeDesktop" :label="__('post/create.subscribe')" wire:model.live="subscribe" />
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                @else
-                    <p class="text-align-center text-color-lc">
-                        @lang('topic/show.reply_login', ['login_url' => login_url()])
-                    </p>
-                @endauth
-            </section>
-        </div>
-        {{ $this->posts->links() }}
+        <livewire:replies :topic="$topic" wire:key="replies-{{ $topic->id }}" />
         <livewire:online-members />
     </div>
-    @script
-        <script>
-            const params = new URLSearchParams(window.location.search);
-            const postId = params.get('post');
-            const scrollToLatest = window.location.hash === '#laatste';
-            let $post;
-
-            if (postId) {
-                $post = document.getElementById(`post-${postId}`);
-            }
-
-            if (scrollToLatest) {
-                $post = document.querySelector('.post:last-child');
-            }
-
-            if ($post) {
-                $nextTick(() => {
-                    $post.classList.add('is-highlighted');
-                    $post.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
-                });
-            }
-        </script>
-    @endscript
 </div>

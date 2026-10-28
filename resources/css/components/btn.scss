@@ -153,6 +153,13 @@
         padding: 1px 0;
     }
 
+    &--iconEnd:not(.btn--icon) {
+        svg {
+            margin-left: 0;
+            margin-right: -.15em;
+        }
+    }
+
     &--primary {
         background: var(--btn-primary-color-bg);
         border-color: var(--btn-primary-color-border);

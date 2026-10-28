@@ -9,12 +9,12 @@
         <br>
         <a href="{{ route('member.show', $post->user) }}" style="color: #c93020;">{{ '@' . $post->user->username }}</a>
         heeft je genoemd in
-        <a href="{{ route('topic.show', ['forum' => $post->topic->forum, 'topic' => $post->topic, 'slug' => $post->topic->slug, 'post' => $post->id]) }}" style="color: #c93020;">{{ $post->topic->title }}</a>.<br>
+        <a href="{{ $post->topic->url(['post' => $post->id]) }}" style="color: #c93020;">{{ $post->topic->title }}</a>.<br>
         <br> 
         Klik op de knop hieronder om het bericht te bekijken.
     </p>
     <p>
-        <a class="btn" href="{{ route('topic.show', ['forum' => $post->topic->forum, 'topic' => $post->topic, 'slug' => $post->topic->slug, 'post' => $post->id]) }}">Bekijk bericht</a>
+        <a class="btn" href="{{ $post->topic->url(['post' => $post->id]) }}">Bekijk bericht</a>
     </p>
     <p>
         Tot snel!<br>

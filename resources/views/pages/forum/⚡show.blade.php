@@ -21,6 +21,8 @@ new class extends Component
 
     public function mount(Forum $forum)
     {
+        abort_if($forum->is_hidden, 404);
+
         $this->forum = $forum;
     }
 

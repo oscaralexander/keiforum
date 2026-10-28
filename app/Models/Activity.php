@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\ActivityCategory;
 use App\Enums\AttendanceStatus;
 use App\Lib\HtmlSanitizer;
+use Carbon\CarbonInterface;
 use Database\Factories\ActivityFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 
@@ -52,6 +54,42 @@ class Activity extends Model
         static::creating(function (Activity $activity): void {
             $activity->slug ??= $activity->uniqueSlug();
         });
+
+        static::updated(function (Activity $activity): void {
+            if ($activity->wasChanged('title')) {
+                $activity->topic?->update(['title' => $activity->title]);
+            }
+        });
+
+        static::deleting(function (Activity $activity): void {
+            $activity->topic?->delete();
+        });
+    }
+
+    /**
+     * The hidden topic holding the replies, created on the first reply with
+     * the venue subscribed so it hears about questions.
+     */
+    public function findOrCreateTopic(): Topic
+    {
+        if ($this->topic) {
+            return $this->topic;
+        }
+
+        $topic = $this->topic()->create([
+            'forum_id' => Forum::agenda()->id,
+            'is_visible' => false,
+            'title' => $this->title,
+            'user_id' => $this->user_id,
+        ]);
+
+        $topic->trackedByUsers()->syncWithoutDetaching([
+            $this->user_id => ['is_subscribed' => true],
+        ]);
+
+        $this->setRelation('topic', $topic);
+
+        return $topic;
     }
 
     /**
@@ -75,9 +113,12 @@ class Activity extends Model
         return $slug;
     }
 
-    public function url(): string
+    /**
+     * @param  array<string, mixed>  $query
+     */
+    public function url(array $query = []): string
     {
-        return route('agenda.show', [$this->user, $this->starts_on->format('Y-m-d'), $this->slug]);
+        return route('agenda.show', [$this->user, $this->starts_on->format('Y-m-d'), $this->slug, ...$query]);
     }
 
     public function editUrl(): string
@@ -101,6 +142,15 @@ class Activity extends Model
     protected function upcoming(Builder $query): void
     {
         $query->whereDate('ends_on', '>=', today());
+    }
+
+    /**
+     * Activities that take place on at least one day of the given period.
+     */
+    #[Scope]
+    protected function during(Builder $query, CarbonInterface $from, CarbonInterface $until): void
+    {
+        $query->whereDate('starts_on', '<=', $until)->whereDate('ends_on', '>=', $from);
     }
 
     #[Scope]
@@ -203,6 +253,11 @@ class Activity extends Model
     public function maybeUsers(): BelongsToMany
     {
         return $this->attendees()->wherePivot('status', AttendanceStatus::MAYBE->value);
+    }
+
+    public function topic(): HasOne
+    {
+        return $this->hasOne(Topic::class);
     }
 
     public function user(): BelongsTo

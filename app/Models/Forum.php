@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +18,7 @@ class Forum extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
+        'is_hidden' => 'boolean',
         'is_locked' => 'boolean',
     ];
 
@@ -25,9 +28,34 @@ class Forum extends Model
     }
 
     /**
+     * The hidden forum holding the topics behind activity replies.
+     */
+    public static function agenda(): self
+    {
+        return static::query()->firstOrCreate(
+            ['slug' => config('agenda.forum_slug')],
+            [
+                'description' => 'Reacties op activiteiten in de agenda.',
+                'icon' => 'calendar',
+                'is_hidden' => true,
+                'is_locked' => true,
+                'name' => 'Agenda',
+            ],
+        );
+    }
+
+    /**
+     * Scopes
+     */
+    #[Scope]
+    protected function listed(Builder $query): void
+    {
+        $query->where('forums.is_hidden', false);
+    }
+
+    /**
      * Attributes
      */
-
     public function isMarketplace(): Attribute
     {
         return new Attribute(
@@ -36,9 +64,8 @@ class Forum extends Model
     }
 
     /**
-     * Relationships    
+     * Relationships
      */
-
     public function topics(): HasMany
     {
         return $this->hasMany(Topic::class);
@@ -49,7 +76,7 @@ class Forum extends Model
         return $this->hasOne(Topic::class)->latestOfMany();
     }
 
-    public function posts(): hasManyThrough
+    public function posts(): HasManyThrough
     {
         return $this->hasManyThrough(Post::class, Topic::class);
     }

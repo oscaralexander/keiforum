@@ -6,6 +6,7 @@
     'good' => false,
     'href' => null,
     'icon' => null,
+    'iconEnd' => false,
     'navigate' => false,
     'primary' => false,
     'small' => false,
@@ -34,12 +35,13 @@
         'btn--danger' => $danger,
         'btn--good' => $good,
         'btn--icon' => $iconOnly,
+        'btn--iconEnd' => $iconEnd,
         'btn--primary' => $primary,
         'btn--small' => $small,
         'btn--text' => $text,
     ]) }}
 >
-    @if ($icon)
+    @if ($icon && !$iconEnd)
         <x-icon :icon="$icon" />
     @endif
     @if (!empty($iconSlot))
@@ -47,5 +49,8 @@
     @endif
     @if ($slot->isNotEmpty())
         <span>{{ $slot }}</span>
+    @endif
+    @if ($icon && $iconEnd)
+        <x-icon :icon="$icon" />
     @endif
 </{{ $tag }}>

@@ -11,6 +11,14 @@
         padding: var(--panel-padding-y) var(--panel-padding-x);
     }
 
+    &__body {
+        padding: var(--panel-padding-y) var(--panel-padding-x);
+
+        & + ol {
+            border-top: 1px solid var(--color-border);
+        }
+    }
+
     &__outset {
         margin-left: calc(var(--panel-padding-x) * -1);
         margin-right: calc(var(--panel-padding-x) * -1);

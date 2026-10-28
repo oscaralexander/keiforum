@@ -156,96 +156,98 @@ new class extends Component
         </x-slot:actions>
     </x-header>
     <x-schema :data="$this->schema" />
-    <div class="panel panel--padded">
-        <div class="activity">
-            <div class="activity__poster">
-                <div class="activityPoster">
-                    @if ($activity->poster_path)
-                        <img
-                            alt="{{ $activity->title }}"
-                            class="activityPoster__img"
-                            src="{{ route('img', ['src' => $activity->poster_path, 'w' => 620, 'h' => 877, 'q' => 85]) }}"
-                        >
-                    @else
-                        <x-icon icon="image" />
-                    @endif
-                </div>
-            </div>
-            <div class="activity__main">
-                @unless ($activity->published_at?->isPast())
-                    <x-callout icon="circle-alert" :text="e(__('agenda/show.unpublished'))" />
-                @endunless
-                <dl class="activity__details">
-                    <div class="activity__detail">
-                        <dt aria-label="@lang(\'agenda/show.date\')" title="@lang(\'agenda/show.date\')"><x-icon icon="calendar" /></dt>
-                        <dd>
-                            @if ($activity->is_multi_day)
-                                {{ ucfirst($activity->starts_on->translatedFormat('l, j F')) }} – {{ $activity->ends_on->translatedFormat('l, j F Y') }}
-                            @else
-                                {{ ucfirst($activity->starts_on->translatedFormat('l, j F Y')) }}
-                            @endif
-                        </dd>
-                    </div>
-                    <div class="activity__detail">
-                        <dt aria-label="@lang(\'agenda/show.time\')" title="@lang(\'agenda/show.time\')"><x-icon icon="clock" /></dt>
-                        <dd>{{ $activity->starts_at_time }}@if ($activity->ends_at_time) – {{ $activity->ends_at_time }}@endif</dd>
-                    </div>
-                    <div class="activity__detail">
-                        <dt aria-label="@lang(\'agenda/show.location\')" title="@lang(\'agenda/show.location\')"><x-icon icon="map-pin" /></dt>
-                        <dd>
-                            <a href="{{ $this->mapsUrl }}" rel="noopener" target="_blank">{{ $activity->location_name }}</a>
-                            @if ($activity->location_address)
-                                <span class="activity__address">{{ $activity->location_address }}</span>
-                            @endif
-                        </dd>
-                    </div>
-                    <div class="activity__detail">
-                        <dt aria-label="@lang(\'agenda/show.price\')" title="@lang(\'agenda/show.price\')"><x-icon icon="ticket" /></dt>
-                        <dd>{{ $activity->price_formatted }}</dd>
-                    </div>
-                    @if ($activity->website_url)
-                        <div class="activity__detail">
-                            <dt aria-label="@lang(\'agenda/show.website\')" title="@lang(\'agenda/show.website\')"><x-icon icon="link" /></dt>
-                            <dd><a href="{{ $activity->website_url }}" rel="noopener nofollow" target="_blank">{{ $activity->website_host }}</a></dd>
-                        </div>
-                    @endif
-                </dl>
-                <div class="formatted">{!! $activity->description !!}</div>
-                <div class="activity__attendance">
-                    <div class="activity__attendanceButtons">
-                        @auth
-                            @can('attend', $activity)
-                                <x-btn
-                                    :good="$this->attendanceStatus === AttendanceStatus::GOING"
-                                    icon="check"
-                                    wire:click="attend('{{ AttendanceStatus::GOING->value }}')"
-                                >{{ AttendanceStatus::GOING->label() }}</x-btn>
-                                <x-btn
-                                    :good="$this->attendanceStatus === AttendanceStatus::MAYBE"
-                                    icon="circle-help"
-                                    wire:click="attend('{{ AttendanceStatus::MAYBE->value }}')"
-                                >{{ AttendanceStatus::MAYBE->label() }}</x-btn>
-                            @endcan
+    <livewire:replies :activity="$activity" :topic="$activity->topic" wire:key="replies-{{ $activity->id }}">
+        <div class="panel__body">
+            <div class="activity">
+                <div class="activity__poster">
+                    <div class="activityPoster">
+                        @if ($activity->poster_path)
+                            <img
+                                alt="{{ $activity->title }}"
+                                class="activityPoster__img"
+                                src="{{ route('img', ['src' => $activity->poster_path, 'w' => 620, 'h' => 877, 'q' => 85]) }}"
+                            >
                         @else
-                            <x-btn href="{{ login_url() }}" icon="check">{{ AttendanceStatus::GOING->label() }}</x-btn>
-                            <x-btn href="{{ login_url() }}" icon="circle-help">{{ AttendanceStatus::MAYBE->label() }}</x-btn>
-                        @endauth
+                            <x-icon icon="image" />
+                        @endif
                     </div>
-                    <ul class="meta">
-                        <li class="meta__item">{{ trans_choice('agenda/show.going_count', $this->goingUsers->count(), ['count' => $this->goingUsers->count()]) }}</li>
-                        <li class="meta__item">{{ trans_choice('agenda/show.maybe_count', $this->maybeUsers->count(), ['count' => $this->maybeUsers->count()]) }}</li>
-                    </ul>
-                    @if ($this->goingUsers->isNotEmpty())
-                        <div class="activity__attendees">
-                            @foreach ($this->goingUsers as $attendee)
-                                <a href="{{ route('member.show', $attendee) }}" wire:key="going-{{ $attendee->id }}" wire:navigate>
-                                    <x-avatar img-only :user="$attendee" x-data="tooltip('{{ $attendee->username }}')" />
-                                </a>
-                            @endforeach
+                </div>
+                <div class="activity__main">
+                    @unless ($activity->published_at?->isPast())
+                        <x-callout icon="circle-alert" :text="e(__('agenda/show.unpublished'))" />
+                    @endunless
+                    <dl class="activity__details">
+                        <div class="activity__detail">
+                            <dt aria-label="@lang(\'agenda/show.date\')" title="@lang(\'agenda/show.date\')"><x-icon icon="calendar" /></dt>
+                            <dd>
+                                @if ($activity->is_multi_day)
+                                    {{ ucfirst($activity->starts_on->translatedFormat('l, j F')) }} – {{ $activity->ends_on->translatedFormat('l, j F Y') }}
+                                @else
+                                    {{ ucfirst($activity->starts_on->translatedFormat('l, j F Y')) }}
+                                @endif
+                            </dd>
                         </div>
-                    @endif
+                        <div class="activity__detail">
+                            <dt aria-label="@lang(\'agenda/show.time\')" title="@lang(\'agenda/show.time\')"><x-icon icon="clock" /></dt>
+                            <dd>{{ $activity->starts_at_time }}@if ($activity->ends_at_time) – {{ $activity->ends_at_time }}@endif</dd>
+                        </div>
+                        <div class="activity__detail">
+                            <dt aria-label="@lang(\'agenda/show.location\')" title="@lang(\'agenda/show.location\')"><x-icon icon="map-pin" /></dt>
+                            <dd>
+                                <a href="{{ $this->mapsUrl }}" rel="noopener" target="_blank">{{ $activity->location_name }}</a>
+                                @if ($activity->location_address)
+                                    <span class="activity__address">{{ $activity->location_address }}</span>
+                                @endif
+                            </dd>
+                        </div>
+                        <div class="activity__detail">
+                            <dt aria-label="@lang(\'agenda/show.price\')" title="@lang(\'agenda/show.price\')"><x-icon icon="ticket" /></dt>
+                            <dd>{{ $activity->price_formatted }}</dd>
+                        </div>
+                        @if ($activity->website_url)
+                            <div class="activity__detail">
+                                <dt aria-label="@lang(\'agenda/show.website\')" title="@lang(\'agenda/show.website\')"><x-icon icon="link" /></dt>
+                                <dd><a href="{{ $activity->website_url }}" rel="noopener nofollow" target="_blank">{{ $activity->website_host }}</a></dd>
+                            </div>
+                        @endif
+                    </dl>
+                    <div class="formatted">{!! $activity->description !!}</div>
+                    <div class="activity__attendance">
+                        <div class="activity__attendanceButtons">
+                            @auth
+                                @can('attend', $activity)
+                                    <x-btn
+                                        :good="$this->attendanceStatus === AttendanceStatus::GOING"
+                                        icon="check"
+                                        wire:click="attend('{{ AttendanceStatus::GOING->value }}')"
+                                    >{{ AttendanceStatus::GOING->label() }}</x-btn>
+                                    <x-btn
+                                        :good="$this->attendanceStatus === AttendanceStatus::MAYBE"
+                                        icon="circle-help"
+                                        wire:click="attend('{{ AttendanceStatus::MAYBE->value }}')"
+                                    >{{ AttendanceStatus::MAYBE->label() }}</x-btn>
+                                @endcan
+                            @else
+                                <x-btn href="{{ login_url() }}" icon="check">{{ AttendanceStatus::GOING->label() }}</x-btn>
+                                <x-btn href="{{ login_url() }}" icon="circle-help">{{ AttendanceStatus::MAYBE->label() }}</x-btn>
+                            @endauth
+                        </div>
+                        <ul class="meta">
+                            <li class="meta__item">{{ trans_choice('agenda/show.going_count', $this->goingUsers->count(), ['count' => $this->goingUsers->count()]) }}</li>
+                            <li class="meta__item">{{ trans_choice('agenda/show.maybe_count', $this->maybeUsers->count(), ['count' => $this->maybeUsers->count()]) }}</li>
+                        </ul>
+                        @if ($this->goingUsers->isNotEmpty())
+                            <div class="activity__attendees">
+                                @foreach ($this->goingUsers as $attendee)
+                                    <a href="{{ route('member.show', $attendee) }}" wire:key="going-{{ $attendee->id }}" wire:navigate>
+                                        <x-avatar img-only :user="$attendee" x-data="tooltip('{{ $attendee->username }}')" />
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </livewire:replies>
 </div>

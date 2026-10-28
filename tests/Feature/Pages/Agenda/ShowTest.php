@@ -165,10 +165,13 @@ class ShowTest extends TestCase
         $component = Livewire::actingAs($member)
             ->test('pages::agenda.show', ['user' => $activity->user, 'date' => $activity->starts_on->format('Y-m-d'), 'slug' => $activity->slug])
             ->call('attend', AttendanceStatus::GOING->value)
-            ->assertSet('attendanceStatus', AttendanceStatus::GOING)
-            ->assertSee(trans_choice('agenda/show.going_count', 1, ['count' => 1]));
+            ->assertSet('attendanceStatus', AttendanceStatus::GOING);
 
         $this->assertSame('going', $activity->attendees()->first()->pivot->status);
+
+        $this->actingAs($member)
+            ->get($activity->url())
+            ->assertSee(trans_choice('agenda/show.going_count', 1, ['count' => 1]));
 
         $component->call('attend', AttendanceStatus::GOING->value)
             ->assertSet('attendanceStatus', null);

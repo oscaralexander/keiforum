@@ -19,7 +19,7 @@ class ActivityFactory extends Factory
      */
     public function definition(): array
     {
-        $startsOn = fake()->dateTimeBetween('+1 day', '+2 months');
+        $startsOn = fake()->dateTimeBetween('+1 day', '+6 days');
 
         return [
             'user_id' => User::factory(),

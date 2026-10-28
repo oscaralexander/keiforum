@@ -44,7 +44,7 @@ class TopicVisibilityTest extends TestCase
         $topic = $this->createNewsTopic();
 
         Livewire::actingAs(User::factory()->create())
-            ->test('pages::topic.show', ['topic' => $topic])
+            ->test('replies', ['topic' => $topic])
             ->set('body', '<p>Goed plan!</p>')
             ->call('submit');
 

@@ -140,12 +140,7 @@ new class extends Component
     #[Computed]
     public function postUrl(): string
     {
-        return route('topic.show', [
-            'forum' => $this->post->topic->forum,
-            'topic' => $this->post->topic,
-            'slug' => $this->post->topic->slug,
-            'post' => $this->post->id,
-        ]);
+        return $this->post->topic->url(['post' => $this->post->id]);
     }
 
     public function rules(): array

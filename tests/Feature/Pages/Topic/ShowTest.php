@@ -83,7 +83,7 @@ class ShowTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test('pages::topic.show', ['topic' => $topic])
+            ->test('replies', ['topic' => $topic])
             ->set('body', '<p>Test reply</p>')
             ->call('submit')
             ->assertRedirect();
@@ -99,7 +99,7 @@ class ShowTest extends TestCase
     {
         [$forum, $topic] = $this->createTopicWithPost();
 
-        Livewire::test('pages::topic.show', ['topic' => $topic])
+        Livewire::test('replies', ['topic' => $topic])
             ->set('body', '<p>Test reply</p>')
             ->call('submit')
             ->assertForbidden();
@@ -120,7 +120,7 @@ class ShowTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test('pages::topic.show', ['topic' => $topic]);
+            ->test('replies', ['topic' => $topic]);
 
         $this->assertDatabaseHas('topic_user', [
             'topic_id' => $topic->id,
@@ -139,7 +139,7 @@ class ShowTest extends TestCase
 
         // Visit page 1 which has a lower max post ID than what was already tracked
         Livewire::actingAs($user)
-            ->test('pages::topic.show', ['topic' => $topic]);
+            ->test('replies', ['topic' => $topic]);
 
         $this->assertDatabaseHas('topic_user', [
             'topic_id' => $topic->id,
@@ -152,7 +152,7 @@ class ShowTest extends TestCase
     {
         [$forum, $topic] = $this->createTopicWithPost();
 
-        Livewire::test('pages::topic.show', ['topic' => $topic]);
+        Livewire::test('replies', ['topic' => $topic]);
 
         $this->assertDatabaseMissing('topic_user', ['topic_id' => $topic->id]);
     }

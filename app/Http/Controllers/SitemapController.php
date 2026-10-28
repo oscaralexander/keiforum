@@ -12,7 +12,7 @@ class SitemapController extends Controller
 {
     public function __invoke(): Response
     {
-        $forums = Forum::query()->orderBy('position')->withCount(['topics' => fn ($query) => $query->visible()])->get();
+        $forums = Forum::query()->listed()->orderBy('position')->withCount(['topics' => fn ($query) => $query->visible()])->get();
         $topics = Topic::query()->visible()->withCount('posts')->withMax('posts', 'created_at')->with('forum')->get();
         $activities = Activity::query()->published()->upcoming()->with('user')->get();
         $users = User::query()->active()->members()->has('posts', '>=', User::INDEXABLE_POSTS_COUNT)->select('username')->get();

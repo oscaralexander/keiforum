@@ -3,21 +3,23 @@
 use App\Enums\ActivityCategory;
 use App\Models\Activity;
 use App\Models\User;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Url;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 new class extends Component
 {
-    use WithPagination;
-
-    public const PAGINATE_COUNT = 30;
-
     public ?ActivityCategory $category = null;
 
     public ?User $user = null;
+
+    /**
+     * The number of weeks from today, negative for past weeks.
+     */
+    #[Url(except: 0)]
+    public int $week = 0;
 
     /**
      * The category is typed as a union, so the container does not try to
@@ -30,31 +32,69 @@ new class extends Component
     }
 
     #[Computed]
-    public function activities(): LengthAwarePaginator
+    public function from(): Carbon
+    {
+        return today()->addWeeks($this->week);
+    }
+
+    #[Computed]
+    public function until(): Carbon
+    {
+        return $this->from->copy()->addDays(6);
+    }
+
+    /**
+     * @return Collection<int, Activity>
+     */
+    #[Computed]
+    public function activities(): Collection
     {
         return Activity::query()
             ->published()
-            ->upcoming()
+            ->during($this->from, $this->until)
             ->with('user')
             ->when($this->user, fn ($query) => $query->whereBelongsTo($this->user))
             ->when($this->category, fn ($query) => $query->where('category', $this->category))
             ->chronological()
-            ->paginate(self::PAGINATE_COUNT, pageName: 'p')
-            ->setPath($this->url($this->category));
+            ->get();
     }
 
     /**
-     * The activities of the current page by day, with activities that
-     * started before today listed under today.
+     * The activities of this week by day, with activities that started
+     * before this week listed under its first day.
      *
      * @return Collection<string, Collection<int, Activity>>
      */
     #[Computed]
     public function activitiesByDay(): Collection
     {
-        return $this->activities->getCollection()->groupBy(
-            fn (Activity $activity): string => $activity->starts_on->max(today())->format('Y-m-d')
+        return $this->activities->groupBy(
+            fn (Activity $activity): string => $activity->starts_on->max($this->from)->format('Y-m-d')
         );
+    }
+
+    /**
+     * The relative name of a day: today, tomorrow or the weekday.
+     */
+    public function dayName(string $day): string
+    {
+        $date = Carbon::parse($day);
+
+        return match (true) {
+            $date->isToday() => __('agenda/index.today'),
+            $date->isTomorrow() => __('agenda/index.tomorrow'),
+            default => ucfirst($date->translatedFormat('l')),
+        };
+    }
+
+    /**
+     * The date of a day, with the year only when it is not the current year.
+     */
+    public function dayDate(string $day): string
+    {
+        $date = Carbon::parse($day);
+
+        return $date->translatedFormat($date->isCurrentYear() ? 'j F' : 'j F Y');
     }
 
     #[Computed]
@@ -71,13 +111,15 @@ new class extends Component
     /**
      * The URL of this agenda for the given category, keeping the user.
      */
-    public function url(?ActivityCategory $category): string
+    public function url(?ActivityCategory $category, int $week = 0): string
     {
+        $query = $week ? ['week' => $week] : [];
+
         return match (true) {
-            $this->user && $category => route('agenda.user.category', [$this->user, $category->value]),
-            (bool) $this->user => route('agenda.user', $this->user),
-            (bool) $category => route('agenda.category', $category->value),
-            default => route('agenda'),
+            $this->user && $category => route('agenda.user.category', [$this->user, $category->value, ...$query]),
+            (bool) $this->user => route('agenda.user', [$this->user, ...$query]),
+            (bool) $category => route('agenda.category', [$category->value, ...$query]),
+            default => route('agenda', $query),
         };
     }
 
@@ -88,6 +130,12 @@ new class extends Component
     }
 };
 ?>
+
+@if ($week !== 0)
+    @push('meta')
+        <meta content="noindex" name="robots">
+    @endpush
+@endif
 
 <div>
     <x-header
@@ -124,13 +172,7 @@ new class extends Component
             @forelse ($this->activitiesByDay as $day => $dayActivities)
                 <section class="agendaDay" wire:key="day-{{ $day }}">
                     <h2 class="agendaDay__title">
-                        @if ($day === today()->format('Y-m-d'))
-                            @lang('agenda/index.today') <span class="text-color-lc">{{ today()->translatedFormat('j F Y') }}</span>
-                        @elseif ($day === today()->addDay()->format('Y-m-d'))
-                            @lang('agenda/index.tomorrow') <span class="text-color-lc">{{ today()->addDay()->translatedFormat('j F Y') }}</span>
-                        @else
-                            {{ ucfirst(\Illuminate\Support\Carbon::parse($day)->translatedFormat('l j F')) }}
-                        @endif
+                        {{ $this->dayName($day) }} <span class="text-color-lc">{{ $this->dayDate($day) }}</span>
                     </h2>
                     <div class="agendaDay__activities">
                         @foreach ($dayActivities as $activity)
@@ -141,7 +183,10 @@ new class extends Component
             @empty
                 <p class="text-color-lc">@lang('agenda/index.empty')</p>
             @endforelse
-            {{ $this->activities->links() }}
+            <nav class="flex flex-justify-spaceBetween" aria-label="@lang('agenda/index.weeks')">
+                <x-btn :href="$this->url($category, $week - 1)" icon="arrow-left" navigate rel="prev">@lang('agenda/index.previous')</x-btn>
+                <x-btn :href="$this->url($category, $week + 1)" icon="arrow-right" icon-end navigate rel="next">@lang('agenda/index.next')</x-btn>
+            </nav>
         </div>
     </div>
 </div>

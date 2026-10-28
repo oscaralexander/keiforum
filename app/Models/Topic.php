@@ -102,6 +102,35 @@ class Topic extends Model
     }
 
     /**
+     * The page of the given post, or null when it is not in this topic.
+     */
+    public function pageOfPost(int $postId): ?int
+    {
+        if (! $this->posts()->whereKey($postId)->exists()) {
+            return null;
+        }
+
+        $position = $this->posts()->where('id', '<=', $postId)->count();
+
+        return (int) ceil($position / Post::PAGINATE_COUNT);
+    }
+
+    /**
+     * The URL of this topic, or of its activity when it holds the replies
+     * to an activity.
+     *
+     * @param  array<string, mixed>  $query
+     */
+    public function url(array $query = []): string
+    {
+        if ($this->activity_id) {
+            return $this->activity->url($query);
+        }
+
+        return route('topic.show', [$this->forum, $this, $this->slug, ...$query]);
+    }
+
+    /**
      * Scopes
      */
     #[Scope]
@@ -147,6 +176,11 @@ class Topic extends Model
     /**
      * Relationships
      */
+    public function activity(): BelongsTo
+    {
+        return $this->belongsTo(Activity::class);
+    }
+
     public function firstPost(): HasOne
     {
         return $this->hasOne(Post::class)->oldestOfMany();
