@@ -64,6 +64,15 @@
         </url>
     @endforeach
 
+    {{-- Organizer agenda pages --}}
+    @foreach ($organizers as $organizer)
+        <url>
+            <loc>{{ route('agenda.user', $organizer) }}</loc>
+            <changefreq>weekly</changefreq>
+            <priority>0.5</priority>
+        </url>
+    @endforeach
+
     {{-- Member pages --}}
     @foreach ($users as $user)
         <url>

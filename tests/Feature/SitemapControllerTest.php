@@ -149,4 +149,20 @@ class SitemapControllerTest extends TestCase
         $response->assertDontSee($past->url(), false);
         $response->assertDontSee($unpublished->url(), false);
     }
+
+    public function test_sitemap_contains_agenda_pages_of_organizers_with_upcoming_activities_once(): void
+    {
+        $organizer = User::factory()->create();
+        Activity::factory()->for($organizer)->count(2)->create();
+        $pastOrganizer = User::factory()->create();
+        Activity::factory()->for($pastOrganizer)->past()->create();
+        $unpublishedOrganizer = User::factory()->create();
+        Activity::factory()->for($unpublishedOrganizer)->unpublished()->create();
+
+        $content = $this->get('/sitemap.xml')->assertOk()->getContent();
+
+        $this->assertSame(1, substr_count($content, '<loc>'.route('agenda.user', $organizer).'</loc>'));
+        $this->assertStringNotContainsString('<loc>'.route('agenda.user', $pastOrganizer).'</loc>', $content);
+        $this->assertStringNotContainsString('<loc>'.route('agenda.user', $unpublishedOrganizer).'</loc>', $content);
+    }
 }
