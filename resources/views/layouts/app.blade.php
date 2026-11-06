@@ -41,9 +41,7 @@
         <x-nav />
         <div @class(['page', $pageClass ?? null])>
             <main class="page__main">
-                <div class="wrapper">
-                    {{ $slot }}
-                </div>
+                {{ $slot }}
             </main>
             <x-footer />
         </div>

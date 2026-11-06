@@ -1,5 +1,7 @@
 .formatted {
     line-height: var(--lineHeight-l);
+    max-width: 65ch;
+    text-wrap: pretty;
 
     b, strong {
         color: var(--color-text-hc);

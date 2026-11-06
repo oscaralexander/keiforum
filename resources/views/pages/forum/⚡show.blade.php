@@ -57,7 +57,12 @@ new class extends Component
 ?>
 
 <div>
-    <x-header :home="__('nav.forums')" :intro="$forum->description" :title="$forum->name">
+    <x-header
+        contrast
+        :home="__('nav.forums')"
+        :intro="$forum->description"
+        :title="$forum->name"
+    >
         <x-slot:actions>
             @can('createTopic', $forum)
                 <x-btn class="m:hide" :href="route('topic.create', $forum)" icon="plus" primary small>{{ __('forum/show.new_' . ($forum->is_marketplace ? 'ad' : 'topic')) }}</x-btn>

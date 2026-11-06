@@ -20,8 +20,8 @@ $sizes: (
     --color-1: #c93020;
     --color-1-rgb: 201, 48, 32;
 
-    --color-2: #565350;
-    --color-2-rgb: 86, 83, 80;
+    --color-2: #191919;
+    --color-2-rgb: 25, 25, 25;
 
     --color-bg: #fff;
     --color-bg-tint: #fcf9f6; //f9f6f3;
@@ -143,10 +143,40 @@ $sizes: (
 
     @media (min-width: 1024px) {
         --nav-height: 5rem;
-        --gutter-width: 3rem;
+        --gutter-width: 2rem;
         --panel-padding-x: 1.5rem;
         --panel-padding-y: 2rem;
+
         --fontSize-xxl: 2rem;
-        --fontSize-3xl: 2.5rem;
+        --fontSize-3xl: 3rem;
+        --fontSize-4xl: 4.5rem;
     }
+}
+
+.contrast {
+    --color-text: rgba(255, 255, 255, .75) !important;
+    --color-text-hc: #fff !important;
+    --color-text-lc: rgba(255, 255, 255, .5) !important;
+    --color-link: rgba(255, 255, 255, .75) !important;
+    --color-link-hover: #fff !important;
+    --color-bg: var(--color-1) !important;
+    --color-bg-tint: var(--color-1) !important;
+
+    --color-border: rgba(255, 255, 255, .15);
+    --color-border-hc: #fff;
+    --color-border-lc: rgba(255, 255, 255, .25);
+
+    --btn-color: var(--color-text);
+    --btn-color-hover: var(--color-text-hc);
+    --btn-color-bg: transparent;
+    --btn-color-bg-hover: transparent;
+    --btn-color-border: rgba(255, 255, 255, .5);
+    --btn-color-border-hover: #fff;
+
+    --btn-primary-color: var(--color-1);
+    --btn-primary-color-hover: var(--color-1);
+    --btn-primary-color-bg: #fff;
+    --btn-primary-color-bg-hover: #dd4433;
+    --btn-primary-color-border: #fff;
+    --btn-primary-color-border-hover: #dd4433;
 }

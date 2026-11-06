@@ -1,9 +1,25 @@
 @use '@css/mixins' as *;
 
+.activityPage {
+    display: grid;
+    gap: var(--size-xxl);
+    grid-template-columns: repeat(4, 1fr);
+
+    &__main {
+        grid-column: 1 / 4;
+    }
+
+    &__side {
+        grid-column: 4;
+        padding-top: var(--size-xxl);
+    }
+}
+
 .activityPoster {
     align-items: center;
     aspect-ratio: 210 / 297;
     background: var(--color-bg-tint);
+    box-shadow: var(--boxShadow-m);
     color: var(--color-text-placeholder);
     display: flex;
     justify-content: center;
@@ -145,6 +161,12 @@
         min-width: 0;
     }
 
+    &__description {
+        font-size: var(--fontSize-l);
+        line-height: var(--lineHeight-l);
+        max-width: 32ch;
+    }
+
     &__summary {
         display: flex;
         gap: var(--size-xl);
@@ -152,7 +174,6 @@
 
     &__details {
         display: flex;
-        flex: 1;
         flex-direction: column;
         gap: var(--size-s);
         min-width: 0;
@@ -165,24 +186,20 @@
         line-height: var(--lineHeight-l);
 
         dt {
-            color: var(--color-text-lc);
+            color: var(--color-text-hc);
             display: flex;
-
-            .icon {
-                height: 1.25rem;
-                width: 1.25rem;
-            }
         }
 
         dd {
             display: flex;
             flex-direction: column;
         }
-    }
 
-    &__address {
-        color: var(--color-text-lc);
-        font-size: var(--fontSize-s);
+        &-main {
+            color: var(--color-text-hc);
+            font-weight: 600;
+            text-decoration: none;
+        }
     }
 
     &__attendance {
@@ -221,6 +238,17 @@
 
         &__main {
             grid-column: span 2;
+        }
+
+        &__details {
+            flex-direction: row;
+            gap: var(--size-xl);
+        }
+
+        &__detail {
+            align-items: flex-start;
+            flex: 1;
+            gap: .75em;
         }
     }
 }

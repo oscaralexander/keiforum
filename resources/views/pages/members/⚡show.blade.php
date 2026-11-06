@@ -66,106 +66,109 @@ new class extends Component
 
 <div>
     <x-header
+        contrast
         :path="[['label' => __('members/index.title'), 'href' => route('members')]]"
         :title="$user->username"
     />
-    <div class="panel panel--padded">
-        <div class="profile">
-            <div class="profile__avatar">
-                <x-avatar img-only :size="AvatarSize::L" :user="$user" />
-            </div>
-            <div class="profile__main">
-                <section class="profile__section">
-                    <header class="profile__header">
-                        <x-avatar class="profile__header-avatar" img-only :size="AvatarSize::L" :user="$user" />
-                        <div class="profile__header-content">
-                            @auth
-                                <div class="profile__header-details">
-                                    <h2 class="profile__header-name">{{ $user->name }}</h2>
-                                    <ul class="meta meta--large">
-                                        @if ($user->area)
-                                            <li class="meta__item">{{  $user->area->name }}</li>
+    <div class="wrapper">
+        <div class="panel panel--padded">
+            <div class="profile">
+                <div class="profile__avatar">
+                    <x-avatar img-only :size="AvatarSize::L" :user="$user" />
+                </div>
+                <div class="profile__main">
+                    <section class="profile__section">
+                        <header class="profile__header">
+                            <x-avatar class="profile__header-avatar" img-only :size="AvatarSize::L" :user="$user" />
+                            <div class="profile__header-content">
+                                @auth
+                                    <div class="profile__header-details">
+                                        <h2 class="profile__header-name">{{ $user->name }}</h2>
+                                        <ul class="meta meta--large">
+                                            @if ($user->area)
+                                                <li class="meta__item">{{  $user->area->name }}</li>
+                                            @endif
+                                            @if (!empty($user->gender))
+                                                <li class="meta__item">{{ $user->gender->label() }}</li>
+                                            @endif
+                                            @if (!empty($user->birthdate))
+                                                <li class="meta__item">{{ $user->age }}</li>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                    <div class="profile__header-actions">
+                                        @if ($user->id === auth()->id())
+                                            <x-btn class="m:hide" :href="route('profile')" icon="pencil" primary small>@lang('ui.edit')</x-btn>
+                                            <x-btn class="m:show" :href="route('profile')" icon="pencil" primary>@lang('ui.edit')</x-btn>
+                                        @else
+                                            <x-btn class="m:hide" icon="send" primary small wire:click="$dispatch('openModal', { component: 'messages.message-modal', arguments: { username: '{{ $user->username }}' } })">@lang('ui.private_message')</x-btn>
+                                            <x-btn class="m:show" icon="send" primary wire:click="$dispatch('openModal', { component: 'messages.message-modal', arguments: { username: '{{ $user->username }}' } })">@lang('ui.private_message')</x-btn>
                                         @endif
-                                        @if (!empty($user->gender))
-                                            <li class="meta__item">{{ $user->gender->label() }}</li>
-                                        @endif
-                                        @if (!empty($user->birthdate))
-                                            <li class="meta__item">{{ $user->age }}</li>
-                                        @endif
-                                    </ul>
-                                </div>
-                                <div class="profile__header-actions">
-                                    @if ($user->id === auth()->id())
-                                        <x-btn class="m:hide" :href="route('profile')" icon="pencil" primary small>@lang('ui.edit')</x-btn>
-                                        <x-btn class="m:show" :href="route('profile')" icon="pencil" primary>@lang('ui.edit')</x-btn>
-                                    @else
-                                        <x-btn class="m:hide" icon="send" primary small wire:click="$dispatch('openModal', { component: 'messages.message-modal', arguments: { username: '{{ $user->username }}' } })">@lang('ui.private_message')</x-btn>
-                                        <x-btn class="m:show" icon="send" primary wire:click="$dispatch('openModal', { component: 'messages.message-modal', arguments: { username: '{{ $user->username }}' } })">@lang('ui.private_message')</x-btn>
-                                    @endif
-                                </div>
-                            @else
-                                <div class="text-color-lc">Details alleen zichtbaar voor leden.</div>
-                            @endauth
-                        </div>
-                    </header>
-                    @auth
-                        @if (!empty($user->bio))
-                            <div class="formatted profile__bio">
-                                <p>{!! $user->bio_html !!}</p>
-                            </div>
-                        @endif
-                        @if (auth()->user()->is_admin)
-                            <div class="profile__organizer">
-                                <x-input.toggle id="isOrganizer" :label="__('members/show.is_organizer')" wire:model.live="isOrganizer" />
-                            </div>
-                        @endif
-                    @endauth
-                </section>
-                <section class="profile__section">
-                    <div class="profile__stats">
-                        <div class="profile__stat">
-                            <h4 class="profile__stat-title">@lang('members/show.member_since')</h4>
-                            <p class="profile__stat-value">{{ $user->created_at->translatedFormat('j F Y') }}</p>
-                        </div>
-                        <div class="profile__stat">
-                            <h4 class="profile__stat-title">@lang('members/show.posts_count')</h4>
-                            <p class="profile__stat-value">{{ $user->posts_count }}</p>
-                        </div>
-                        <div class="profile__stat">
-                            <h4 class="profile__stat-title">@lang('members/show.last_seen')</h4>
-                            <p class="profile__stat-value">
-                                @if ($user->last_seen_at)
-                                    {{ time_diff($user->last_seen_at, long: true) }} @lang('ui.ago')
+                                    </div>
                                 @else
-                                    <span class="text-color-lc">—</span>
-                                @endif
-                            </p>
+                                    <div class="text-color-lc">Details alleen zichtbaar voor leden.</div>
+                                @endauth
+                            </div>
+                        </header>
+                        @auth
+                            @if (!empty($user->bio))
+                                <div class="formatted profile__bio">
+                                    <p>{!! $user->bio_html !!}</p>
+                                </div>
+                            @endif
+                            @if (auth()->user()->is_admin)
+                                <div class="profile__organizer">
+                                    <x-input.toggle id="isOrganizer" :label="__('members/show.is_organizer')" wire:model.live="isOrganizer" />
+                                </div>
+                            @endif
+                        @endauth
+                    </section>
+                    <section class="profile__section">
+                        <div class="profile__stats">
+                            <div class="profile__stat">
+                                <h4 class="profile__stat-title">@lang('members/show.member_since')</h4>
+                                <p class="profile__stat-value">{{ $user->created_at->translatedFormat('j F Y') }}</p>
+                            </div>
+                            <div class="profile__stat">
+                                <h4 class="profile__stat-title">@lang('members/show.posts_count')</h4>
+                                <p class="profile__stat-value">{{ $user->posts_count }}</p>
+                            </div>
+                            <div class="profile__stat">
+                                <h4 class="profile__stat-title">@lang('members/show.last_seen')</h4>
+                                <p class="profile__stat-value">
+                                    @if ($user->last_seen_at)
+                                        {{ time_diff($user->last_seen_at, long: true) }} @lang('ui.ago')
+                                    @else
+                                        <span class="text-color-lc">—</span>
+                                    @endif
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                </section>
-                <section class="profile__section">
-                    <h3 class="profile__section-title">@lang('members/show.topics')</h3>
-                    @if ($this->topics->isNotEmpty())
-                        <ul class="profile__topics">
-                            @foreach ($this->topics as $topic)
-                                <li class="profile__topic" wire:key="topic-{{ $topic->id }}">
-                                    <a class="profile__topic-title" href="{{ route('topic.show', [$topic->forum, $topic, $topic->slug, 'post' => $topic->latest_post_id]) }}" wire:navigate>{{ $topic->title }}</a>
-                                    <ul class="meta">
-                                        <li class="meta__item">{{ trans_choice('members/show.topic_posts_count', $topic->posts_count, ['count' => $topic->posts_count]) }}</li>
-                                        <li class="meta__item">
-                                            <a aria-label="@lang('forum/show.latest_post_label', ['topic' => $topic->title])" href="{{ route('topic.show', [$topic->forum, $topic, $topic->slug, 'post' => $topic->latest_post_id]) }}" wire:navigate>
-                                                {{ time_diff(Carbon\Carbon::parse($topic->latest_post_created_at)) }} @lang('ui.ago')
-                                                <x-icon icon="arrow-right" />
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @else
-                        <p class="text-color-lc">@lang('members/show.no_topics')</p>
-                    @endif
-                </section>
+                    </section>
+                    <section class="profile__section">
+                        <h3 class="profile__section-title">@lang('members/show.topics')</h3>
+                        @if ($this->topics->isNotEmpty())
+                            <ul class="profile__topics">
+                                @foreach ($this->topics as $topic)
+                                    <li class="profile__topic" wire:key="topic-{{ $topic->id }}">
+                                        <a class="profile__topic-title" href="{{ route('topic.show', [$topic->forum, $topic, $topic->slug, 'post' => $topic->latest_post_id]) }}" wire:navigate>{{ $topic->title }}</a>
+                                        <ul class="meta">
+                                            <li class="meta__item">{{ trans_choice('members/show.topic_posts_count', $topic->posts_count, ['count' => $topic->posts_count]) }}</li>
+                                            <li class="meta__item">
+                                                <a aria-label="@lang('forum/show.latest_post_label', ['topic' => $topic->title])" href="{{ route('topic.show', [$topic->forum, $topic, $topic->slug, 'post' => $topic->latest_post_id]) }}" wire:navigate>
+                                                    {{ time_diff(Carbon\Carbon::parse($topic->latest_post_created_at)) }} @lang('ui.ago')
+                                                    <x-icon icon="arrow-right" />
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p class="text-color-lc">@lang('members/show.no_topics')</p>
+                        @endif
+                    </section>
+                </div>
             </div>
         </div>
     </div>

@@ -1,20 +1,33 @@
 @use '@css/mixins' as *;
 
 .header {
+    --color-link: rgb(from var(--color-1) r g b / .75);
+    --color-link-hover: var(--color-1);
+    --color-text: rgb(from var(--color-1) r g b / .75);
+    background: var(--color-bg-tint);
+    color: var(--color-text);
     display: flex;
     flex-direction: column;
     gap: var(--size-m);
-    margin-bottom: var(--size-xl);
+    margin: 0 calc(var(--gutter-width) * -1) calc(var(--size-xl) * -1) calc(var(--gutter-width) * -1);
+    padding: var(--size-xl) 0 calc(var(--size-xl) * 2);
 
     &__text {
         display: flex;
         flex: 1;
         flex-direction: column;
-        gap: var(--size-xs);
+        gap: var(--size-l);
+        padding-left: var(--panel-padding-x);
+
+        &-flex {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            gap: var(--size-xs);
+        }
     }
 
     &__titleIntro {
-        color: rgba(var(--color-1-rgb), .75);
         display: flex;
         flex-direction: column;
         gap: .75rem;
@@ -23,6 +36,55 @@
     &__intro {
         font-size: var(--fontSize-l);
         line-height: var(--lineHeight-l);
+    }
+
+    &__date {
+        align-items: center;
+        display: flex;
+        gap: .75em;
+        margin: var(--size-m) 0 var(--size-s);
+
+        &-calendar {
+            align-items: center;
+            aspect-ratio: 1 / 1;
+            background: #fff;
+            border-radius: var(--borderRadius-s);
+            box-shadow: 0 .25em .25em rgba(0, 0, 0, .1);
+            color: var(--color-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: .125rem;
+            line-height: 1;
+            text-align: center;
+            width: 3.5rem;
+
+            &-month {
+                font-size: var(--fontSize-xs);
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+
+            &-day {
+                font-family: var(--font-2);
+                font-size: 1.75rem;
+                font-weight: 700;
+                letter-spacing: -.025em;
+            }
+        }
+
+        &-text {
+            line-height: var(--lineHeight-l);
+
+            b {
+                color: var(--color-text-hc);
+            }
+        }
+    }
+
+    &__poster {
+        border-radius: var(--borderRadius-s);
+        box-shadow: var(--boxShadow-m);
     }
 
     &__actions {
@@ -35,18 +97,44 @@
         text-align: center;
     }
 
+    &.contrast {
+        h1 {
+            color: #fff;
+        }
+    }
+
     @include screen-min(m) {
         align-items: center;
         flex-direction: row;
         gap: var(--size-m);
-        margin-bottom: var(--size-xxl);
-        width: 100%;
+
+        &--agenda {
+            & > .wrapper {
+                display: grid;
+                gap: var(--size-xl);
+                grid-template-columns: repeat(4, 1fr);
+
+                .header__text {
+                    grid-column: 1 / 4;
+
+                    h1 {
+                        font-size: var(--fontSize-4xl);
+                    }
+                }
+            }
+        }
 
         &--center {
             .header__intro {
                 margin: 0 auto;
                 max-width: 75%;
             }
+        }
+
+        .header__poster {
+            // margin-bottom: -6rem;
+            position: relative;
+            z-index: 1;
         }
     }
 }

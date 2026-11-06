@@ -154,17 +154,20 @@ new class extends Component
     @endif
     <x-header
         :areas="$topic->areas"
+        contrast
         :home="__('nav.forums')"
         :path="[
             ['label' => $topic->forum->name, 'href' => route('forum.show', $topic->forum)],
         ]"
         :title="$topic->title"
     />
-    <div class="flex flex-col flex-gap-m">
-        @if ($topic->poll)
-            <livewire:poll :topic="$topic" wire:key="poll-{{ $topic->id }}" />
-        @endif
-        <livewire:replies :topic="$topic" wire:key="replies-{{ $topic->id }}" />
-        <livewire:online-members />
+    <div class="wrapper">
+        <div class="flex flex-col flex-gap-m">
+            @if ($topic->poll)
+                <livewire:poll :topic="$topic" wire:key="poll-{{ $topic->id }}" />
+            @endif
+            <livewire:replies :topic="$topic" wire:key="replies-{{ $topic->id }}" />
+            <livewire:online-members />
+        </div>
     </div>
 </div>
