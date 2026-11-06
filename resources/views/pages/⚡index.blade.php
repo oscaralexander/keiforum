@@ -29,7 +29,7 @@ new class extends Component
                     ->orderByDesc(
                         DB::raw('(SELECT MAX(p.id) FROM posts p WHERE p.topic_id = topics.id)')
                     )
-                    ->limit(5)
+                    ->limit($forum->slug === 'algemeen' ? 10 : 5)
                     ->get()
             );
         });
