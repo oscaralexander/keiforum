@@ -25,12 +25,13 @@ new class extends Component
                     ->visible()
                     ->where('is_pinned', false)
                     ->withCount('pollVotes', 'posts')
-                    ->with('latestPost.user', 'poll')
+                    ->with('areas', 'latestPost.user', 'poll', 'posts.user')
                     ->orderByDesc(
                         DB::raw('(SELECT MAX(p.id) FROM posts p WHERE p.topic_id = topics.id)')
                     )
                     ->limit(5)
                     ->get()
+                    ->each->setRelation('forum', $forum)
             );
         });
 
@@ -104,20 +105,20 @@ new class extends Component
 
 <div>
     <x-schema :data="$this->schema" />
-    <x-header hide-path :intro="__('home.intro')" :title="$title">
+    <x-header contrast hide-path :intro="__('home.intro')" :title="$title">
         <x-slot:actions>
             <x-btn class="m:hide" :href="route('topic.create')" icon="plus" primary small>@lang('forum/show.new_topic')</x-btn>
             <x-btn class="m:show" :href="route('topic.create')" icon="plus" primary>@lang('forum/show.new_topic')</x-btn>
         </x-slot:actions>
     </x-header>
-    <div class="flex flex-col flex-gap-l">
-        <div class="panel">
-            <ul class="forumList">
+    <div class="wrapper">
+        <div class="flex flex-col flex-gap-l">
+            <div class="flex flex-col flex-gap-m">
                 @foreach ($this->forums as $forum)
-                    <x-forum-list-item :$forum />
+                    <x-forum-list-item :$forum wire:key="forum-{{ $forum->id }}" />
                 @endforeach
-            </ul>
+            </div>
+            <livewire:online-members />
         </div>
-        <livewire:online-members />
     </div>
 </div>

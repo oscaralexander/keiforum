@@ -1,45 +1,30 @@
 @use '@css/mixins' as *;
 
 .forumListItem {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    padding: 1.25rem var(--panel-padding-x) 2rem;
-
-    &:not(:last-child) {
-        border-bottom: 1px solid var(--color-border-lc);
-    }
-
     &__header {
         align-items: center;
+        border-bottom: 1px solid var(--color-border-lc);
         display: flex;
-        gap: .75rem;
+        gap: .75em;
+        padding: 1.25rem var(--panel-padding-x);
     }
 
     &__icon {
-        align-items: center;
-        background: rgba(var(--color-1-rgb), .1);
-        border-radius: 50%;
         color: var(--color-1);
         display: flex;
-        flex: 0 0 2.5rem;
-        height: 2.5rem;
-        margin-top: .35rem;
-        justify-content: center;
-        width: 2.5rem;
-    }
+        flex: 0 0 32px;
+        width: 32px;
 
-    &__text {
-        display: flex;
-        flex: 1;
-        flex-direction: column;
-        gap: var(--size-m);
+        .icon {
+            height: 32px;
+            width: 32px;
+        }
     }
 
     &__nameDescription {
         display: flex;
-        flex-direction: column;
         flex: 1;
+        flex-direction: column;
         gap: 2px;
     }
 
@@ -50,86 +35,24 @@
     }
 
     &__description {
+        color: rgb(from var(--color-1) r g b / .75);
         line-height: var(--lineHeight-l);
     }
 
-    &__recentTopics {
-        display: flex;
-        flex-direction: column;
-        gap: .75rem;
-    }
-
-    &__recentTopic {
-        align-items: center;
-        display: flex;
-        gap: .75rem;
-
-        &-titleMeta {
-            display: flex;
-            flex: 1;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        &-icon {
-            color: var(--color-1);
-            display: inline-block;
-            height: 1em;
-            margin-right: .1em;
-            position: relative;
-            top: .15em;
-            width: 1em;
-        }
-
-        &-title {
-            font-weight: 600;
-            text-decoration: none;
-        }
-    }
-
     &__moreTopics {
-        display: inline-block;
-        margin-left: 3.25rem;
+        border-top: 1px solid var(--color-border-lc);
+        display: block;
+        font-weight: 600;
+        padding: 1.5rem var(--panel-padding-x) 1.5rem calc(var(--panel-padding-x) + 32px + .75rem);
         text-decoration: none;
     }
 
-    @include screen-max(m) {
-        &__recentTopic {
-            &-avatar {
-                align-items: center;
-                display: flex;
-                flex: 0 0 2.5rem;
-                justify-content: center;
-                width: 2.5rem;
-            }
-        }
-    }
-
     @include screen-min(m) {
-        gap: var(--size-l);
-
         &__name {
             font-size: var(--fontSize-xl);
         }
 
-        &__count {
-            font-size: var(--fontSize-m);
-        }
-
-        &__description {
-            font-size: var(--fontSize-m);
-        }
-
-        &__recentTopics {
-            padding-left: 3.25rem;
-        }
-
-        &__recentTopic {
-            &-title {
-                font-size: var(--fontSize-m);
-            }
-        }
-
+        &__description,
         &__moreTopics {
             font-size: var(--fontSize-m);
         }
