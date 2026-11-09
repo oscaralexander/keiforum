@@ -100,7 +100,7 @@ class CreateTest extends TestCase
         $newsForum = $this->newsForum();
         $createUrl = route('topic.create', $newsForum);
 
-        $this->get(route('forum.show', $newsForum))->assertOk()->assertDontSee($createUrl, false);
+        $this->get(route('forum.show', $newsForum))->assertOk()->assertDontSee($createUrl, false)->assertDontSee('header--cta', false);
         $this->actingAs(User::factory()->create())->get(route('forum.show', $newsForum))->assertOk()->assertDontSee($createUrl, false);
         $this->actingAs(User::factory()->admin()->create())->get(route('forum.show', $newsForum))->assertOk()->assertSee($createUrl, false);
     }
@@ -112,5 +112,13 @@ class CreateTest extends TestCase
         $this->get(route('forum.show', $openForum))
             ->assertOk()
             ->assertSee(route('topic.create', $openForum), false);
+    }
+
+    public function test_create_page_has_contrast_header_and_wrapped_form(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('topic.create'))
+            ->assertOk()
+            ->assertSeeInOrder(['contrast', 'header', '<div class="wrapper">', '<div class="panel panel--padded">'], false);
     }
 }

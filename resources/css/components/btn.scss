@@ -178,6 +178,17 @@
         }
     }
 
+    &--large {
+        font-size: var(--fontSize-l);
+        height: var(--btn-height-l);
+        padding: 1px 1.25em;
+
+        svg {
+            flex: 0 0 1.25rem;
+            height: 1.25rem;
+        }
+    }
+
     &--small {
         font-size: var(--fontSize-s);
         height: var(--btn-height-s);

@@ -44,4 +44,15 @@ class HomeRecentTopicsTest extends TestCase
 
         $this->assertCount(5, $forums->firstWhere('id', $forum->id)->recentTopics);
     }
+
+    public function test_pinned_topics_are_included(): void
+    {
+        $forum = $this->createForumWithTopics('algemeen', 2);
+        $pinnedTopic = Topic::factory()->for($forum)->create(['is_pinned' => true]);
+        Post::factory()->for($pinnedTopic)->create();
+
+        $forums = Livewire::test('pages::index')->instance()->forums();
+
+        $this->assertTrue($forums->firstWhere('id', $forum->id)->recentTopics->contains($pinnedTopic));
+    }
 }

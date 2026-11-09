@@ -52,7 +52,7 @@ class HomeForumPanelsTest extends TestCase
     {
         Area::query()->create(['name' => 'Aaa-wijk', 'slug' => 'aaa-wijk']);
 
-        Livewire::test('pages::index')
+        Livewire::test('community-sidebar')
             ->assertDontSee(__('home.areas'))
             ->assertDontSeeHtml('href="'.route('area.show', 'aaa-wijk').'"');
     }
@@ -62,7 +62,7 @@ class HomeForumPanelsTest extends TestCase
         Area::query()->create(['name' => 'Zzz-wijk', 'slug' => 'zzz-wijk']);
         Area::query()->create(['name' => 'Aaa-wijk', 'slug' => 'aaa-wijk']);
 
-        $areaNames = Livewire::test('pages::index')->instance()->areas()->pluck('name')->all();
+        $areaNames = Livewire::test('community-sidebar')->instance()->areas()->pluck('name')->all();
 
         $this->assertSame(['Aaa-wijk', 'Zzz-wijk'], $areaNames);
     }
@@ -76,7 +76,7 @@ class HomeForumPanelsTest extends TestCase
         $area->topics()->attach($topics->take(3)->pluck('id'));
         $topics->first()->update(['is_visible' => false]);
 
-        $areas = Livewire::test('pages::index')->instance()->areas();
+        $areas = Livewire::test('community-sidebar')->instance()->areas();
 
         $this->assertSame(2, $areas->firstWhere('id', $area->id)->topics_count);
     }
@@ -88,7 +88,7 @@ class HomeForumPanelsTest extends TestCase
             fn ($sequence) => ['created_at' => now()->subDays($sequence->index)]
         )->create();
 
-        $memberIds = Livewire::test('pages::index')->instance()->newestMembers()->pluck('id')->all();
+        $memberIds = Livewire::test('community-sidebar')->instance()->newestMembers()->pluck('id')->all();
 
         $this->assertSame($newest->pluck('id')->all(), $memberIds);
 
@@ -105,7 +105,7 @@ class HomeForumPanelsTest extends TestCase
             fn (int $days) => Activity::factory()->create(['starts_on' => today()->addDays($days), 'ends_on' => today()->addDays($days)])
         );
 
-        $activityIds = Livewire::test('pages::index')
+        $activityIds = Livewire::test('community-sidebar')
             ->assertSee($upcoming->last()->title)
             ->instance()
             ->upcomingActivities()
@@ -123,5 +123,22 @@ class HomeForumPanelsTest extends TestCase
 
         Livewire::test('pages::index')
             ->assertDontSeeHtml('forumListItem__moreTopics');
+    }
+
+    public function test_home_page_shows_the_community_sidebar(): void
+    {
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSeeLivewire('community-sidebar');
+    }
+
+    public function test_forum_page_shows_the_community_sidebar_next_to_the_topics(): void
+    {
+        $forum = Forum::factory()->create();
+
+        $this->get(route('forum.show', $forum))
+            ->assertOk()
+            ->assertSee('sidebarLayout__main', false)
+            ->assertSeeLivewire('community-sidebar');
     }
 }

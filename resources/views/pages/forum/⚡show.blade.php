@@ -63,48 +63,50 @@ new class extends Component
         :intro="$forum->description"
         :title="$forum->name"
     >
-        <x-slot:actions>
+        <x-slot:cta>
             @can('createTopic', $forum)
-                <x-btn class="m:hide" :href="route('topic.create', $forum)" icon="plus" primary :rel="auth()->guest() ? 'nofollow' : null" small>{{ __('forum/show.new_' . ($forum->is_marketplace ? 'ad' : 'topic')) }}</x-btn>
-                <x-btn class="m:show" :href="route('topic.create', $forum)" icon="plus" primary :rel="auth()->guest() ? 'nofollow' : null">{{ __('forum/show.new_' . ($forum->is_marketplace ? 'ad' : 'topic')) }}</x-btn>
+                <x-btn :href="route('topic.create', $forum)" icon="plus" large primary :rel="auth()->guest() ? 'nofollow' : null">{{ __('forum/show.new_' . ($forum->is_marketplace ? 'ad' : 'topic')) }}</x-btn>
             @endcan
-        </x-slot:actions>
+        </x-slot:cta>
     </x-header>
     <div class="wrapper">
-        <div class="flex flex-col flex-gap-l">
-            @if ($forum->is_marketplace)
-                <ul class="flex flex-gap-s">
-                    @foreach (AdType::options() as $value => $label)
-                        <li>
-                            <label class="chip" for="ad-type-{{ $value }}">
-                                <input
-                                    id="ad-type-{{ $value }}"
-                                    type="checkbox"
-                                    value="{{ $value }}"
-                                    wire:model.live="adTypes"
-                                />
-                                <x-icon icon="check" />
-                                {{ $label }}
-                            </label>
-                        </li>
-                    @endforeach
-                </ul>
-            @endif
-            @if ($this->topics->isNotEmpty())
-                <div class="panel">
-                    <ul class="topicList">
-                        @foreach ($this->topics as $topic)
-                            <x-topic-list-item :topic="$topic" wire:key="topic-{{ $topic->id }}" />
+        <div class="sidebarLayout">
+            <div class="sidebarLayout__main flex flex-col flex-gap-l">
+                @if ($forum->is_marketplace)
+                    <ul class="flex flex-gap-s">
+                        @foreach (AdType::options() as $value => $label)
+                            <li>
+                                <label class="chip" for="ad-type-{{ $value }}">
+                                    <input
+                                        id="ad-type-{{ $value }}"
+                                        type="checkbox"
+                                        value="{{ $value }}"
+                                        wire:model.live="adTypes"
+                                    />
+                                    <x-icon icon="check" />
+                                    {{ $label }}
+                                </label>
+                            </li>
                         @endforeach
                     </ul>
-                </div>
-                {{ $this->topics->links() }}
-            @else
-                <div class="panel panel--padded">
-                    <p>@lang('forum/show.no_topics')</p>
-                </div>
-            @endif
-            <livewire:online-members />
+                @endif
+                @if ($this->topics->isNotEmpty())
+                    <div class="panel">
+                        <ul class="topicList">
+                            @foreach ($this->topics as $topic)
+                                <x-topic-list-item :topic="$topic" wire:key="topic-{{ $topic->id }}" />
+                            @endforeach
+                        </ul>
+                    </div>
+                    {{ $this->topics->links() }}
+                @else
+                    <div class="panel panel--padded">
+                        <p>@lang('forum/show.no_topics')</p>
+                    </div>
+                @endif
+                <livewire:online-members />
+            </div>
+            <livewire:community-sidebar />
         </div>
     </div>
 </div>

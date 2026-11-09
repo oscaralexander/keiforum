@@ -195,6 +195,29 @@ new class extends Component
                 <x-header.area-list :areas="$topic->areas" />
             @endif
         </x-slot:meta>
+        <x-slot:cta>
+            @auth
+                <x-btn
+                    href="#reageren"
+                    icon="pencil"
+                    large
+                    primary
+                    x-on:click.prevent="
+                        const reply = document.getElementById('reageren');
+                        reply.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+                        const focusEditor = () => {
+                            clearTimeout(fallback);
+                            window.removeEventListener('scrollend', focusEditor);
+                            reply.querySelector('[contenteditable]')?.focus({ preventScroll: true });
+                        };
+                        const fallback = setTimeout(focusEditor, 1000);
+                        window.addEventListener('scrollend', focusEditor, { once: true });
+                    "
+                >@lang('topic/show.reply')</x-btn>
+            @else
+                <x-btn :href="login_url()" icon="pencil" large primary rel="nofollow">@lang('topic/show.reply')</x-btn>
+            @endauth
+        </x-slot:cta>
     </x-header>
     <div class="wrapper">
         <div class="sidebarLayout">

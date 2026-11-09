@@ -12,12 +12,17 @@
     'title' => null,
 ])
 
+@php
+    $hasCta = isset($cta) && $cta->hasActualContent();
+@endphp
+
 <header
     @class([
         'contrast' => $contrast,
         'header',
         'header--agenda' => $agenda,
         'header--center' => $center,
+        'header--cta' => $hasCta,
     ])
 >
     <div class="wrapper">
@@ -51,6 +56,11 @@
         @if (isset($actions) && $actions->hasActualContent())
             <div class="header__actions">
                 {{ $actions }}
+            </div>
+        @endif
+        @if ($hasCta)
+            <div class="header__cta">
+                {{ $cta }}
             </div>
         @endif
         @if (isset($poster) && $poster->hasActualContent())

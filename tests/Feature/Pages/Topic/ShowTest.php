@@ -295,4 +295,40 @@ class ShowTest extends TestCase
         $this->assertCount(5, $memberIds);
         $this->assertNotContains($deletedPoster->id, $memberIds);
     }
+
+    public function test_reply_call_to_action_scrolls_to_reply_form_for_members(): void
+    {
+        [$forum, $topic] = $this->createTopicWithPost();
+        $url = route('topic.show', [$forum, $topic, $topic->slug]);
+
+        $html = $this->actingAs(User::factory()->create())->get($url)->assertOk()->getContent();
+
+        $this->assertStringContainsString('href="#reageren"', $this->callToAction($html));
+        $this->assertStringContainsString('id="reageren"', $html);
+    }
+
+    public function test_reply_call_to_action_links_guests_to_login(): void
+    {
+        [$forum, $topic] = $this->createTopicWithPost();
+        $url = route('topic.show', [$forum, $topic, $topic->slug]);
+        $loginUrl = e(route('login', ['redirect' => parse_url($url, PHP_URL_PATH)]));
+
+        $html = $this->get($url)->assertOk()->getContent();
+
+        $callToAction = $this->callToAction($html);
+
+        $this->assertStringContainsString('href="'.$loginUrl.'"', $callToAction);
+        $this->assertStringContainsString('rel="nofollow"', $callToAction);
+    }
+
+    /**
+     * The opening tag of the link in the header's call to action.
+     */
+    private function callToAction(string $html): string
+    {
+        $this->assertMatchesRegularExpression('/<div class="header__cta">.*?(<a\s[^>]*>)/s', $html);
+        preg_match('/<div class="header__cta">.*?(<a\s[^>]*>)/s', $html, $matches);
+
+        return $matches[1];
+    }
 }

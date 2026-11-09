@@ -92,6 +92,28 @@
         gap: var(--size-m);
     }
 
+    &__cta {
+        display: flex;
+        padding-left: var(--panel-padding-x);
+    }
+
+    /**
+     * The call to action is small on mobile and only gets its full
+     * (`btn--large`) size from the desktop layout up.
+     */
+    @include screen-max(m) {
+        &__cta .btn {
+            font-size: var(--fontSize-s);
+            height: var(--btn-height-s);
+            padding: 1px 1em;
+
+            svg {
+                flex: 0 0 1rem;
+                height: 1rem;
+            }
+        }
+    }
+
     & > .wrapper {
         display: flex;
         flex-direction: column;
@@ -135,7 +157,12 @@
             flex-direction: row;
         }
 
-        &--agenda {
+        /**
+         * The same columns as `.sidebarLayout` and the activity page, so
+         * the call to action lines up with the sidebar below.
+         */
+        &--agenda,
+        &--cta {
             & > .wrapper {
                 display: grid;
                 gap: var(--size-xl);
@@ -143,11 +170,20 @@
 
                 .header__text {
                     grid-column: 1 / 4;
-
-                    h1 {
-                        font-size: var(--fontSize-4xl);
-                    }
                 }
+            }
+        }
+
+        &--agenda .header__text h1 {
+            font-size: var(--fontSize-4xl);
+        }
+
+        &__cta {
+            grid-column: 4;
+            padding-left: 0;
+
+            .btn {
+                width: 100%;
             }
         }
 
