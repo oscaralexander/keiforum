@@ -116,4 +116,21 @@
             display: block;
         }
     }
+
+    // In the top layer (see Popout.js) the menu is positioned against the
+    // viewport with inline `top`/`left`, so undo the browser's popover styles
+    // and the offsets of the `is-*` classes. Browsers without the Popover API
+    // skip this and keep the absolutely positioned menu.
+    @supports selector(:popover-open) {
+        & &__menu[popover] {
+            border: none;
+            bottom: auto;
+            color: inherit;
+            inset: auto;
+            margin: 0;
+            overflow: visible;
+            position: fixed;
+            right: auto;
+        }
+    }
 }

@@ -17,7 +17,7 @@
     {{ $attributes }}
 >
     <x-icon :icon="$icon" />
-    <ul class="popout__menu" x-ref="menu">
+    <ul class="popout__menu" popover="manual" x-ref="menu">
         {{ $slot }}
     </ul>
 </button>

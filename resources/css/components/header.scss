@@ -108,8 +108,20 @@
     }
 
     &.contrast {
+        mask:
+            linear-gradient(#000, #000) left top / 100% calc(100% - 5px) no-repeat,
+            url('@public/assets/img/lines/edge.svg') left bottom / 720px 5px repeat-x;
+
         h1 {
             color: #fff;
+        }
+
+        /**
+         * The mask turns the header into its own stacking layer, which
+         * would paint over the content that overlaps its bottom edge.
+         */
+        & + * {
+            position: relative;
         }
     }
 
