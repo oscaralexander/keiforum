@@ -65,8 +65,8 @@ new class extends Component
     >
         <x-slot:actions>
             @can('createTopic', $forum)
-                <x-btn class="m:hide" :href="route('topic.create', $forum)" icon="plus" primary small>{{ __('forum/show.new_' . ($forum->is_marketplace ? 'ad' : 'topic')) }}</x-btn>
-                <x-btn class="m:show" :href="route('topic.create', $forum)" icon="plus" primary>{{ __('forum/show.new_' . ($forum->is_marketplace ? 'ad' : 'topic')) }}</x-btn>
+                <x-btn class="m:hide" :href="route('topic.create', $forum)" icon="plus" primary :rel="auth()->guest() ? 'nofollow' : null" small>{{ __('forum/show.new_' . ($forum->is_marketplace ? 'ad' : 'topic')) }}</x-btn>
+                <x-btn class="m:show" :href="route('topic.create', $forum)" icon="plus" primary :rel="auth()->guest() ? 'nofollow' : null">{{ __('forum/show.new_' . ($forum->is_marketplace ? 'ad' : 'topic')) }}</x-btn>
             @endcan
         </x-slot:actions>
     </x-header>

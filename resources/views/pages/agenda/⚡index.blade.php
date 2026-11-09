@@ -187,8 +187,8 @@ new class extends Component
         :title="$this->title"
     >
         <x-slot:actions>
-            <x-btn class="m:hide" :href="route('agenda.create')" icon="plus" primary small>@lang('agenda/index.create')</x-btn>
-            <x-btn class="m:show" :href="route('agenda.create')" icon="plus" primary>@lang('agenda/index.create')</x-btn>
+            <x-btn class="m:hide" :href="route('agenda.create')" icon="plus" primary :rel="auth()->guest() ? 'nofollow' : null" small>@lang('agenda/index.create')</x-btn>
+            <x-btn class="m:show" :href="route('agenda.create')" icon="plus" primary :rel="auth()->guest() ? 'nofollow' : null">@lang('agenda/index.create')</x-btn>
         </x-slot:actions>
     </x-header>
     <div class="wrapper">

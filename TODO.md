@@ -53,11 +53,14 @@ Self-service agenda waarop bars, theaters en andere locaties hun eigen activitei
 ## Search Console
 
 - [x] Na deploy: "Oplossing valideren" bij "Dubbele pagina zonder door de gebruiker geselecteerde canonieke versie"
-- [ ] Na deploy: "Oplossing valideren" bij de `userInteractionCount`-melding (Discussieforum)
-- [ ] Na deploy: sitemap opnieuw indienen
+- [x] Na deploy: "Oplossing valideren" bij de `userInteractionCount`-melding (Discussieforum) — validatie voltooid; 1 oud item (topic 18, gecrawld 1 okt) verdwijnt bij de volgende crawl
+- [x] Na deploy: sitemap opnieuw indienen (14-10; 8-11 succesvol gelezen, 95 pagina's)
 - [x] Over een paar weken: aantal niet-geïndexeerde pagina's opnieuw bekijken (26-10: 268 niet / 107 wel; ~200 terecht)
 - [x] Inloglinks `nofollow`, `/auth/` uitgesloten in `robots.txt`, profielen pas indexeren vanaf 3 berichten
 - [ ] Email Obfuscation uitzetten in Cloudflare (404 op `/cdn-cgi/l/email-protection`)
+- [x] Over een paar weken: aantal niet-geïndexeerde pagina's opnieuw bekijken (9-11: 365 niet / 105 wel; 176 `?post=`-varianten en 54 profielen met noindex zijn terecht)
+- [x] "Nieuw onderwerp"/"Activiteit plaatsen" `nofollow` voor gasten en account-pagina's (inloggen, registreren, …) `noindex`, zodat `/inloggen?redirect=…` uit de duplicaten verdwijnt
+- [ ] Na deploy: "Oplossing valideren" bij "Pagina met omleiding" en "Dubbele pagina zonder door de gebruiker geselecteerde canonieke versie"
 - [ ] Indexering aanvragen voor belangrijke onderwerpen en nieuwsberichten die "Gevonden/Gecrawld - momenteel niet geïndexeerd" zijn
 
 ## Bouwen

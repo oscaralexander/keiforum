@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta content="width=device-width,initial-scale=1.0,viewport-fit=cover" name="viewport">
         <meta content="#c93020" name="theme-color">
-        <link href="{{ canonical_url() }}" rel="canonical">
+        <meta content="noindex" name="robots">
         @stack('meta')
         <title>{{ $title ?? '' }} - {{ config('app.name') }}</title>
         <link href="/favicon.svg" rel="icon" sizes="any" type="image/svg+xml">

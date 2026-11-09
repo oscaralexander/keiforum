@@ -71,11 +71,12 @@ class CanonicalUrlTest extends TestCase
             ->assertSee($this->canonicalTag($forumUrl), false);
     }
 
-    public function test_login_page_drops_redirect_parameter(): void
+    public function test_login_page_is_not_indexed_and_has_no_canonical_url(): void
     {
         $this->get(route('login', ['redirect' => '/@john']))
             ->assertOk()
-            ->assertSee($this->canonicalTag(route('login')), false);
+            ->assertSee('<meta content="noindex" name="robots">', false)
+            ->assertDontSee('rel="canonical"', false);
     }
 
     public function test_member_page_has_canonical_url(): void
