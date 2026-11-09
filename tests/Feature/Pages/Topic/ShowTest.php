@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Pages\Topic;
 
+use App\Models\Area;
 use App\Models\Forum;
 use App\Models\Like;
 use App\Models\Post;
@@ -228,5 +229,70 @@ class ShowTest extends TestCase
 
         $this->get(route('topic.show', [$forum, $topic, $topic->slug]))
             ->assertSee('<meta content="'.e(__('app.description')).'" name="description">', false);
+    }
+
+    public function test_header_shows_starter_date_and_area_in_order(): void
+    {
+        [, $topic] = $this->createTopicWithPost();
+        $topic->update(['created_at' => '2026-10-07 12:00:00']);
+        $area = Area::query()->create(['name' => 'Testwijk', 'slug' => 'testwijk']);
+        $topic->areas()->attach($area);
+
+        Livewire::test('pages::topic.show', ['topic' => $topic->fresh()])
+            ->assertSeeHtml('href="'.route('member.show', $topic->user).'"')
+            ->assertSeeInOrder([$topic->user->username, '7 okt 2026', 'Testwijk']);
+    }
+
+    public function test_header_shows_starter_and_date_without_area(): void
+    {
+        [, $topic] = $this->createTopicWithPost();
+
+        Livewire::test('pages::topic.show', ['topic' => $topic])
+            ->assertSee($topic->user->username)
+            ->assertSee($topic->created_at->translatedFormat('j M Y'))
+            ->assertSeeHtml('#pencil')
+            ->assertDontSeeHtml('#map-pin');
+    }
+
+    public function test_sidebar_lists_most_active_members_by_post_count(): void
+    {
+        [, $topic, $firstPost] = $this->createTopicWithPost();
+        $mostActive = User::factory()->create(['username' => 'veelschrijver']);
+        $lessActive = User::factory()->create(['username' => 'tweeposter']);
+        $otherTopicPoster = User::factory()->create(['username' => 'elderswactief']);
+
+        Post::factory()->count(3)->create(['topic_id' => $topic->id, 'user_id' => $mostActive->id]);
+        Post::factory()->count(2)->create(['topic_id' => $topic->id, 'user_id' => $lessActive->id]);
+        Post::factory()->count(5)->create(['user_id' => $otherTopicPoster->id]);
+
+        $members = Livewire::test('pages::topic.show', ['topic' => $topic])
+            ->assertSee(__('topic/show.most_active_members'))
+            ->assertSee(trans_choice('members/index.top_posters.posts_count', 3, ['count' => 3]))
+            ->instance()
+            ->mostActiveMembers();
+
+        $this->assertSame(
+            [$mostActive->id, $lessActive->id, $firstPost->user_id],
+            $members->pluck('id')->all()
+        );
+        $this->assertSame([3, 2, 1], $members->pluck('posts_count')->all());
+    }
+
+    public function test_sidebar_ignores_deleted_posts_and_shows_at_most_five_members(): void
+    {
+        [, $topic] = $this->createTopicWithPost();
+
+        Post::factory()->count(6)->create(['topic_id' => $topic->id]);
+        $deletedPoster = User::factory()->create();
+        Post::factory()->count(4)->create(['topic_id' => $topic->id, 'user_id' => $deletedPoster->id])
+            ->each->delete();
+
+        $memberIds = Livewire::test('pages::topic.show', ['topic' => $topic])
+            ->instance()
+            ->mostActiveMembers()
+            ->pluck('id');
+
+        $this->assertCount(5, $memberIds);
+        $this->assertNotContains($deletedPoster->id, $memberIds);
     }
 }

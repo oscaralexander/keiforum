@@ -12,12 +12,13 @@
     &__icon {
         color: var(--color-1);
         display: flex;
-        flex: 0 0 32px;
-        width: 32px;
+        flex: 0 0 2rem;
+        width: 2rem;
 
         .icon {
-            height: 32px;
-            width: 32px;
+            height: 1.75rem;
+            margin: auto;
+            width: 1.75rem;
         }
     }
 
@@ -48,10 +49,6 @@
     }
 
     @include screen-min(m) {
-        &__name {
-            font-size: var(--fontSize-xl);
-        }
-
         &__description,
         &__moreTopics {
             font-size: var(--fontSize-m);

@@ -161,7 +161,7 @@ new class extends Component
         <x-slot:date>
             <div class="header__date">
                 <div class="header__date-calendar">
-                    <div class="header__date-calendar-month">{{ trim($activity->starts_on->translatedFormat('M'), '.') }}</div>
+                    <div class="header__date-calendar-month">{{ $activity->starts_on->translatedFormat('M') }}</div>
                     <div class="header__date-calendar-day">{{ $activity->starts_on->translatedFormat('j') }}</div>
                 </div>
                 <div class="header__date-text">

@@ -78,6 +78,24 @@
             text-decoration: none;
         }
     }
+
+    &--compact {
+        align-items: center;
+        flex-direction: row-reverse;
+        gap: .75rem;
+
+        .activityListItem__content {
+            flex: 1;
+        }
+
+        .activityListItem__poster {
+            flex: 0 0 3rem;
+        }
+
+        .activityListItem__title {
+            font-size: var(--fontSize-m);
+        }
+    }
 }
 
 .agendaFilters {

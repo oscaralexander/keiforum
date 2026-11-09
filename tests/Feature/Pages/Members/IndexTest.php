@@ -18,12 +18,34 @@ class IndexTest extends TestCase
         $this->get(route('members'))->assertOk();
     }
 
-    public function test_all_members_heading_shows_total_count(): void
+    public function test_intro_shows_total_member_count(): void
     {
         User::factory()->count(3)->create();
 
         Livewire::test('pages::members.index')
-            ->assertSee(__('members/index.all_members', ['count' => 3]));
+            ->assertSee('Al 3 Amersfoorters praten mee op Keiforum.');
+    }
+
+    public function test_intro_uses_singular_for_one_member(): void
+    {
+        User::factory()->create();
+
+        Livewire::test('pages::members.index')
+            ->assertSee('Al 1 Amersfoorter praat mee op Keiforum.');
+    }
+
+    public function test_intro_invites_the_first_member_when_there_are_none(): void
+    {
+        Livewire::test('pages::members.index')
+            ->assertSee('Word jij de eerste Amersfoorter op Keiforum?');
+    }
+
+    public function test_intro_formats_large_member_counts_with_a_thousands_separator(): void
+    {
+        User::factory()->count(1000)->create();
+
+        Livewire::test('pages::members.index')
+            ->assertSee('Al 1.000 Amersfoorters');
     }
 
     public function test_unverified_users_are_not_listed_or_counted(): void
@@ -53,26 +75,25 @@ class IndexTest extends TestCase
             ->assertDontSee(config('news.username'));
     }
 
-    public function test_new_members_lists_users_from_last_7_days_newest_first(): void
+    public function test_new_members_lists_the_five_newest_verified_users_newest_first(): void
     {
-        $older = User::factory()->create(['created_at' => now()->subDays(5)]);
-        $newer = User::factory()->create(['created_at' => now()->subDay()]);
-        $outside = User::factory()->create(['created_at' => now()->subDays(8)]);
-        User::factory()->unverified()->create(['created_at' => now()->subDay()]);
+        $oldest = User::factory()->create(['created_at' => now()->subDays(30)]);
+        $newest = User::factory()->count(5)->sequence(
+            fn ($sequence) => ['created_at' => now()->subDays($sequence->index)]
+        )->create();
+        User::factory()->unverified()->create(['created_at' => now()]);
 
         Livewire::test('pages::members.index')
-            ->assertSet('newMembers', fn ($members) => $members->pluck('id')->all() === [$newer->id, $older->id])
-            ->assertSeeInOrder([__('members/index.new_members.title'), $newer->username, $newer->created_at->translatedFormat('j F Y'), $older->username]);
+            ->assertSet('newMembers', fn ($members) => $members->pluck('id')->all() === $newest->pluck('id')->all())
+            ->assertSeeInOrder([__('members/index.new_members.title'), $newest->first()->username, $newest->first()->created_at->translatedFormat('j M Y')]);
 
-        $this->assertNotContains($outside->id, Livewire::test('pages::members.index')->get('newMembers')->pluck('id'));
+        $this->assertNotContains($oldest->id, Livewire::test('pages::members.index')->get('newMembers')->pluck('id'));
     }
 
-    public function test_new_members_shows_empty_message_when_nobody_joined(): void
+    public function test_new_members_section_is_hidden_without_members(): void
     {
-        User::factory()->create(['created_at' => now()->subDays(10)]);
-
         Livewire::test('pages::members.index')
-            ->assertSee(__('members/index.new_members.empty'));
+            ->assertDontSee(__('members/index.new_members.title'));
     }
 
     public function test_top_posters_are_ordered_by_posts_count(): void
@@ -90,16 +111,16 @@ class IndexTest extends TestCase
             ->assertSeeInOrder([__('members/index.top_posters.title'), $chatty->username, '5 berichten', $quiet->username, '2 berichten']);
     }
 
-    public function test_top_posters_are_limited_to_10(): void
+    public function test_top_posters_are_limited_to_5(): void
     {
         $topic = Topic::factory()->create();
 
-        User::factory()->count(12)->create()->each(
+        User::factory()->count(7)->create()->each(
             fn (User $user) => Post::factory()->create(['topic_id' => $topic->id, 'user_id' => $user->id])
         );
 
         Livewire::test('pages::members.index')
-            ->assertSet('topPosters', fn ($members) => $members->count() === 10);
+            ->assertSet('topPosters', fn ($members) => $members->count() === 5);
     }
 
     public function test_top_posters_exclude_deleted_posts_and_unverified_users(): void

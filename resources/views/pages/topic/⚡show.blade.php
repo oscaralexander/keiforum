@@ -4,7 +4,10 @@ use App\Constants\Event;
 use App\Lib\OpenGraphImage;
 use App\Models\Topic;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\RedirectResponse;
 use Livewire\Component;
@@ -43,6 +46,25 @@ new class extends Component
         return $paginator;
     }
 
+    /**
+     * The members with the most posts in this topic.
+     *
+     * @return Collection<int, User>
+     */
+    #[Computed]
+    public function mostActiveMembers(): Collection
+    {
+        $inThisTopic = fn (Builder $query) => $query->whereBelongsTo($this->topic);
+
+        return User::query()
+            ->whereHas('posts', $inThisTopic)
+            ->withCount(['posts' => $inThisTopic])
+            ->orderByDesc('posts_count')
+            ->orderBy('username')
+            ->limit(5)
+            ->get();
+    }
+
     public function mount(Topic $topic)
     {
         if ($this->topic->activity_id) {
@@ -50,7 +72,7 @@ new class extends Component
         }
 
         $this->topic->loadCount(['posts']);
-        $this->topic->loadMissing(['areas', 'firstPost', 'forum', 'poll']);
+        $this->topic->loadMissing(['areas', 'firstPost', 'forum', 'poll', 'user']);
         $this->topic->firstPost?->loadCount('likes');
 
         if ($page = $this->topic->pageOfPost((int) request()->query('post'))) {
@@ -153,21 +175,56 @@ new class extends Component
         <x-schema :data="$this->schema" />
     @endif
     <x-header
-        :areas="$topic->areas"
         contrast
         :home="__('nav.forums')"
         :path="[
             ['label' => $topic->forum->name, 'href' => route('forum.show', $topic->forum)],
         ]"
         :title="$topic->title"
-    />
-    <div class="wrapper">
-        <div class="flex flex-col flex-gap-m">
-            @if ($topic->poll)
-                <livewire:poll :topic="$topic" wire:key="poll-{{ $topic->id }}" />
+    >
+        <x-slot:meta>
+            <div class="headerMeta__item">
+                <x-icon class="headerMeta__icon" icon="user" />
+                <a href="{{ route('member.show', $topic->user) }}" wire:navigate>{{ $topic->user->username }}</a>
+            </div>
+            <div class="headerMeta__item">
+                <x-icon class="headerMeta__icon" icon="pencil" />
+                <time datetime="{{ $topic->created_at->toDateString() }}">{{ $topic->created_at->translatedFormat('j M Y') }}</time>
+            </div>
+            @if ($topic->areas->isNotEmpty())
+                <x-header.area-list :areas="$topic->areas" />
             @endif
-            <livewire:replies :topic="$topic" wire:key="replies-{{ $topic->id }}" />
-            <livewire:online-members />
+        </x-slot:meta>
+    </x-header>
+    <div class="wrapper">
+        <div class="sidebarLayout">
+            <div class="sidebarLayout__main flex flex-col flex-gap-m">
+                @if ($topic->poll)
+                    <livewire:poll :topic="$topic" wire:key="poll-{{ $topic->id }}" />
+                @endif
+                <livewire:replies :topic="$topic" wire:key="replies-{{ $topic->id }}" />
+                <livewire:online-members />
+            </div>
+            <aside class="sidebarLayout__side">
+                @if ($this->mostActiveMembers->isNotEmpty())
+                    <section class="sidebarLayout__section">
+                        <h2 class="sidebarLayout__title">@lang('topic/show.most_active_members')</h2>
+                        <ul class="sidebarLayout__list">
+                            @foreach ($this->mostActiveMembers as $member)
+                                <li class="member" wire:key="most-active-member-{{ $member->id }}">
+                                    <x-avatar :user="$member" />
+                                    <div class="member__content">
+                                        <a class="member__name" href="{{ route('member.show', $member) }}" wire:navigate>{{ $member->username }}</a>
+                                        <ul class="meta">
+                                            <li class="meta__item">{{ trans_choice('members/index.top_posters.posts_count', $member->posts_count, ['count' => $member->posts_count]) }}</li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </section>
+                @endif
+            </aside>
         </div>
     </div>
 </div>

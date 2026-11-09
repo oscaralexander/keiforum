@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Anthropic\Client;
+use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -15,6 +16,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Carbon::getTranslator()->setMessages('nl', ['mmm_suffix' => '']);
+
         Password::defaults(function () {
             return Password::min(8)
                 ->letters()

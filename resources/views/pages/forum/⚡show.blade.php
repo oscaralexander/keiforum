@@ -70,39 +70,41 @@ new class extends Component
             @endcan
         </x-slot:actions>
     </x-header>
-    <div class="flex flex-col flex-gap-l">
-        @if ($forum->is_marketplace)
-            <ul class="flex flex-gap-s">
-                @foreach (AdType::options() as $value => $label)
-                    <li>
-                        <label class="chip" for="ad-type-{{ $value }}">
-                            <input
-                                id="ad-type-{{ $value }}"
-                                type="checkbox"
-                                value="{{ $value }}"
-                                wire:model.live="adTypes"
-                            />
-                            <x-icon icon="check" />
-                            {{ $label }}
-                        </label>
-                    </li>
-                @endforeach
-            </ul>
-        @endif
-        @if ($this->topics->isNotEmpty())
-            <div class="panel">
-                <ul class="topicList">
-                    @foreach ($this->topics as $topic)
-                        <x-topic-list-item :topic="$topic" wire:key="topic-{{ $topic->id }}" />
+    <div class="wrapper">
+        <div class="flex flex-col flex-gap-l">
+            @if ($forum->is_marketplace)
+                <ul class="flex flex-gap-s">
+                    @foreach (AdType::options() as $value => $label)
+                        <li>
+                            <label class="chip" for="ad-type-{{ $value }}">
+                                <input
+                                    id="ad-type-{{ $value }}"
+                                    type="checkbox"
+                                    value="{{ $value }}"
+                                    wire:model.live="adTypes"
+                                />
+                                <x-icon icon="check" />
+                                {{ $label }}
+                            </label>
+                        </li>
                     @endforeach
                 </ul>
-            </div>
-            {{ $this->topics->links() }}
-        @else
-            <div class="panel panel--padded">
-                <p>@lang('forum/show.no_topics')</p>
-            </div>
-        @endif
-        <livewire:online-members />
+            @endif
+            @if ($this->topics->isNotEmpty())
+                <div class="panel">
+                    <ul class="topicList">
+                        @foreach ($this->topics as $topic)
+                            <x-topic-list-item :topic="$topic" wire:key="topic-{{ $topic->id }}" />
+                        @endforeach
+                    </ul>
+                </div>
+                {{ $this->topics->links() }}
+            @else
+                <div class="panel panel--padded">
+                    <p>@lang('forum/show.no_topics')</p>
+                </div>
+            @endif
+            <livewire:online-members />
+        </div>
     </div>
 </div>

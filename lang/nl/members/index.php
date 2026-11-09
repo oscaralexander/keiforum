@@ -2,10 +2,9 @@
 
 return [
     'title' => 'Leden',
-    'all_members' => 'Alle leden (:count)',
+    'intro' => '{0} Nog niemand is lid. Word jij de eerste Amersfoorter op Keiforum?|{1} Al :count Amersfoorter praat mee op Keiforum. Kom jij erbij?|[2,*] Al :count Amersfoorters praten mee op Keiforum. Kom jij erbij?',
     'new_members' => [
         'title' => 'Nieuwste leden',
-        'empty' => 'Er zijn de afgelopen 7 dagen geen nieuwe leden bijgekomen.',
     ],
     'top_posters' => [
         'title' => 'Meeste berichten',

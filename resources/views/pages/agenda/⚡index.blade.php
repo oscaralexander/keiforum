@@ -181,6 +181,7 @@ new class extends Component
 
 <div>
     <x-header
+        contrast
         :hide-path="! $user && ! $category"
         :path="[['label' => __('agenda/index.title'), 'href' => route('agenda')]]"
         :title="$this->title"
@@ -190,51 +191,53 @@ new class extends Component
             <x-btn class="m:show" :href="route('agenda.create')" icon="plus" primary>@lang('agenda/index.create')</x-btn>
         </x-slot:actions>
     </x-header>
-    <div class="panel panel--padded">
-        <div class="flex flex-col flex-gap-xl">
-            <div class="agendaFilters">
-                <nav class="agendaFilters__categories">
-                    <a
-                        @class(['chip', 'is-active' => ! $category])
-                        href="{{ $this->url(null) }}"
-                        wire:navigate
-                    >@lang('agenda/index.all')</a>
-                    @foreach (ActivityCategory::cases() as $categoryOption)
+    <div class="wrapper">
+        <div class="panel panel--padded">
+            <div class="flex flex-col flex-gap-xl">
+                <div class="agendaFilters">
+                    <nav class="agendaFilters__categories">
                         <a
-                            @class(['chip', 'is-active' => $category === $categoryOption])
-                            href="{{ $this->url($categoryOption) }}"
-                            wire:key="category-{{ $categoryOption->value }}"
+                            @class(['chip', 'is-active' => ! $category])
+                            href="{{ $this->url(null) }}"
                             wire:navigate
-                        >{{ $categoryOption->label() }}</a>
-                    @endforeach
-                </nav>
-            </div>
-            @forelse ($this->activitiesByDay as $day => $dayActivities)
-                <section class="agendaDay" wire:key="day-{{ $day }}">
-                    <h2 class="agendaDay__title">
-                        {{ $this->dayName($day) }} <span class="text-color-lc">{{ $this->dayDate($day) }}</span>
-                    </h2>
-                    <div class="agendaDay__activities">
-                        @foreach ($dayActivities as $activity)
-                            <x-activity-list-item :activity="$activity" wire:key="activity-{{ $activity->id }}" />
+                        >@lang('agenda/index.all')</a>
+                        @foreach (ActivityCategory::cases() as $categoryOption)
+                            <a
+                                @class(['chip', 'is-active' => $category === $categoryOption])
+                                href="{{ $this->url($categoryOption) }}"
+                                wire:key="category-{{ $categoryOption->value }}"
+                                wire:navigate
+                            >{{ $categoryOption->label() }}</a>
                         @endforeach
-                    </div>
-                </section>
-            @empty
-                <p class="text-color-lc">@lang('agenda/index.empty')</p>
-            @endforelse
-            @if (! $this->from->isToday() || $this->nextStart)
-                <nav class="flex flex-justify-spaceBetween" aria-label="@lang('agenda/index.pages')">
-                    @if (! $this->from->isToday())
-                        <x-btn :href="$this->url($category)" icon="arrow-left" navigate>@lang('agenda/index.back_to_today')</x-btn>
-                    @else
-                        <span></span>
-                    @endif
-                    @if ($this->nextStart)
-                        <x-btn :href="$this->url($category, $this->nextStart)" icon="arrow-right" icon-end navigate rel="next">@lang('agenda/index.next')</x-btn>
-                    @endif
-                </nav>
-            @endif
+                    </nav>
+                </div>
+                @forelse ($this->activitiesByDay as $day => $dayActivities)
+                    <section class="agendaDay" wire:key="day-{{ $day }}">
+                        <h2 class="agendaDay__title">
+                            {{ $this->dayName($day) }} <span class="text-color-lc">{{ $this->dayDate($day) }}</span>
+                        </h2>
+                        <div class="agendaDay__activities">
+                            @foreach ($dayActivities as $activity)
+                                <x-activity-list-item :activity="$activity" wire:key="activity-{{ $activity->id }}" />
+                            @endforeach
+                        </div>
+                    </section>
+                @empty
+                    <p class="text-color-lc">@lang('agenda/index.empty')</p>
+                @endforelse
+                @if (! $this->from->isToday() || $this->nextStart)
+                    <nav class="flex flex-justify-spaceBetween" aria-label="@lang('agenda/index.pages')">
+                        @if (! $this->from->isToday())
+                            <x-btn :href="$this->url($category)" icon="arrow-left" navigate>@lang('agenda/index.back_to_today')</x-btn>
+                        @else
+                            <span></span>
+                        @endif
+                        @if ($this->nextStart)
+                            <x-btn :href="$this->url($category, $this->nextStart)" icon="arrow-right" icon-end navigate rel="next">@lang('agenda/index.next')</x-btn>
+                        @endif
+                    </nav>
+                @endif
+            </div>
         </div>
     </div>
 </div>
