@@ -92,9 +92,7 @@ new class extends Component
 
 <div>
     @if ($isValidToken)
-        <x-header
-            center
-            hide-path
+        <x-header-simple
             :intro="__('user/reset_password.text')"
             :title="__('user/reset_password.title')"
         />
@@ -109,10 +107,8 @@ new class extends Component
             </form>
         </div>
     @else
-        <x-header
-            center
+        <x-header-simple
             :intro="__('user/reset_password.error_text')"
-            hide-path
             :title="__('user/reset_password.error_title')"
         />
         <div class="flex flex-gap-s flex-justify-center">

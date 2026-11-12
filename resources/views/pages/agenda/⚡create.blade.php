@@ -15,13 +15,8 @@ new class extends Component
     public $poster;
 
     /**
-     * The start date before the user changed it, to tell whether the end
-     * date still followed it.
-     */
-    protected ?string $previousStartsOn = null;
-
-    /**
      * Members who are not an organizer yet see a request instead of the form.
+     * Organizers start with the location of their latest activity.
      */
     public function mount(): void
     {
@@ -32,7 +27,10 @@ new class extends Component
         }
 
         $this->form->starts_on = today()->format('Y-m-d');
-        $this->form->ends_on = $this->form->starts_on;
+
+        if ($latestActivity = auth()->user()->activities()->latest()->first()) {
+            $this->form->fillLocationFromActivity($latestActivity);
+        }
     }
 
     public function render()
@@ -50,14 +48,10 @@ new class extends Component
         }
     }
 
-    public function updatingFormStartsOn(string $value): void
+    public function removePoster(): void
     {
-        $this->previousStartsOn = $this->form->starts_on;
-    }
-
-    public function updatedFormStartsOn(): void
-    {
-        $this->form->syncEndDate($this->previousStartsOn ?? '');
+        $this->poster = null;
+        $this->resetValidation('poster');
     }
 
     public function updatedPoster(): void
@@ -104,28 +98,29 @@ new class extends Component
         :path="[['label' => __('agenda/index.title'), 'href' => route('agenda')]]"
         :title="__('agenda/create.title')"
     />
-    <div class="panel panel--padded">
-        @can('create', Activity::class)
-            <x-activity-form
-                :cancel-href="route('agenda')"
-                :ends-on-min="$form->starts_on"
-                :poster-url="$poster && ! $errors->has('poster') ? $poster->temporaryUrl() : null"
-                :submit-label="__('agenda/create.submit')"
-            />
-        @else
-            <div class="flex flex-col flex-align-start flex-gap-l">
-                <div class="flex flex-col flex-gap-s">
-                    <h2>@lang('agenda/create.request.title')</h2>
-                    <div class="formatted">
-                        @lang('agenda/create.request.text')
+    <div class="wrapper">
+        <div class="panel panel--padded">
+            @can('create', Activity::class)
+                <x-activity-form
+                    :cancel-href="route('agenda')"
+                    :poster-url="$poster && ! $errors->has('poster') ? $poster->temporaryUrl() : null"
+                    :submit-label="__('agenda/create.submit')"
+                />
+            @else
+                <div class="flex flex-col flex-align-start flex-gap-l">
+                    <div class="flex flex-col flex-gap-s">
+                        <h2>@lang('agenda/create.request.title')</h2>
+                        <div class="formatted">
+                            @lang('agenda/create.request.text')
+                        </div>
                     </div>
+                    @if (auth()->user()->organizer_requested_at)
+                        <x-btn disabled icon="clock">@lang('agenda/create.request.pending')</x-btn>
+                    @else
+                        <x-btn icon="send" primary wire:click="requestOrganizer">@lang('agenda/create.request.submit')</x-btn>
+                    @endif
                 </div>
-                @if (auth()->user()->organizer_requested_at)
-                    <x-btn disabled icon="clock">@lang('agenda/create.request.pending')</x-btn>
-                @else
-                    <x-btn icon="send" primary wire:click="requestOrganizer">@lang('agenda/create.request.submit')</x-btn>
-                @endif
-            </div>
-        @endcan
+            @endcan
+        </div>
     </div>
 </div>

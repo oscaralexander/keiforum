@@ -159,87 +159,100 @@ new class extends Component
 
 <div>
     <x-header
-        contrast
         :path="$this->path"
         :title="__('topic/create.title_' . ($forum && $forum->is_marketplace ? 'ad' : 'topic'))"
     />
     <div class="wrapper">
-        <div class="panel panel--padded">
-            <form wire:submit="submit">
-                <div class="flex flex-col flex-gap-xl">
-                    <div class="flex flex-col flex-gap-m">
-                        <x-field :label="__('topic/form.title.label')" model="title">
-                            <x-input.text large model="title" required />
-                        </x-field>
-                        <div class="flex flex-col flex-gap-m l:flex-gap-m l:flex-row">
-                            <x-field
-                                class="flex-flex"
-                                :label="__('topic/form.forum.label')"
-                                model="forum_id"
-                            >
-                                <x-input.select
+        <div class="sidebarLayout">
+            <div class="sidebarLayout__main panel panel--padded">
+                <form wire:submit="submit">
+                    <div class="flex flex-col flex-gap-xl">
+                        <div class="flex flex-col flex-gap-m">
+                            <x-field :label="__('topic/form.title.label')" model="title">
+                                <x-input.text large model="title" required />
+                            </x-field>
+                            <div class="flex flex-col flex-gap-m l:flex-gap-m l:flex-row">
+                                <x-field
+                                    class="flex-flex"
+                                    :label="__('topic/form.forum.label')"
                                     model="forum_id"
-                                    :options="$this->forums->pluck('name', 'id')"
-                                    :placeholder="__('topic/form.forum.placeholder')"
-                                    required
-                                />
-                            </x-field>
-                            <x-field
-                                class="flex-flex"
-                                :label="__('topic/form.topic_areas.label')"
-                                model="topicAreas"
-                            >
-                                <x-input.multi-select
+                                >
+                                    <x-input.select
+                                        model="forum_id"
+                                        :options="$this->forums->pluck('name', 'id')"
+                                        :placeholder="__('topic/form.forum.placeholder')"
+                                        required
+                                    />
+                                </x-field>
+                                <x-field
+                                    class="flex-flex"
+                                    :label="__('topic/form.topic_areas.label')"
                                     model="topicAreas"
-                                    :options="$this->areas"
-                                    :placeholder="__('topic/form.topic_areas.placeholder')"
-                                />
-                            </x-field>
-                        </div>
-                        <x-field :label="__('topic/form.ad_type.label')" model="ad_type" x-cloak x-show="$wire.forum_id == 2">
-                            <div class="flex flex-gap-m">
-                                @foreach (AdType::options() as $value => $label)
-                                    <x-input.option
-                                        :label="$label"
-                                        model="ad_type"
-                                        name="ad_type"
-                                        type="radio"
-                                        :value="$value"
+                                >
+                                    <x-input.multi-select
+                                        model="topicAreas"
+                                        :options="$this->areas"
+                                        :placeholder="__('topic/form.topic_areas.placeholder')"
                                     />
-                                @endforeach
-                                @if (auth()->id() == 1)
-                                    <x-input.option
-                                        :label="__('topic/form.ad_type.null')"
-                                        model="ad_type"
-                                        name="ad_type"
-                                        type="radio"
-                                        value=""
-                                    />
-                                @endif
+                                </x-field>
                             </div>
-                        </x-field>
-                        <x-field :label="__('topic/form.body.label')" model="body">
-                            <x-editor model="body" required />
-                        </x-field>
-                        <div>
-                            @unless ($forum && $forum->is_marketplace)
-                                <div x-cloak x-show="$wire.forum_id != 2">
-                                    <x-poll-editor :form="$this->poll" show-toggle />
+                            <x-field :label="__('topic/form.ad_type.label')" model="ad_type" x-cloak x-show="$wire.forum_id == 2">
+                                <div class="flex flex-gap-m">
+                                    @foreach (AdType::options() as $value => $label)
+                                        <x-input.option
+                                            :label="$label"
+                                            model="ad_type"
+                                            name="ad_type"
+                                            type="radio"
+                                            :value="$value"
+                                        />
+                                    @endforeach
+                                    @if (auth()->id() == 1)
+                                        <x-input.option
+                                            :label="__('topic/form.ad_type.null')"
+                                            model="ad_type"
+                                            name="ad_type"
+                                            type="radio"
+                                            value=""
+                                        />
+                                    @endif
                                 </div>
-                            @endunless
-                            <x-input.toggle :label="__('topic/form.subscribe.label')" wire:model.live="subscribe" />
+                            </x-field>
+                            <x-field :label="__('topic/form.body.label')" model="body">
+                                <x-editor model="body" required />
+                            </x-field>
+                            <div>
+                                @unless ($forum && $forum->is_marketplace)
+                                    <div x-cloak x-show="$wire.forum_id != 2">
+                                        <x-poll-editor :form="$this->poll" show-toggle />
+                                    </div>
+                                @endunless
+                                <x-input.toggle :label="__('topic/form.subscribe.label')" wire:model.live="subscribe" />
+                            </div>
+                        </div>
+                        <div class="flex flex-align-center flex-gap-m">
+                            <x-btn primary submit>@lang('ui.post')</x-btn>
+                            @if ($this->forum)
+                                <x-btn text href="{{ route('forum.show', $this->forum) }}">@lang('ui.cancel')</x-btn>
+                            @else
+                                <x-btn text href="{{ route('home') }}">@lang('ui.cancel')</x-btn>
+                            @endif
                         </div>
                     </div>
-                    <div class="flex flex-align-center flex-gap-m">
-                        <x-btn primary submit>@lang('ui.post')</x-btn>
-                        @if ($this->forum)
-                            <x-btn text href="{{ route('forum.show', $this->forum) }}">@lang('ui.cancel')</x-btn>
-                        @else
-                            <x-btn text href="{{ route('home') }}">@lang('ui.cancel')</x-btn>
-                        @endif
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
+            <aside class="sidebarLayout__side">
+                <section class="sidebarLayout__section">
+                    <h2 class="sidebarLayout__title">@lang('topic/create.tips.title')</h2>
+                    <ul class="sidebarLayout__list sidebarLayout__list--divided">
+                        @foreach (__('topic/create.tips.items') as $tip)
+                            <li class="sidebarLayout__tip">
+                                <b>{{ $tip['title'] }}.</b> {{ $tip['text'] }}
+                            </li>
+                        @endforeach
+                    </ul>
+                </section>
+            </aside>
         </div>
     </div>
 </div>

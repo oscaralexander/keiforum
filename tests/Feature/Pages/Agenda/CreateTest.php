@@ -152,27 +152,90 @@ class CreateTest extends TestCase
             ->assertSee(__('agenda/form.location_name.placeholder'));
     }
 
-    public function test_dates_default_to_today(): void
+    public function test_date_defaults_to_today(): void
     {
         Livewire::actingAs(User::factory()->organizer()->create())
             ->test('pages::agenda.create')
             ->assertSet('form.starts_on', today()->format('Y-m-d'))
-            ->assertSet('form.ends_on', today()->format('Y-m-d'))
             ->assertSet('form.price', '0');
     }
 
-    public function test_end_date_follows_start_date_until_changed(): void
+    public function test_location_is_taken_from_the_latest_activity(): void
     {
-        $component = Livewire::actingAs(User::factory()->organizer()->create())
-            ->test('pages::agenda.create')
-            ->set('form.starts_on', '2099-05-01')
-            ->assertSet('form.ends_on', '2099-05-01')
-            ->set('form.ends_on', '2099-05-03')
-            ->set('form.starts_on', '2099-05-02')
-            ->assertSet('form.ends_on', '2099-05-03');
+        $user = User::factory()->organizer()->create();
+        Activity::factory()->for($user)->create([
+            'location_name' => 'Oude Locatie',
+            'created_at' => now()->subMonth(),
+        ]);
+        Activity::factory()->for($user)->create([
+            'location_name' => 'Podium Fluor',
+            'location_address' => 'Hendrik van Viandenstraat 11, Amersfoort',
+            'location_place_id' => 'ChIJ-fluor',
+            'location_latitude' => 52.1561,
+            'location_longitude' => 5.3878,
+            'created_at' => now()->subDay(),
+        ]);
+        Activity::factory()->create(['location_name' => 'Iemand Anders']);
 
-        $component->set('form.starts_on', '2099-05-10')
-            ->assertSet('form.ends_on', '2099-05-10');
+        Livewire::actingAs($user)
+            ->test('pages::agenda.create')
+            ->assertSet('form.location_name', 'Podium Fluor')
+            ->assertSet('form.location_address', 'Hendrik van Viandenstraat 11, Amersfoort')
+            ->assertSet('form.location_place_id', 'ChIJ-fluor')
+            ->assertSet('form.location_latitude', 52.1561)
+            ->assertSet('form.location_longitude', 5.3878);
+    }
+
+    public function test_default_location_can_be_replaced(): void
+    {
+        $user = User::factory()->organizer()->create();
+        Activity::factory()->for($user)->create([
+            'location_name' => 'Podium Fluor',
+            'location_place_id' => 'ChIJ-fluor',
+            'location_latitude' => 52.1561,
+            'location_longitude' => 5.3878,
+        ]);
+
+        Livewire::actingAs($user)
+            ->test('pages::agenda.create')
+            ->set('form.title', 'Jazz op de Hof')
+            ->set('form.description', '<p>Live jazz</p>')
+            ->set('form.category', ActivityCategory::MUSIC->value)
+            ->set('form.starts_at', '20:00')
+            ->set('form.location_name', 'De Kelder')
+            ->set('form.location_address', 'Kleine Koppel 3, Amersfoort')
+            ->set('form.location_place_id', 'ChIJ-kelder')
+            ->set('form.location_latitude', 52.1601)
+            ->set('form.location_longitude', 5.3801)
+            ->call('submit')
+            ->assertHasNoErrors();
+
+        $activity = $user->activities()->latest('id')->first();
+
+        $this->assertSame('De Kelder', $activity->location_name);
+        $this->assertSame('ChIJ-kelder', $activity->location_place_id);
+        $this->assertSame(52.1601, $activity->location_latitude);
+    }
+
+    public function test_location_is_empty_without_earlier_activities(): void
+    {
+        Livewire::actingAs(User::factory()->organizer()->create())
+            ->test('pages::agenda.create')
+            ->assertSet('form.location_name', '')
+            ->assertSet('form.location_address', '')
+            ->assertSet('form.location_latitude', null);
+    }
+
+    public function test_form_asks_for_a_single_date(): void
+    {
+        $this->actingAs(User::factory()->organizer()->create())
+            ->get(route('agenda.create'))
+            ->assertOk()
+            ->assertSee('Datum')
+            ->assertDontSee('Begindatum')
+            ->assertDontSee('Einddatum')
+            ->assertSee('grid__col l:grid__col--span-6', false)
+            ->assertSee('grid__col l:grid__col--span-3', false);
     }
 
     public function test_activity_is_created_with_a_poster_in_a4_proportions(): void
@@ -210,6 +273,29 @@ class CreateTest extends TestCase
             ->assertHasErrors(['form.title', 'form.description', 'form.category', 'form.starts_at', 'form.location_name']);
 
         $this->assertSame(0, Activity::count());
+    }
+
+    public function test_browse_button_is_shown_until_a_poster_is_uploaded(): void
+    {
+        Livewire::actingAs(User::factory()->organizer()->create())
+            ->test('pages::agenda.create')
+            ->assertSee(__('ui.browse'))
+            ->assertDontSee(__('agenda/form.poster.remove'))
+            ->set('poster', UploadedFile::fake()->image('poster.jpg', 800, 1000))
+            ->assertSee(__('agenda/form.poster.remove'))
+            ->assertDontSee(__('ui.browse'));
+    }
+
+    public function test_uploaded_poster_can_be_removed(): void
+    {
+        $this->validForm()
+            ->call('removePoster')
+            ->assertSet('poster', null)
+            ->assertSee(__('ui.browse'))
+            ->call('submit')
+            ->assertHasNoErrors();
+
+        $this->assertNull(Activity::sole()->poster_path);
     }
 
     public function test_poster_must_be_an_image(): void
@@ -273,29 +359,27 @@ class CreateTest extends TestCase
             ->assertHasErrors('form.starts_on');
     }
 
-    public function test_end_date_cannot_be_before_start_date(): void
+    public function test_end_time_must_differ_from_start_time(): void
     {
         $this->validForm()
-            ->set('form.ends_on', today()->format('Y-m-d'))
-            ->call('submit')
-            ->assertHasErrors('form.ends_on');
-    }
-
-    public function test_same_day_end_time_must_be_after_start_time(): void
-    {
-        $this->validForm()
-            ->set('form.ends_at', '19:00')
+            ->set('form.ends_at', '20:00')
             ->call('submit')
             ->assertHasErrors('form.ends_at');
     }
 
-    public function test_end_time_may_be_earlier_when_activity_ends_the_next_day(): void
+    public function test_end_time_before_start_time_ends_the_next_day(): void
     {
         $this->validForm()
-            ->set('form.ends_on', today()->addWeek()->addDay()->format('Y-m-d'))
+            ->set('form.starts_at', '23:00')
             ->set('form.ends_at', '04:00')
             ->call('submit')
             ->assertHasNoErrors();
+
+        $activity = Activity::sole();
+
+        $this->assertSame(today()->addWeek()->format('Y-m-d'), $activity->starts_on->format('Y-m-d'));
+        $this->assertSame(today()->addWeek()->addDay()->format('Y-m-d'), $activity->ends_on->format('Y-m-d'));
+        $this->assertFalse($activity->is_multi_day);
     }
 
     public function test_end_time_is_optional(): void
@@ -305,7 +389,10 @@ class CreateTest extends TestCase
             ->call('submit')
             ->assertHasNoErrors();
 
-        $this->assertNull(Activity::sole()->ends_at);
+        $activity = Activity::sole();
+
+        $this->assertNull($activity->ends_at);
+        $this->assertTrue($activity->starts_on->isSameDay($activity->ends_on));
     }
 
     public function test_negative_price_is_rejected(): void

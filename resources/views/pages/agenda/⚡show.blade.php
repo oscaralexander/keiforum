@@ -151,7 +151,6 @@ new class extends Component
     <x-schema :data="$this->schema" />
     <x-header
         agenda
-        contrast
         :path="[
             ['label' => __('agenda/index.title'), 'href' => route('agenda')],
             ['label' => $activity->category->label(), 'href' => route('agenda.category', $activity->category->value)],
@@ -207,18 +206,13 @@ new class extends Component
                 </div>
             </dl>
         </x-slot>
-        <x-slot:actions>
-            @can('update', $activity)
-                <x-btn class="m:hide" :href="$activity->editUrl()" icon="pencil" small>@lang('ui.edit')</x-btn>
-                <x-btn class="m:show" :href="$activity->editUrl()" icon="pencil">@lang('ui.edit')</x-btn>
-            @endcan
-        </x-slot:actions>
     </x-header>
     <div class="wrapper">
-        <div class="activityPage">
-            <div class="activityPage__main">
+        <div class="sidebarLayout">
+            <div class="sidebarLayout__main">
                 <livewire:replies :activity="$activity" :topic="$activity->topic" wire:key="replies-{{ $activity->id }}">
                     <div class="panel__body">
+                        <x-activity-organizer class="activityOrganizer--panel panel__outset panel__outset--padded m:hide" :user="$activity->user" />
                         <div class="activity__main">
                             @unless ($activity->published_at?->isPast())
                                 <x-callout icon="circle-alert" :text="e(__('agenda/show.unpublished'))" />
@@ -278,13 +272,14 @@ new class extends Component
                     @endif
                 </livewire:replies>
             </div>
-            <div class="activityPage__side">
-                Door<br>
-                CLUB PAAP
-                <a class="activity__organizerLarge m:show" href="{{ route('agenda.user', $activity->user) }}" title="{{ $activity->user->organizer_name }}" wire:navigate>
-                    <x-avatar img-only :size="AvatarSize::L" :user="$activity->user" />
-                </a>
-            </div>
+            <aside class="sidebarLayout__side">
+                @can('update', $activity)
+                    <div>
+                        <x-btn :href="$activity->editUrl()" icon="pencil" large primary>@lang('ui.edit')</x-btn>
+                    </div>
+                @endcan
+                <x-activity-organizer class="m:show" :user="$activity->user" />
+            </aside>
         </div>
     </div>
 </div>

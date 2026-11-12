@@ -93,8 +93,45 @@ class HomeForumPanelsTest extends TestCase
         $this->assertSame($newest->pluck('id')->all(), $memberIds);
 
         Livewire::test('pages::index')
-            ->assertSeeInOrder([$newest->first()->username, $newest->first()->created_at->translatedFormat('j M Y')]);
+            ->assertSeeInOrder([$newest->first()->username, __('home.joined.today')]);
         $this->assertNotContains($oldest->id, $memberIds);
+    }
+
+    public function test_newest_members_show_recent_join_dates_in_words(): void
+    {
+        $this->travelTo(now()->setTime(12, 0));
+
+        $members = collect([
+            'today' => now()->startOfDay(),
+            'yesterday' => now()->subDay()->endOfDay(),
+            'day_before_yesterday' => now()->subDays(2)->startOfDay(),
+        ])->map(fn ($createdAt) => User::factory()->create(['created_at' => $createdAt]));
+        $older = User::factory()->create(['created_at' => now()->subDays(3)->endOfDay()]);
+
+        Livewire::test('community-sidebar')
+            ->assertSeeInOrder([
+                $members['today']->username, 'Vandaag',
+                $members['yesterday']->username, 'Gisteren',
+                $members['day_before_yesterday']->username, 'Eergisteren',
+                $older->username, $older->created_at->translatedFormat('j M Y'),
+            ]);
+    }
+
+    public function test_newest_members_show_their_area_instead_of_the_date_to_logged_in_members(): void
+    {
+        $area = Area::create(['name' => 'Soesterkwartier', 'slug' => 'soesterkwartier']);
+        $withArea = User::factory()->create(['area_id' => $area->id, 'created_at' => now()]);
+        $withoutArea = User::factory()->create(['area_id' => null, 'created_at' => now()->subDay()]);
+
+        Livewire::test('community-sidebar')
+            ->assertSeeInOrder([$withArea->username, 'Vandaag', $withoutArea->username, 'Gisteren'])
+            ->assertDontSee('Soesterkwartier');
+
+        Livewire::actingAs(User::factory()->create(['created_at' => now()->subWeek()]))
+            ->test('community-sidebar')
+            ->assertSeeInOrder([$withArea->username, 'Soesterkwartier', $withoutArea->username, '—'])
+            ->assertDontSee('Vandaag')
+            ->assertDontSee('Gisteren');
     }
 
     public function test_home_page_shows_five_upcoming_published_activities_in_order(): void

@@ -34,9 +34,7 @@ new class extends Component
 ?>
 
 <div>
-    <x-header
-        center
-        hide-path
+    <x-header-simple
         :intro="__($user->is_subscribed_to_digest ? 'user/unsubscribe_digest.subscribed_text' : 'user/unsubscribe_digest.unsubscribed_text')"
         :title="__('user/unsubscribe_digest.title')"
     />

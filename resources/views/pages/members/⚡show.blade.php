@@ -66,10 +66,17 @@ new class extends Component
 
 <div>
     <x-header
-        contrast
         :path="[['label' => __('members/index.title'), 'href' => route('members')]]"
         :title="$user->username"
-    />
+    >
+        <x-slot:cta>
+            @auth
+                @if ($user->id !== auth()->id())
+                    <x-btn icon="send" large primary wire:click="$dispatch('openModal', { component: 'messages.message-modal', arguments: { username: '{{ $user->username }}' } })">@lang('ui.private_message')</x-btn>
+                @endif
+            @endauth
+        </x-slot:cta>
+    </x-header>
     <div class="wrapper">
         <div class="panel panel--padded">
             <div class="profile">
@@ -96,15 +103,12 @@ new class extends Component
                                             @endif
                                         </ul>
                                     </div>
-                                    <div class="profile__header-actions">
-                                        @if ($user->id === auth()->id())
+                                    @if ($user->id === auth()->id())
+                                        <div class="profile__header-actions">
                                             <x-btn class="m:hide" :href="route('profile')" icon="pencil" primary small>@lang('ui.edit')</x-btn>
                                             <x-btn class="m:show" :href="route('profile')" icon="pencil" primary>@lang('ui.edit')</x-btn>
-                                        @else
-                                            <x-btn class="m:hide" icon="send" primary small wire:click="$dispatch('openModal', { component: 'messages.message-modal', arguments: { username: '{{ $user->username }}' } })">@lang('ui.private_message')</x-btn>
-                                            <x-btn class="m:show" icon="send" primary wire:click="$dispatch('openModal', { component: 'messages.message-modal', arguments: { username: '{{ $user->username }}' } })">@lang('ui.private_message')</x-btn>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="text-color-lc">Details alleen zichtbaar voor leden.</div>
                                 @endauth

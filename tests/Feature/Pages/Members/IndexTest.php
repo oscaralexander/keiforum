@@ -23,7 +23,7 @@ class IndexTest extends TestCase
         User::factory()->count(3)->create();
 
         Livewire::test('pages::members.index')
-            ->assertSee('Al 3 Amersfoorters praten mee op Keiforum.');
+            ->assertSee('Al 3 Amersfoorters op Keiforum!');
     }
 
     public function test_intro_uses_singular_for_one_member(): void
@@ -31,7 +31,7 @@ class IndexTest extends TestCase
         User::factory()->create();
 
         Livewire::test('pages::members.index')
-            ->assertSee('Al 1 Amersfoorter praat mee op Keiforum.');
+            ->assertSee('Al 1 Amersfoorter op Keiforum!');
     }
 
     public function test_intro_invites_the_first_member_when_there_are_none(): void

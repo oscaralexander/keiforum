@@ -1,0 +1,28 @@
+@use '@css/mixins' as *;
+@use '@css/vars' as *;
+
+.grid {
+    display: grid;
+    gap: var(--size-m);
+    grid-template-columns: repeat($grid-columns, minmax(0, 1fr));
+
+    &__col {
+        grid-column: span $grid-columns;
+
+        @for $i from 1 through $grid-columns {
+            &--span-#{$i} {
+                grid-column: span $i;
+            }
+        }
+    }
+}
+
+@each $screen, $width in $screens {
+    @include screen-min($screen) {
+        @for $i from 1 through $grid-columns {
+            .#{$screen}\:grid__col--span-#{$i} {
+                grid-column: span $i;
+            }
+        }
+    }
+}

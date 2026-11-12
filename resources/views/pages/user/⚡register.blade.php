@@ -115,16 +115,14 @@ new class extends Component
 
 <div>
     @if ($activationEmailSent)
-        <x-header center hide-path :title="__('user/register.activation_email_sent_title')" />
+        <x-header-simple :title="__('user/register.activation_email_sent_title')" />
         <x-callout
             icon="mail"
             success
             :text="__('user/register.activation_email_sent_text')"
         />
     @else
-        <x-header
-            center
-            hide-path
+        <x-header-simple
             :intro="__('user/register.text', ['login_url' => route('login')])"
             :title="__('user/register.title')"
         />

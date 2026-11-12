@@ -35,4 +35,25 @@ class HeaderCtaTest extends TestCase
             ->assertSee('header--cta', false)
             ->assertSee('btn--large', false);
     }
+
+    public function test_header_always_uses_contrast_theme(): void
+    {
+        $html = (string) $this->blade('<x-header title="Titel" />');
+
+        $this->assertMatchesRegularExpression('/<header\s+class="contrast header"/', $html);
+    }
+
+    public function test_path_is_outside_the_header_text(): void
+    {
+        $html = (string) $this->blade('<x-header title="Titel" />');
+
+        $this->assertMatchesRegularExpression('#<div class="header__path">\s*<ul class="path">.*</ul>\s*</div>\s*<div class="header__text">#s', $html);
+    }
+
+    public function test_hidden_path_is_not_rendered(): void
+    {
+        $html = (string) $this->blade('<x-header hide-path title="Titel" />');
+
+        $this->assertStringNotContainsString('header__path', $html);
+    }
 }

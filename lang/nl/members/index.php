@@ -2,7 +2,7 @@
 
 return [
     'title' => 'Leden',
-    'intro' => '{0} Nog niemand is lid. Word jij de eerste Amersfoorter op Keiforum?|{1} Al :count Amersfoorter praat mee op Keiforum. Kom jij erbij?|[2,*] Al :count Amersfoorters praten mee op Keiforum. Kom jij erbij?',
+    'intro' => '{0} Nog niemand is lid. Word jij de eerste Amersfoorter op Keiforum?|{1} Al :count Amersfoorter op Keiforum.|[2,*] Al :count Amersfoorters op Keiforum.',
     'new_members' => [
         'title' => 'Nieuwste leden',
     ],

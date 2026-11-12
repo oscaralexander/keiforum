@@ -43,16 +43,14 @@ new class extends Component
 
 <div>
     @if ($resetEmailSent)
-        <x-header center hide-path :title="__('user/forgot_password.reset_email_sent_title')" />
+        <x-header-simple :title="__('user/forgot_password.reset_email_sent_title')" />
         <x-callout
             icon="mail"
             success
             :text="__('user/forgot_password.reset_email_sent_text')"
         />
     @else
-        <x-header
-            center
-            hide-path
+        <x-header-simple
             :intro="__('user/forgot_password.text', ['login_url' => route('login')])"
             :title="__('user/forgot_password.title')"
         />

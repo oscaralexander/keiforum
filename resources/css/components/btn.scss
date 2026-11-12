@@ -126,26 +126,30 @@
         box-shadow: none;
     }
 
-    &--danger,
+    &--danger {
+        background: var(--color-bad-tint);
+        border-color: transparent;
+        box-shadow: none;
+        color: var(--color-bad);
+
+        &:hover {
+            background: var(--color-bad-tint-hover);
+            border-color: transparent;
+            color: var(--color-bad);
+        }
+    }
+
     &--good {
-        background: var(--btn-variant-color);
-        border-color: var(--btn-variant-color);
+        background: var(--color-good);
+        border-color: var(--color-good);
         box-shadow: none;
         color: #fff;
 
         &:hover {
-            background: color-mix(in srgb, var(--btn-variant-color) 85%, #000);
-            border-color: color-mix(in srgb, var(--btn-variant-color) 85%, #000);
+            background: color-mix(in srgb, var(--color-good) 85%, #000);
+            border-color: color-mix(in srgb, var(--color-good) 85%, #000);
             color: #fff;
         }
-    }
-
-    &--danger {
-        --btn-variant-color: var(--color-bad);
-    }
-
-    &--good {
-        --btn-variant-color: var(--color-good);
     }
 
     &--icon {
@@ -163,7 +167,7 @@
     &--primary {
         background: var(--btn-primary-color-bg);
         border-color: var(--btn-primary-color-border);
-        box-shadow: 0 .125rem .125rem rgba(var(--color-1-rgb), .15);
+        box-shadow: var(--btn-primary-shadow);
         color: var(--btn-primary-color);
 
         &:hover {

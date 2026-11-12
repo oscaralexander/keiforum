@@ -1,17 +1,53 @@
 @use '@css/mixins' as *;
 
-.activityPage {
-    display: grid;
-    gap: var(--size-xxl);
-    grid-template-columns: repeat(4, 1fr);
+.activityOrganizer {
+    align-items: center;
+    display: flex;
+    gap: var(--size-m);
+    min-width: 0;
 
-    &__main {
-        grid-column: 1 / 4;
+    // Above the description on mobile, with a border to the edges of the panel.
+    &--panel {
+        border-bottom: 1px solid var(--color-border-lc);
+        margin-bottom: var(--panel-padding-y);
+        padding-bottom: var(--panel-padding-y);
     }
 
-    &__side {
-        grid-column: 4;
-        padding-top: var(--size-xxl);
+    &__text {
+        display: flex;
+        flex-direction: column;
+        gap: .125rem;
+        min-width: 0;
+
+        > * {
+            margin: 0;
+        }
+    }
+
+    &__label {
+        color: var(--color-text-lc);
+        font-size: var(--fontSize-s);
+        font-weight: 400;
+    }
+
+    &__name {
+        font-size: var(--fontSize-l);
+        line-height: var(--lineHeight-m);
+
+        a {
+            text-decoration: none;
+        }
+    }
+
+    &__username {
+        font-size: var(--fontSize-s);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        a {
+            color: var(--color-text-lc);
+        }
     }
 }
 
@@ -41,9 +77,37 @@
         border: 1px solid var(--color-border-lc);
     }
 
-    .icon {
+    > .icon {
         height: 2rem;
         width: 2rem;
+    }
+}
+
+.activityPosterInput {
+    position: relative;
+
+    &__empty {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        gap: var(--size-m);
+
+        > .icon {
+            height: 2rem;
+            width: 2rem;
+        }
+    }
+
+    /**
+     * Sticks out of the top right corner of the poster by half its size.
+     */
+    &__remove.btn {
+        border-radius: 50%;
+        position: absolute;
+        right: 0;
+        top: 0;
+        transform: translate(50%, -50%);
+        z-index: 1;
     }
 }
 
@@ -144,6 +208,13 @@
         padding-top: var(--size-m);
     }
 
+    &__date {
+        color: rgb(from var(--color-1) r g b / .5);
+        font-weight: 500;
+        // Parkinsans has a narrow space.
+        margin-left: .1em;
+    }
+
     &__activities {
         display: grid;
         gap: var(--size-l) var(--size-m);
@@ -154,7 +225,7 @@
         }
 
         @include screen-min(m) {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(5, minmax(0, 1fr));
         }
     }
 }
@@ -163,10 +234,6 @@
     display: grid;
     gap: var(--size-xl);
     grid-template-columns: minmax(0, 1fr);
-
-    &__organizerLarge {
-        display: block;
-    }
 
     &__poster {
         max-width: 24rem;
@@ -180,7 +247,6 @@
     }
 
     &__description {
-        font-size: var(--fontSize-l);
         line-height: var(--lineHeight-l);
         max-width: 32ch;
     }
@@ -193,14 +259,14 @@
     &__details {
         display: flex;
         flex-direction: column;
-        gap: var(--size-s);
+        gap: var(--size-m);
         min-width: 0;
     }
 
     &__detail {
         align-items: center;
         display: flex;
-        gap: var(--size-s);
+        gap: .75rem;
         line-height: var(--lineHeight-l);
 
         dt {
@@ -268,6 +334,10 @@
             flex: 1;
             gap: .75em;
         }
+
+        &__description {
+            font-size: var(--fontSize-l);
+        }
     }
 }
 
@@ -315,19 +385,19 @@
     &__poster {
         max-width: 16rem;
 
+        .field {
+            gap: var(--size-m);
+        }
+
+        // Framed like the inputs next to it.
         .activityPoster {
-            margin-bottom: var(--size-s);
+            border: 1px solid var(--input-border-color);
+            border-radius: var(--borderRadius-m);
         }
     }
 
     &__fields {
         min-width: 0;
-    }
-
-    &__row {
-        display: grid;
-        gap: var(--size-m);
-        grid-template-columns: repeat(2, 1fr);
     }
 
     &__location {

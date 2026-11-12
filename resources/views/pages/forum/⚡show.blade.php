@@ -58,7 +58,7 @@ new class extends Component
 
 <div>
     <x-header
-        contrast
+        hide-path
         :home="__('nav.forums')"
         :intro="$forum->description"
         :title="$forum->name"
@@ -72,38 +72,44 @@ new class extends Component
     <div class="wrapper">
         <div class="sidebarLayout">
             <div class="sidebarLayout__main flex flex-col flex-gap-l">
-                @if ($forum->is_marketplace)
-                    <ul class="flex flex-gap-s">
-                        @foreach (AdType::options() as $value => $label)
-                            <li>
-                                <label class="chip" for="ad-type-{{ $value }}">
-                                    <input
-                                        id="ad-type-{{ $value }}"
-                                        type="checkbox"
-                                        value="{{ $value }}"
-                                        wire:model.live="adTypes"
-                                    />
-                                    <x-icon icon="check" />
-                                    {{ $label }}
-                                </label>
-                            </li>
-                        @endforeach
-                    </ul>
-                @endif
-                @if ($this->topics->isNotEmpty())
-                    <div class="panel">
+                <div class="panel">
+                    @if ($forum->is_marketplace)
+                        <div class="panel__body">
+                            <ul class="flex flex-gap-s flex-wrap">
+                                @foreach (AdType::options() as $value => $label)
+                                    <li wire:key="ad-type-filter-{{ $value }}">
+                                        <label class="chip" for="ad-type-{{ $value }}">
+                                            <input
+                                                id="ad-type-{{ $value }}"
+                                                type="checkbox"
+                                                value="{{ $value }}"
+                                                wire:model.live="adTypes"
+                                            />
+                                            <x-icon icon="check" />
+                                            {{ $label }}
+                                        </label>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    @if ($this->topics->isNotEmpty())
                         <ul class="topicList">
                             @foreach ($this->topics as $topic)
                                 <x-topic-list-item :topic="$topic" wire:key="topic-{{ $topic->id }}" />
                             @endforeach
                         </ul>
-                    </div>
-                    {{ $this->topics->links() }}
-                @else
-                    <div class="panel panel--padded">
-                        <p>@lang('forum/show.no_topics')</p>
-                    </div>
-                @endif
+                    @else
+                        <div class="panel__body">
+                            <p>@lang('forum/show.no_topics')</p>
+                        </div>
+                    @endif
+                    @if ($this->topics->hasPages())
+                        <div class="panel__body">
+                            {{ $this->topics->links() }}
+                        </div>
+                    @endif
+                </div>
                 <livewire:online-members />
             </div>
             <livewire:community-sidebar />

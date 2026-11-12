@@ -36,9 +36,9 @@ new class extends Component
 
 <div>
     @if ($isConfirmed)
-        <x-header center hide-path :intro="__('user/confirm_email_change.success_text')" :title="__('user/confirm_email_change.success_title')" />
+        <x-header-simple :intro="__('user/confirm_email_change.success_text')" :title="__('user/confirm_email_change.success_title')" />
     @else
-        <x-header center hide-path :intro="__('user/confirm_email_change.error_text')" :title="__('user/confirm_email_change.error_title')" />
+        <x-header-simple :intro="__('user/confirm_email_change.error_text')" :title="__('user/confirm_email_change.error_title')" />
     @endif
     <div class="flex flex-justify-center">
         <x-btn :href="route('home')" navigate primary>@lang('user/confirm_email_change.btn_home')</x-btn>

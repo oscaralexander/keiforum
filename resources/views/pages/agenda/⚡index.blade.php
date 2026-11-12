@@ -181,15 +181,14 @@ new class extends Component
 
 <div>
     <x-header
-        contrast
         :hide-path="! $user && ! $category"
+        :intro="! $user && ! $category ? __('agenda/index.intro') : null"
         :path="[['label' => __('agenda/index.title'), 'href' => route('agenda')]]"
         :title="$this->title"
     >
-        <x-slot:actions>
-            <x-btn class="m:hide" :href="route('agenda.create')" icon="plus" primary :rel="auth()->guest() ? 'nofollow' : null" small>@lang('agenda/index.create')</x-btn>
-            <x-btn class="m:show" :href="route('agenda.create')" icon="plus" primary :rel="auth()->guest() ? 'nofollow' : null">@lang('agenda/index.create')</x-btn>
-        </x-slot:actions>
+        <x-slot:cta>
+            <x-btn :href="route('agenda.create')" icon="plus" large primary :rel="auth()->guest() ? 'nofollow' : null">@lang('agenda/index.create')</x-btn>
+        </x-slot:cta>
     </x-header>
     <div class="wrapper">
         <div class="panel panel--padded">
@@ -213,8 +212,8 @@ new class extends Component
                 </div>
                 @forelse ($this->activitiesByDay as $day => $dayActivities)
                     <section class="agendaDay" wire:key="day-{{ $day }}">
-                        <h2 class="agendaDay__title">
-                            {{ $this->dayName($day) }} <span class="text-color-lc">{{ $this->dayDate($day) }}</span>
+                        <h2 class="agendaDay__title panel__outset panel__outset--padded">
+                            {{ $this->dayName($day) }} <span class="agendaDay__date">{{ $this->dayDate($day) }}</span>
                         </h2>
                         <div class="agendaDay__activities">
                             @foreach ($dayActivities as $activity)

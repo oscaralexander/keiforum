@@ -54,4 +54,37 @@
             opacity: .5;
         }
     }
+
+    &__submenu {
+        display: flex;
+        flex-direction: column;
+        padding-left: 1rem;
+
+        &-link {
+            align-items: center;
+            border-radius: var(--input-height);
+            display: flex;
+            font-weight: 500;
+            gap: var(--size-s);
+            height: var(--input-height);
+            padding: 0 1rem;
+            text-decoration: none;
+
+            svg {
+                flex: 0 0 1.25rem;
+                height: 1.25rem;
+                stroke-width: 2;
+            }
+
+            &:hover {
+                color: var(--color-link-hover);
+            }
+
+            &--active,
+            &--active:hover {
+                color: var(--color-1);
+                font-weight: 600;
+            }
+        }
+    }
 }

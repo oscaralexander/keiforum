@@ -49,7 +49,10 @@
     }
 
     @include screen-min(m) {
-        &__description,
+        &__description {
+            font-size: var(--fontSize-l);
+        }
+
         &__moreTopics {
             font-size: var(--fontSize-m);
         }

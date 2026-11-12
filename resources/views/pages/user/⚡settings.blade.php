@@ -103,7 +103,7 @@ new class extends Component
 ?>
 
 <div>
-    <x-header center hide-path :title="__('user/settings.title')" />
+    <x-header-simple :title="__('user/settings.title')" />
     <form class="flex flex-col flex-gap-xl" wire:submit="submit">
         @if ($emailChangeSentTo)
             <x-callout

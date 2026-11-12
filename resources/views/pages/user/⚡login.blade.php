@@ -67,9 +67,7 @@ new class extends Component
 ?>
 
 <div>
-    <x-header
-        center
-        hide-path
+    <x-header-simple
         :intro="__('user/login.text', ['register_url' => route('register')])"
         :title="__('user/login.title')"
     />

@@ -114,7 +114,7 @@ class IndexTest extends TestCase
 
         $this->actingAs(User::factory()->create())
             ->get(route('agenda'))
-            ->assertSeeInOrder(['class="header__actions"', route('agenda.create'), 'Nieuwe activiteit'], false);
+            ->assertSeeInOrder(['class="header__cta"', route('agenda.create'), 'Nieuwe activiteit'], false);
     }
 
     public function test_empty_agenda_shows_message(): void
@@ -192,7 +192,7 @@ class IndexTest extends TestCase
         Activity::factory()->create(['starts_on' => '2026-03-05', 'ends_on' => '2026-03-05']);
 
         $this->get(route('agenda'))
-            ->assertSee('Donderdag <span class="text-color-lc">5 maart</span>', false);
+            ->assertSee('Donderdag <span class="agendaDay__date">5 maart</span>', false);
     }
 
     public function test_day_headers_show_the_year_when_it_is_not_the_current_year(): void
@@ -202,8 +202,8 @@ class IndexTest extends TestCase
         Activity::factory()->create(['starts_on' => '2027-01-02', 'ends_on' => '2027-01-02']);
 
         $this->get(route('agenda'))
-            ->assertSee(__('agenda/index.tomorrow').' <span class="text-color-lc">31 december</span>', false)
-            ->assertSee('Zaterdag <span class="text-color-lc">2 januari 2027</span>', false);
+            ->assertSee(__('agenda/index.tomorrow').' <span class="agendaDay__date">31 december</span>', false)
+            ->assertSee('Zaterdag <span class="agendaDay__date">2 januari 2027</span>', false);
     }
 
     public function test_agenda_shows_upcoming_activities_far_ahead(): void
@@ -238,7 +238,7 @@ class IndexTest extends TestCase
         $after = Activity::factory()->create(['starts_on' => '2026-11-12', 'ends_on' => '2026-11-12']);
 
         $this->get(route('agenda', ['vanaf' => '2026-11-06']))
-            ->assertSee('Donderdag <span class="text-color-lc">12 november</span>', false)
+            ->assertSee('Donderdag <span class="agendaDay__date">12 november</span>', false)
             ->assertSee($after->title)
             ->assertDontSee($before->title)
             ->assertSee(route('agenda'), false)
@@ -283,5 +283,21 @@ class IndexTest extends TestCase
 
         $this->get(route('agenda.category', ActivityCategory::DANCE->value))
             ->assertDontSee(__('agenda/index.next'));
+    }
+
+    public function test_agenda_header_has_intro_and_call_to_action(): void
+    {
+        $this->get(route('agenda'))
+            ->assertOk()
+            ->assertSee(__('agenda/index.intro'))
+            ->assertSee('header--cta', false)
+            ->assertSee('btn--large', false);
+    }
+
+    public function test_category_page_has_no_intro(): void
+    {
+        $this->get('/agenda/club')
+            ->assertOk()
+            ->assertDontSee(__('agenda/index.intro'));
     }
 }

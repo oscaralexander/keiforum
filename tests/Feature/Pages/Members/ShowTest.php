@@ -146,4 +146,32 @@ class ShowTest extends TestCase
 
         $this->assertFalse($user->refresh()->is_organizer);
     }
+
+    public function test_private_message_button_is_the_header_call_to_action(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs(User::factory()->create())
+            ->get(route('member.show', $user))
+            ->assertOk()
+            ->assertSeeInOrder(['class="header__cta"', 'messages.message-modal', __('ui.private_message'), '</header>'], false)
+            ->assertDontSee('profile__header-actions', false);
+    }
+
+    public function test_own_profile_and_guests_have_no_private_message_button(): void
+    {
+        $user = User::factory()->create();
+
+        $this->get(route('member.show', $user))
+            ->assertOk()
+            ->assertDontSee('header--cta', false)
+            ->assertDontSee('messages.message-modal', false);
+
+        $this->actingAs($user)
+            ->get(route('member.show', $user))
+            ->assertOk()
+            ->assertDontSee('header--cta', false)
+            ->assertDontSee('messages.message-modal', false)
+            ->assertSee(route('profile'));
+    }
 }

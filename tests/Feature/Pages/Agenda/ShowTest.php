@@ -164,6 +164,71 @@ class ShowTest extends TestCase
             ->assertSee($activity->editUrl());
     }
 
+    public function test_edit_button_is_not_in_the_header(): void
+    {
+        $activity = Activity::factory()->create();
+
+        $html = $this->actingAs($activity->user)->get($activity->url())->assertOk()->getContent();
+        $header = substr($html, strpos($html, '<header'), strpos($html, '</header>') - strpos($html, '<header'));
+
+        $this->assertStringNotContainsString($activity->editUrl(), $header);
+        $this->assertStringNotContainsString('header__actions', $header);
+        $this->assertStringContainsString($activity->editUrl(), $html);
+    }
+
+    public function test_sidebar_shows_the_organizer_with_name_and_username(): void
+    {
+        $organizer = User::factory()->create(['name' => 'Club Paap', 'username' => 'clubpaap']);
+        $activity = Activity::factory()->for($organizer)->create();
+
+        $this->get($activity->url())
+            ->assertOk()
+            ->assertSeeInOrder([
+                'class="sidebarLayout__side"',
+                'class="activityOrganizer m:show"',
+                __('agenda/show.organized_by'),
+                route('member.show', $organizer),
+                'Club Paap</a>',
+                '@clubpaap</a>',
+            ], false);
+    }
+
+    public function test_organizer_is_above_the_description_on_mobile(): void
+    {
+        $activity = Activity::factory()->create(['description' => '<p>Beschrijving</p>']);
+
+        $this->get($activity->url())
+            ->assertOk()
+            ->assertSeeInOrder([
+                'class="activityOrganizer activityOrganizer--panel panel__outset panel__outset--padded m:hide"',
+                'class="activity__description formatted"',
+                'class="sidebarLayout__side"',
+            ], false);
+    }
+
+    public function test_poster_is_also_between_the_date_and_the_title_on_mobile(): void
+    {
+        $activity = Activity::factory()->create();
+
+        $this->get($activity->url())
+            ->assertOk()
+            ->assertSeeInOrder([
+                'class="header__date"',
+                'header__poster header__poster--mobile m:hide',
+                '<h1>',
+                'class="header__poster m:show"',
+            ], false);
+    }
+
+    public function test_edit_button_is_above_the_organizer(): void
+    {
+        $activity = Activity::factory()->create();
+
+        $this->actingAs($activity->user)
+            ->get($activity->url())
+            ->assertSeeInOrder(['class="sidebarLayout__side"', $activity->editUrl(), 'class="activityOrganizer m:show"'], false);
+    }
+
     public function test_admins_see_the_edit_button(): void
     {
         $activity = Activity::factory()->create();

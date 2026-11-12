@@ -6,6 +6,7 @@ return [
     'going_count' => ':count gaat|:count gaan',
     'location' => 'Locatie',
     'maybe_count' => ':count misschien|:count misschien',
+    'organized_by' => 'Georganiseerd door',
     'more_from' => 'Meer van :name',
     'price' => 'Entree',
     'time' => 'Tijd',

@@ -114,11 +114,19 @@ class CreateTest extends TestCase
             ->assertSee(route('topic.create', $openForum), false);
     }
 
-    public function test_create_page_has_contrast_header_and_wrapped_form(): void
+    public function test_create_page_shows_the_form_next_to_writing_tips(): void
     {
         $this->actingAs(User::factory()->create())
             ->get(route('topic.create'))
             ->assertOk()
-            ->assertSeeInOrder(['contrast', 'header', '<div class="wrapper">', '<div class="panel panel--padded">'], false);
+            ->assertSeeInOrder([
+                '<div class="wrapper">',
+                '<div class="sidebarLayout">',
+                '<div class="sidebarLayout__main panel panel--padded">',
+                '<aside class="sidebarLayout__side">',
+                e(__('topic/create.tips.title')),
+                e(__('topic/create.tips.items.0.title')),
+                e(__('topic/create.tips.items.3.title')),
+            ], false);
     }
 }

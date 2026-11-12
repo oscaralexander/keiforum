@@ -60,7 +60,6 @@ new class extends Component
 
 <div>
     <x-header
-        contrast
         hide-path
         :intro="trans_choice('members/index.intro', $this->totalMembers, ['count' => number_format($this->totalMembers, 0, ',', '.')])"
         :title="__('members/index.title')"

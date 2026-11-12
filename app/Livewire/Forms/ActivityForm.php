@@ -6,6 +6,7 @@ use App\Enums\ActivityCategory;
 use App\Lib\Image;
 use App\Models\Activity;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -23,8 +24,6 @@ class ActivityForm extends Form
     public string $category = '';
 
     public string $starts_on = '';
-
-    public string $ends_on = '';
 
     public string $starts_at = '';
 
@@ -68,7 +67,6 @@ class ActivityForm extends Form
                 'date_format:Y-m-d',
                 $this->starts_on !== $this->originalStartsOn ? 'after_or_equal:today' : null,
             ]),
-            'ends_on' => ['required', 'date_format:Y-m-d', 'after_or_equal:starts_on'],
             'starts_at' => ['required', 'date_format:H:i'],
             'ends_at' => ['nullable', 'date_format:H:i'],
             'location_name' => ['required', 'string', 'max:255'],
@@ -87,7 +85,6 @@ class ActivityForm extends Form
     protected function messages(): array
     {
         return [
-            'ends_on.after_or_equal' => __('agenda/form.ends_on.after_or_equal'),
             'starts_on.after_or_equal' => __('agenda/form.starts_on.after_or_equal'),
         ];
     }
@@ -98,27 +95,38 @@ class ActivityForm extends Form
         $this->description = $activity->description;
         $this->category = $activity->category->value;
         $this->starts_on = $activity->starts_on->format('Y-m-d');
-        $this->ends_on = $activity->ends_on->format('Y-m-d');
         $this->starts_at = $activity->starts_at_time;
         $this->ends_at = $activity->ends_at_time ?? '';
-        $this->location_name = $activity->location_name;
-        $this->location_address = $activity->location_address ?? '';
-        $this->location_place_id = $activity->location_place_id ?? '';
-        $this->location_latitude = $activity->location_latitude;
-        $this->location_longitude = $activity->location_longitude;
+        $this->fillLocationFromActivity($activity);
         $this->price = (string) ($activity->price / 100);
         $this->website_url = $activity->website_url ?? '';
         $this->originalStartsOn = $this->starts_on;
     }
 
     /**
-     * Keep the end date on the start date unless the user chose a later one.
+     * Take over the location of an earlier activity, as organizers mostly
+     * host their activities at the same place.
      */
-    public function syncEndDate(string $previousStartsOn): void
+    public function fillLocationFromActivity(Activity $activity): void
     {
-        if ($this->ends_on === '' || $this->ends_on === $previousStartsOn || $this->ends_on < $this->starts_on) {
-            $this->ends_on = $this->starts_on;
+        $this->location_name = $activity->location_name;
+        $this->location_address = $activity->location_address ?? '';
+        $this->location_place_id = $activity->location_place_id ?? '';
+        $this->location_latitude = $activity->location_latitude;
+        $this->location_longitude = $activity->location_longitude;
+    }
+
+    /**
+     * Activities last a single day, but an end time before the start time
+     * (a party from 23:00 until 04:00) ends on the next day.
+     */
+    public function endsOn(): string
+    {
+        if ($this->ends_at !== '' && $this->ends_at < $this->starts_at) {
+            return Carbon::parse($this->starts_on)->addDay()->format('Y-m-d');
         }
+
+        return $this->starts_on;
     }
 
     public function priceInCents(): int
@@ -127,7 +135,7 @@ class ActivityForm extends Form
     }
 
     /**
-     * Validate, including that a same-day activity ends after it starts.
+     * Validate, including that the end time differs from the start time.
      */
     public function validateActivity(): void
     {
@@ -135,7 +143,7 @@ class ActivityForm extends Form
 
         $this->validate();
 
-        if ($this->ends_at !== '' && $this->starts_on === $this->ends_on && $this->ends_at <= $this->starts_at) {
+        if ($this->ends_at !== '' && $this->ends_at === $this->starts_at) {
             throw ValidationException::withMessages([
                 'form.ends_at' => __('agenda/form.ends_at.after'),
             ]);
@@ -152,7 +160,7 @@ class ActivityForm extends Form
             'description' => $this->description,
             'category' => ActivityCategory::from($this->category),
             'starts_on' => $this->starts_on,
-            'ends_on' => $this->ends_on,
+            'ends_on' => $this->endsOn(),
             'starts_at' => $this->starts_at,
             'ends_at' => $this->ends_at ?: null,
             'location_name' => $this->location_name,
@@ -192,9 +200,10 @@ class ActivityForm extends Form
 
     /**
      * Save the changes, giving the activity a new slug when its title or
-     * start date changed and replacing the poster when a new one is given.
+     * start date changed. The poster is replaced when a new one is given, or
+     * deleted when it was removed without a new one.
      */
-    public function update(Activity $activity, ?string $posterPath): Activity
+    public function update(Activity $activity, ?string $posterPath, bool $isPosterRemoved = false): Activity
     {
         $activity->fill($this->attributes());
 
@@ -204,13 +213,13 @@ class ActivityForm extends Form
 
         $previousPosterPath = $activity->poster_path;
 
-        if ($posterPath) {
+        if ($posterPath || $isPosterRemoved) {
             $activity->poster_path = $posterPath;
         }
 
         $activity->save();
 
-        if ($posterPath && $previousPosterPath) {
+        if ($activity->poster_path !== $previousPosterPath && $previousPosterPath) {
             Storage::disk('public')->delete($previousPosterPath);
         }
 

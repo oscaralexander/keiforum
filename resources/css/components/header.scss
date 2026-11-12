@@ -1,23 +1,41 @@
 @use '@css/mixins' as *;
 
+/**
+ * Always rendered with the `.contrast` theme, which provides the colours.
+ */
 .header {
-    --color-link: rgb(from var(--color-1) r g b / .75);
-    --color-link-hover: var(--color-1);
-    --color-text: rgb(from var(--color-1) r g b / .75);
-    background: var(--color-bg-tint);
+    background: var(--color-1);
     color: var(--color-text);
     display: flex;
     flex-direction: column;
     gap: var(--size-m);
-    margin: 0 calc(var(--gutter-width) * -1) calc(var(--size-xl) * -1) calc(var(--gutter-width) * -1);
-    padding: var(--size-xxl) 0 calc(var(--size-xxl) + var(--size-xl));
+    // Lies over the content below, so the torn edge of the mask falls
+    // over it. `.panel` compensates for it on mobile.
+    margin-bottom: calc(var(--header-overlap) * -1);
+    position: relative;
+    z-index: 1;
+    mask:
+        linear-gradient(#000, #000) left top / 100% calc(100% - 5px) no-repeat,
+        url('@public/assets/img/lines/edge.svg') left bottom / 720px 5px repeat-x;
+    padding: var(--size-xl) 0 calc(var(--size-xl) + var(--header-overlap));
+
+    h1 {
+        color: #fff;
+    }
+
+    /**
+     * The mask turns the header into its own stacking layer, which
+     * would paint over the content that overlaps its bottom edge.
+     */
+    & + * {
+        position: relative;
+    }
 
     &__text {
         display: flex;
         flex: 1;
         flex-direction: column;
         gap: var(--size-l);
-        padding-left: var(--panel-padding-x);
 
         &-flex {
             display: flex;
@@ -27,15 +45,31 @@
         }
     }
 
+    /**
+     * Spans the full width above the text and the call to action, as
+     * close to the text as within `.header__text-flex`.
+     */
+    &__path {
+        margin-bottom: calc(var(--size-xs) - var(--size-m));
+    }
+
     &__titleIntro {
         display: flex;
         flex-direction: column;
-        gap: .75rem;
+        gap: .5rem;
+
+        @include screen-min(m) {
+            gap: .75rem;
+        }
     }
 
     &__intro {
-        font-size: var(--fontSize-l);
+        font-size: var(--fontSize-m);
         line-height: var(--lineHeight-l);
+
+        @include screen-min(m) {
+            font-size: var(--fontSize-l);
+        }
     }
 
     &__date {
@@ -87,6 +121,12 @@
         box-shadow: var(--boxShadow-m);
     }
 
+    &__poster--mobile {
+        align-self: center;
+        margin: var(--size-l) 0;
+        width: 75vw;
+    }
+
     &__actions {
         display: flex;
         gap: var(--size-m);
@@ -94,7 +134,6 @@
 
     &__cta {
         display: flex;
-        padding-left: var(--panel-padding-x);
     }
 
     /**
@@ -120,41 +159,25 @@
         gap: var(--size-m);
     }
 
-    &--center {
-        align-items: center;
-        text-align: center;
-
-        & > .wrapper {
-            align-items: center;
-        }
-    }
-
-    &.contrast {
-        mask:
-            linear-gradient(#000, #000) left top / 100% calc(100% - 5px) no-repeat,
-            url('@public/assets/img/lines/edge.svg') left bottom / 720px 5px repeat-x;
-
-        h1 {
-            color: #fff;
-        }
-
-        /**
-         * The mask turns the header into its own stacking layer, which
-         * would paint over the content that overlaps its bottom edge.
-         */
-        & + * {
-            position: relative;
-        }
-    }
-
     @include screen-min(m) {
         align-items: center;
         flex-direction: row;
         gap: var(--size-m);
+        // The content below overlaps the bottom of the header, and the
+        // header covers the gutters of its parent. Padding them back keeps
+        // its `.wrapper` as wide as the one below, so the columns line up.
+        margin: 0 calc(var(--gutter-width) * -1) calc(var(--size-xl) * -1);
+        padding: var(--size-xxl) var(--gutter-width) calc(var(--size-xxl) + var(--size-xl));
+        z-index: auto;
 
         & > .wrapper {
             align-items: center;
             flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        &__path {
+            flex: 0 0 100%;
         }
 
         /**
@@ -168,29 +191,40 @@
                 gap: var(--size-xl);
                 grid-template-columns: repeat(4, 1fr);
 
+                .header__path {
+                    grid-column: 1 / -1;
+                    margin-bottom: calc(var(--size-xs) - var(--size-xl));
+                }
+
                 .header__text {
                     grid-column: 1 / 4;
                 }
             }
         }
 
+        /**
+         * The text stretches to the height of the poster, so
+         * `.header__text-flex` pushes the details to the bottom.
+         */
+        &--agenda > .wrapper {
+            align-items: stretch;
+        }
+
         &--agenda .header__text h1 {
             font-size: var(--fontSize-4xl);
         }
 
+        // Lines the text up with the content of the panels below.
+        &__path,
+        &__text {
+            padding-left: var(--panel-padding-x);
+        }
+
         &__cta {
             grid-column: 4;
-            padding-left: 0;
 
             .btn {
                 width: 100%;
-            }
-        }
-
-        &--center {
-            .header__intro {
-                margin: 0 auto;
-                max-width: 75%;
             }
         }
 

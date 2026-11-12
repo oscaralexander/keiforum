@@ -1,6 +1,5 @@
 @props([
     'cancelHref',
-    'endsOnMin' => null,
     'posterUrl' => null,
     'submitLabel',
 ])
@@ -13,14 +12,28 @@
                 :label="__('agenda/form.poster.label')"
                 model="poster"
             >
-                <div @class(['activityPoster', 'activityPoster--placeholder' => ! $posterUrl])>
+                <div class="activityPosterInput">
+                    <div @class(['activityPoster', 'activityPoster--placeholder' => ! $posterUrl])>
+                        @if ($posterUrl)
+                            <img alt="" class="activityPoster__img" src="{{ $posterUrl }}">
+                        @else
+                            <div class="activityPosterInput__empty">
+                                <x-icon icon="image" />
+                                <x-input.upload accept="image/jpeg,image/png,image/webp" model="poster" />
+                            </div>
+                        @endif
+                    </div>
                     @if ($posterUrl)
-                        <img alt="" class="activityPoster__img" src="{{ $posterUrl }}">
-                    @else
-                        <x-icon icon="image" />
+                        <x-btn
+                            aria-label="{{ __('agenda/form.poster.remove') }}"
+                            class="activityPosterInput__remove"
+                            icon="x"
+                            small
+                            title="{{ __('agenda/form.poster.remove') }}"
+                            wire:click="removePoster"
+                        />
                     @endif
                 </div>
-                <x-input.upload accept="image/jpeg,image/png,image/webp" model="poster" />
             </x-field>
         </div>
         <div class="activityForm__fields flex flex-col flex-gap-xl">
@@ -36,19 +49,14 @@
                         required
                     />
                 </x-field>
-                <div class="activityForm__row">
-                    <x-field :label="__('agenda/form.starts_on.label')" model="form.starts_on">
-                        <x-input.text required type="date" wire:model.live="form.starts_on" />
+                <div class="grid">
+                    <x-field class="grid__col l:grid__col--span-6" :label="__('agenda/form.starts_on.label')" model="form.starts_on">
+                        <x-input.text model="form.starts_on" required type="date" />
                     </x-field>
-                    <x-field :label="__('agenda/form.starts_at.label')" model="form.starts_at">
+                    <x-field class="grid__col l:grid__col--span-3" :label="__('agenda/form.starts_at.label')" model="form.starts_at">
                         <x-input.text model="form.starts_at" required type="time" />
                     </x-field>
-                </div>
-                <div class="activityForm__row">
-                    <x-field :label="__('agenda/form.ends_on.label')" model="form.ends_on">
-                        <x-input.text :min="$endsOnMin" model="form.ends_on" required type="date" />
-                    </x-field>
-                    <x-field :label="__('agenda/form.ends_at.label')" model="form.ends_at">
+                    <x-field class="grid__col l:grid__col--span-3" :label="__('agenda/form.ends_at.label')" model="form.ends_at">
                         <x-input.text model="form.ends_at" type="time" />
                     </x-field>
                 </div>

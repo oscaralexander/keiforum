@@ -129,6 +129,55 @@ class EditTest extends TestCase
         Storage::disk('public')->assertMissing('posters/old.webp');
     }
 
+    public function test_removed_poster_is_deleted_on_save(): void
+    {
+        $activity = $this->activity(['poster_path' => 'posters/old.webp']);
+        Storage::disk('public')->put('posters/old.webp', 'poster');
+
+        Livewire::actingAs($activity->user)
+            ->test('pages::agenda.edit', ['user' => $activity->user, 'date' => '2099-10-14', 'slug' => $activity->slug])
+            ->assertSee(__('agenda/form.poster.remove'))
+            ->call('removePoster')
+            ->assertSee(__('ui.browse'))
+            ->call('submit')
+            ->assertHasNoErrors();
+
+        $this->assertNull($activity->refresh()->poster_path);
+        Storage::disk('public')->assertMissing('posters/old.webp');
+    }
+
+    public function test_removed_poster_can_be_replaced(): void
+    {
+        $activity = $this->activity(['poster_path' => 'posters/old.webp']);
+        Storage::disk('public')->put('posters/old.webp', 'poster');
+
+        Livewire::actingAs($activity->user)
+            ->test('pages::agenda.edit', ['user' => $activity->user, 'date' => '2099-10-14', 'slug' => $activity->slug])
+            ->call('removePoster')
+            ->set('poster', UploadedFile::fake()->image('poster.jpg', 800, 1000))
+            ->call('submit')
+            ->assertHasNoErrors();
+
+        $activity->refresh();
+
+        $this->assertNotNull($activity->poster_path);
+        Storage::disk('public')->assertExists($activity->poster_path);
+        Storage::disk('public')->assertMissing('posters/old.webp');
+    }
+
+    public function test_removing_the_poster_is_undone_without_saving(): void
+    {
+        $activity = $this->activity(['poster_path' => 'posters/old.webp']);
+        Storage::disk('public')->put('posters/old.webp', 'poster');
+
+        Livewire::actingAs($activity->user)
+            ->test('pages::agenda.edit', ['user' => $activity->user, 'date' => '2099-10-14', 'slug' => $activity->slug])
+            ->call('removePoster');
+
+        $this->assertSame('posters/old.webp', $activity->refresh()->poster_path);
+        Storage::disk('public')->assertExists('posters/old.webp');
+    }
+
     public function test_changing_the_title_and_date_moves_the_activity_to_a_new_url(): void
     {
         $activity = $this->activity();
@@ -145,6 +194,19 @@ class EditTest extends TestCase
         $this->assertSame('blues-op-de-hof', $activity->slug);
         $this->assertSame('2099-10-15', $activity->ends_on->format('Y-m-d'));
         $component->assertRedirect(url('/agenda/@'.$activity->user->username.'/2099-10-15/blues-op-de-hof'));
+    }
+
+    public function test_end_time_before_start_time_moves_the_end_date_to_the_next_day(): void
+    {
+        $activity = $this->activity();
+
+        Livewire::actingAs($activity->user)
+            ->test('pages::agenda.edit', ['user' => $activity->user, 'date' => '2099-10-14', 'slug' => $activity->slug])
+            ->set('form.ends_at', '02:00')
+            ->call('submit')
+            ->assertHasNoErrors();
+
+        $this->assertSame('2099-10-15', $activity->refresh()->ends_on->format('Y-m-d'));
     }
 
     public function test_slug_stays_unique_among_the_users_activities(): void
@@ -169,16 +231,21 @@ class EditTest extends TestCase
     {
         $activity = $this->activity([
             'starts_on' => today()->subDay(),
-            'ends_on' => today()->addDay(),
+            'ends_on' => today(),
+            'starts_at' => '23:00',
+            'ends_at' => '04:00',
         ]);
 
         Livewire::actingAs($activity->user)
             ->test('pages::agenda.edit', ['user' => $activity->user, 'date' => today()->subDay()->format('Y-m-d'), 'slug' => $activity->slug])
-            ->set('form.title', 'Jazzweekend')
+            ->set('form.title', 'Jazznacht')
             ->call('submit')
             ->assertHasNoErrors();
 
-        $this->assertSame('Jazzweekend', $activity->refresh()->title);
+        $activity->refresh();
+
+        $this->assertSame('Jazznacht', $activity->title);
+        $this->assertTrue($activity->ends_on->isToday());
     }
 
     public function test_start_date_cannot_be_moved_into_the_past(): void

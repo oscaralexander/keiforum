@@ -104,7 +104,7 @@ new class extends Component
 
 <div>
     <x-schema :data="$this->schema" />
-    <x-header contrast hide-path :intro="__('home.intro')" :title="$title">
+    <x-header hide-path :intro="__('home.intro')" :title="$title">
         <x-slot:cta>
             <x-btn :href="route('topic.create')" icon="plus" large primary :rel="auth()->guest() ? 'nofollow' : null">@lang('forum/show.new_topic')</x-btn>
         </x-slot:cta>

@@ -1,3 +1,5 @@
+@use '@css/mixins' as *;
+
 .headerMeta {
     color: var(--color-text);
     display: flex;
@@ -8,17 +10,28 @@
         align-items: center;
         display: flex;
         flex-wrap: wrap;
-        font-size: var(--fontSize-l);
+        font-size: var(--fontSize-m);
         gap: .35em;
+        // Same line height as `.header__intro`, so the header keeps its
+        // height when navigating between pages with an intro or meta.
+        line-height: var(--lineHeight-l);
 
         a {
             text-decoration: none;
         }
+
+        @include screen-min(m) {
+            font-size: var(--fontSize-l);
+        }
     }
 
     &__icon {
-        flex: 0 0 1.25rem;
-        height: 1.25rem;
-        width: 1.25rem;
+        // Solid colour faded with opacity: a semi-transparent stroke colour
+        // shows the overlapping paths of the icon.
+        color: var(--color-text-hc);
+        flex: 0 0 1.125em;
+        height: 1.125em;
+        opacity: .75;
+        width: 1.125em;
     }
 }

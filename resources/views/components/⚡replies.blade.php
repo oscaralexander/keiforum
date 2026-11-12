@@ -195,8 +195,12 @@ new class extends Component
                 </p>
             @endauth
         </section>
+        @if ($this->posts->hasPages())
+            <div class="panel__body">
+                {{ $this->posts->links() }}
+            </div>
+        @endif
     </div>
-    {{ $this->posts->links() }}
     @script
         <script>
             const params = new URLSearchParams(window.location.search);

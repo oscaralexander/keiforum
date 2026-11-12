@@ -1,0 +1,15 @@
+.headerSimple {
+    --color-link: rgb(from var(--color-1) r g b / .75);
+    --color-link-hover: var(--color-1);
+    color: rgb(from var(--color-1) r g b / .75);
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    margin-bottom: var(--size-xl);
+    text-align: center;
+
+    &__intro {
+        font-size: var(--fontSize-l);
+        line-height: var(--lineHeight-l);
+    }
+}

@@ -1,6 +1,7 @@
 @blaze(memo: true)
 
 @props([
+    'forumLinks' => [],
     'reportedPostsCount' => 0,
 ])
 
@@ -37,6 +38,25 @@
                     href="{{ route('home') }}"
                     wire:navigate
                 >@lang('nav.forums')</a>
+                @if (!empty($forumLinks))
+                    <ul class="mobileMenu__submenu">
+                        @foreach ($forumLinks as $forumLink)
+                            <li>
+                                <a
+                                    @class([
+                                        'mobileMenu__submenu-link',
+                                        'mobileMenu__submenu-link--active' => $forumLink['isActive'],
+                                    ])
+                                    href="{{ $forumLink['url'] }}"
+                                    wire:navigate
+                                >
+                                    <x-icon :icon="$forumLink['icon']" />
+                                    {{ $forumLink['name'] }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
             </li>
             <li class="mobileMenu__menu-item">
                 <a

@@ -8,6 +8,7 @@ return [
     'all' => 'Alles',
     'back_to_today' => 'Terug naar vandaag',
     'create' => 'Nieuwe activiteit',
+    'intro' => 'De plakzuil van Amersfoort.',
     'empty' => 'Er staan geen activiteiten op de agenda.',
     'next' => 'Volgende',
     'pages' => 'Pagina’s',

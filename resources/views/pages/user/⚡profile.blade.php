@@ -146,7 +146,7 @@ new class extends Component
 ?>
 
 <div>
-    <x-header center hide-path :title="__('user/profile.title')" />
+    <x-header-simple :title="__('user/profile.title')" />
     <form class="flex flex-col flex-gap-xl" wire:submit="submit">
         <fieldset class="flex flex-col flex-gap-l">
             <div class="flex flex-align-center flex-gap-l">

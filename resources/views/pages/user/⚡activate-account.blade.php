@@ -81,10 +81,8 @@ new class extends Component
 
 <div>
     @if ($success)
-        <x-header
-            center
+        <x-header-simple
             :intro="__('user/activate_account.success_text')"
-            hide-path
             :title="__('user/activate_account.success_title')"
         />
         <div class="flex flex-gap-s flex-justify-center">
@@ -92,20 +90,16 @@ new class extends Component
             <x-btn href="{{ route('profile') }}">@lang('user/activate_account.btn_profile')</x-btn>
         </div>
     @elseif ($isValidToken)
-        <x-header
-            center
+        <x-header-simple
             :intro="__('user/activate_account.confirm_text')"
-            hide-path
             :title="__('user/activate_account.confirm_title')"
         />
         <div class="flex flex-gap-s flex-justify-center">
             <x-btn primary wire:click="activate">@lang('user/activate_account.btn_confirm')</x-btn>
         </div>
     @else
-        <x-header
-            center
+        <x-header-simple
             :intro="__('user/activate_account.error_text')"
-            hide-path
             :title="__('user/activate_account.error_title')"
         />
         <div class="flex flex-gap-s flex-justify-center">

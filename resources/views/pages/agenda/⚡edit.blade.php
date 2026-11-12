@@ -19,10 +19,9 @@ new class extends Component
     public $poster;
 
     /**
-     * The start date before the user changed it, to tell whether the end
-     * date still followed it.
+     * Whether the current poster should be deleted when the changes are saved.
      */
-    protected ?string $previousStartsOn = null;
+    public bool $isPosterRemoved = false;
 
     public function mount(User $user, string $date, string $slug): void
     {
@@ -43,14 +42,11 @@ new class extends Component
             ->title(__('agenda/edit.title'));
     }
 
-    public function updatingFormStartsOn(string $value): void
+    public function removePoster(): void
     {
-        $this->previousStartsOn = $this->form->starts_on;
-    }
-
-    public function updatedFormStartsOn(): void
-    {
-        $this->form->syncEndDate($this->previousStartsOn ?? '');
+        $this->poster = null;
+        $this->isPosterRemoved = true;
+        $this->resetValidation('poster');
     }
 
     public function updatedPoster(): void
@@ -78,6 +74,7 @@ new class extends Component
         $activity = $this->form->update(
             $this->activity,
             $this->poster ? $this->form->storePoster($this->poster) : null,
+            $this->isPosterRemoved,
         );
 
         $this->redirect($activity->url());
@@ -113,27 +110,28 @@ new class extends Component
         ]"
         :title="__('agenda/edit.title')"
     />
-    <div class="panel panel--padded">
-        <x-activity-form
-            :cancel-href="$activity->url()"
-            :ends-on-min="$form->starts_on"
-            :poster-url="match (true) {
-                $poster && ! $errors->has('poster') => $poster->temporaryUrl(),
-                (bool) $activity->poster_path => route('img', ['src' => $activity->poster_path, 'w' => 620, 'h' => 877, 'q' => 85]),
-                default => null,
-            }"
-            :submit-label="__('ui.save')"
-        >
-            @can('delete', $activity)
-                <x-slot:secondary-actions>
-                    <x-btn
-                        danger
-                        icon="trash"
-                        wire:click="delete"
-                        wire:confirm="{{ __('agenda/edit.confirm_delete') }}"
-                    >@lang('ui.delete')</x-btn>
-                </x-slot:secondary-actions>
-            @endcan
-        </x-activity-form>
+    <div class="wrapper">
+        <div class="panel panel--padded">
+            <x-activity-form
+                :cancel-href="$activity->url()"
+                :poster-url="match (true) {
+                    $poster && ! $errors->has('poster') => $poster->temporaryUrl(),
+                    $activity->poster_path && ! $isPosterRemoved => route('img', ['src' => $activity->poster_path, 'w' => 620, 'h' => 877, 'q' => 85]),
+                    default => null,
+                }"
+                :submit-label="__('ui.save')"
+            >
+                @can('delete', $activity)
+                    <x-slot:secondary-actions>
+                        <x-btn
+                            danger
+                            icon="trash"
+                            wire:click="delete"
+                            wire:confirm="{{ __('agenda/edit.confirm_delete') }}"
+                        >@lang('ui.delete')</x-btn>
+                    </x-slot:secondary-actions>
+                @endcan
+            </x-activity-form>
+        </div>
     </div>
 </div>

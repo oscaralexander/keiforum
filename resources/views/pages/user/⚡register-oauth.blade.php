@@ -142,9 +142,7 @@ new class extends Component
 ?>
 
 <div>
-    <x-header
-        center
-        hide-path
+    <x-header-simple
         :intro="__('user/register-oauth.text')"
         :title="__('user/register-oauth.title')"
     />

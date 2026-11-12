@@ -5,6 +5,19 @@
 @php
     $reportedPostsCount = 0;
 
+    /** @var list<array{icon: string, isActive: bool, name: string, url: string}> $forumLinks */
+    $forumLinks = \App\Models\Forum::query()
+        ->listed()
+        ->orderBy('position')
+        ->get()
+        ->map(fn (\App\Models\Forum $forum): array => [
+            'icon' => $forum->icon,
+            'isActive' => request()->route('forum') instanceof \App\Models\Forum && request()->route('forum')->is($forum),
+            'name' => $forum->name,
+            'url' => route('forum.show', $forum),
+        ])
+        ->all();
+
     if (auth()->check() && auth()->user()->is_admin) {
         $reportedPostsCount = \App\Models\Post::query()->whereHas('reports')->count();
     }
@@ -23,7 +36,7 @@
         x-transition.opacity.duration.250ms
     ></div>
     <div class="nav__mobileMenu" id="navMobileMenu">
-        <x-mobile-menu :reported-posts-count="$reportedPostsCount" />
+        <x-mobile-menu :forum-links="$forumLinks" :reported-posts-count="$reportedPostsCount" />
     </div>
     <div class="nav__menuToggleLogo">
         <button
@@ -51,7 +64,7 @@
                 $isUsers = request()->is('@*') || request()->is('leden*');
                 $isForums = !$isAgenda && !$isAdmin && !$isUsers && !$isConversations;
             @endphp
-            <li class="nav__menu-item">
+            <li class="nav__menu-item nav__menu-item--dropdown">
                 <a
                     @class([
                         'nav__menu-link',
@@ -60,6 +73,16 @@
                     href="{{ route('home') }}"
                     wire:navigate
                 >@lang('nav.forums')</a>
+                <ul class="nav__dropdown nav__dropdown--left">
+                    @foreach ($forumLinks as $forumLink)
+                        <li>
+                            <a class="nav__dropdown-link" href="{{ $forumLink['url'] }}" wire:navigate>
+                                <x-icon :icon="$forumLink['icon']" />
+                                {{ $forumLink['name'] }}
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
             </li>
             <li class="nav__menu-item">
                 <a
@@ -148,27 +171,26 @@
                     <img alt="" src="{{ auth()->user()->avatarUrl(size: AvatarSize::S->value) }}" />
                 </button>
                 <ul
-                    class="nav__user-menu"
+                    class="nav__dropdown nav__dropdown--right"
                     id="navUserMenu"
-                    x-cloak
-                    x-show="isMenuOpen"
+                    x-bind:class="{ 'is-open': isMenuOpen }"
                 >
-                    <li class="nav__user-menu-item">
-                        <a class="nav__user-menu-link" href="{{ route('profile') }}">
+                    <li>
+                        <a class="nav__dropdown-link" href="{{ route('profile') }}">
                             <x-icon icon="user" />
                             Profiel
                         </a>
                     </li>
-                    <li class="nav__user-menu-item">
-                        <a class="nav__user-menu-link" href="{{ route('settings') }}">
+                    <li>
+                        <a class="nav__dropdown-link" href="{{ route('settings') }}">
                             <x-icon icon="settings" />
                             @lang('user/settings.title')
                         </a>
                     </li>
-                    <li class="nav__user-menu-item">
+                    <li>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
-                            <button class="nav__user-menu-link" type="submit">
+                            <button class="nav__dropdown-link" type="submit">
                                 <x-icon icon="log-out" />
                                 @lang('ui.logout')
                             </button>

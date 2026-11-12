@@ -16,6 +16,31 @@ class ShowTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_pagination_is_at_the_bottom_of_the_posts_panel(): void
+    {
+        [$forum, $topic] = $this->createTopicWithPost();
+        Post::factory()->count(Post::PAGINATE_COUNT)->create(['topic_id' => $topic->id]);
+
+        $this->get(route('topic.show', [$forum, $topic, $topic->slug]))
+            ->assertOk()
+            ->assertSeeInOrder([
+                '<div class="panel">',
+                'id="reageren"',
+                '</section>',
+                '<div class="panel__body">',
+                '<nav class="pagination"',
+            ], false);
+    }
+
+    public function test_single_page_topic_has_no_pagination(): void
+    {
+        [$forum, $topic] = $this->createTopicWithPost();
+
+        $this->get(route('topic.show', [$forum, $topic, $topic->slug]))
+            ->assertOk()
+            ->assertDontSee('class="pagination"', false);
+    }
+
     private function createTopicWithPost(): array
     {
         $forum = Forum::factory()->create();

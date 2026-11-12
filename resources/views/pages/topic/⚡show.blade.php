@@ -175,7 +175,6 @@ new class extends Component
         <x-schema :data="$this->schema" />
     @endif
     <x-header
-        contrast
         :home="__('nav.forums')"
         :path="[
             ['label' => $topic->forum->name, 'href' => route('forum.show', $topic->forum)],
