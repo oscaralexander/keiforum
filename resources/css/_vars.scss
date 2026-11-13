@@ -53,7 +53,6 @@ $sizes: (
     /* Layout */
     --gutter-width: 1.25rem;
     --nav-padding-left: calc(var(--gutter-width) - 10px);
-    --header-overlap: 4px;
     --panel-padding-x: 1.25rem;
     --panel-padding-y: 2rem;
 
@@ -87,7 +86,6 @@ $sizes: (
     --btn-primary-color-bg-hover: #dd4433;
     --btn-primary-color-border: var(--color-1);
     --btn-primary-color-border-hover: #dd4433;
-    --btn-primary-shadow: 0 .125rem .125rem rgba(var(--color-1-rgb), .15);
 
     /* Duration */
     --duration-s: 125ms;
@@ -95,7 +93,7 @@ $sizes: (
     --duration-l: 500ms;
 
     /* Font */
-    --font-1: system-ui, sans-serif;
+    --font-1: 'Lato', system-ui, sans-serif;
     --font-2: 'Parkinsans', system-ui, sans-serif;
 
     /* Font size */
@@ -131,8 +129,8 @@ $sizes: (
 
     /* Line height */
     --lineHeight-s: 1;
-    --lineHeight-m: 1.25;
-    --lineHeight-l: 1.5;
+    --lineHeight-m: 1.3;
+    --lineHeight-l: 1.6;
 
     /* breakpoint */
     @each $key, $value in $screens {
@@ -150,7 +148,7 @@ $sizes: (
         --panel-padding-x: 1.5rem;
         --panel-padding-y: 2rem;
 
-        --fontSize-xxl: 1.75rem;
+        --fontSize-xxl: 2rem;
         --fontSize-3xl: 3rem;
         --fontSize-4xl: 4.5rem;
     }
@@ -177,10 +175,9 @@ $sizes: (
     --btn-color-border-hover: #fff;
 
     --btn-primary-color: var(--color-1);
-    --btn-primary-color-hover: #191919; // --color-link-hover outside .contrast
+    --btn-primary-color-hover: var(--color-1);
     --btn-primary-color-bg: #fff;
-    --btn-primary-color-bg-hover: #fff;
+    --btn-primary-color-bg-hover: rgba(255, 255, 255, .9);
     --btn-primary-color-border: #fff;
-    --btn-primary-color-border-hover: #fff;
-    --btn-primary-shadow: 0 .125rem .125rem rgb(0 0 0 / 15%);
+    --btn-primary-color-border-hover: rgba(255, 255, 255, .9);
 }
