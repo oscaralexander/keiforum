@@ -1,6 +1,9 @@
 .formatted {
     line-height: var(--lineHeight-l);
     max-width: 65ch;
+    // Breaks long links and words that would push out the layout. Unlike
+    // `break-word`, `anywhere` also lets flex and grid items shrink past them.
+    overflow-wrap: anywhere;
     text-wrap: pretty;
 
     b, strong {

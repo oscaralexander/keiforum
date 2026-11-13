@@ -110,9 +110,9 @@ new class extends Component
                         </div>
                     @endif
                 </div>
-                <livewire:online-members />
             </div>
             <livewire:community-sidebar />
         </div>
+        <livewire:online-members />
     </div>
 </div>

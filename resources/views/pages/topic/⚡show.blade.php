@@ -188,7 +188,7 @@ new class extends Component
             </div>
             <div class="headerMeta__item">
                 <x-icon class="headerMeta__icon" icon="pencil" />
-                <time datetime="{{ $topic->created_at->toDateString() }}">{{ $topic->created_at->translatedFormat('j M Y') }}</time>
+                <time datetime="{{ $topic->created_at->toDateString() }}">{{ $topic->created_at->translatedFormat($topic->created_at->isCurrentYear() ? 'j M' : 'j M Y') }}</time>
             </div>
             @if ($topic->areas->isNotEmpty())
                 <x-header.area-list :areas="$topic->areas" />
@@ -225,7 +225,6 @@ new class extends Component
                     <livewire:poll :topic="$topic" wire:key="poll-{{ $topic->id }}" />
                 @endif
                 <livewire:replies :topic="$topic" wire:key="replies-{{ $topic->id }}" />
-                <livewire:online-members />
             </div>
             <aside class="sidebarLayout__side">
                 @if ($this->mostActiveMembers->isNotEmpty())
@@ -248,5 +247,6 @@ new class extends Component
                 @endif
             </aside>
         </div>
+        <livewire:online-members />
     </div>
 </div>

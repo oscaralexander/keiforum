@@ -42,6 +42,10 @@
         margin-right: calc(var(--panel-padding-x) * -1);
         // Compensates for the header lying over it.
         padding-top: var(--header-overlap);
+
+        &--padded {
+            padding-top: calc(var(--panel-padding-y) + var(--header-overlap));
+        }
     }
 
     @include screen-min(m) {

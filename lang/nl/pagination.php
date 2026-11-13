@@ -1,8 +1,9 @@
 <?php
 
 return [
-    'go_to_page' => 'Ga naar pagina :page',
+    'first' => 'Eerste pagina',
+    'last' => 'Laatste pagina',
     'next' => 'Volgende pagina',
-    'pagination' => 'Pagina :page van :lastPage &middot; :total resultaten',
+    'page' => 'Pagina :page van :lastPage',
     'previous' => 'Vorige pagina',
 ];

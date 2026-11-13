@@ -17,7 +17,7 @@
     mask:
         linear-gradient(#000, #000) left top / 100% calc(100% - 5px) no-repeat,
         url('@public/assets/img/lines/edge.svg') left bottom / 720px 5px repeat-x;
-    padding: var(--size-xl) 0 calc(var(--size-xl) + var(--header-overlap));
+    padding: 2.5rem 0 calc(2.5rem + var(--header-overlap)); // Between `--size-xl` and `--size-xxl`
 
     h1 {
         color: #fff;
@@ -45,18 +45,14 @@
         }
     }
 
-    /**
-     * Spans the full width above the text and the call to action, as
-     * close to the text as within `.header__text-flex`.
-     */
     &__path {
-        margin-bottom: calc(var(--size-xs) - var(--size-m));
+        margin-bottom: var(--size-s);
     }
 
     &__titleIntro {
         display: flex;
         flex-direction: column;
-        gap: .5rem;
+        gap: var(--size-s);
 
         @include screen-min(m) {
             gap: .75rem;
@@ -141,37 +137,33 @@
      * (`btn--large`) size from the desktop layout up.
      */
     @include screen-max(m) {
-        &__cta .btn {
-            font-size: var(--fontSize-s);
-            height: var(--btn-height-s);
-            padding: 1px 1em;
+        &__cta {
+            margin-top: var(--size-l);
 
-            svg {
-                flex: 0 0 1rem;
-                height: 1rem;
+            .btn {
+                font-size: var(--fontSize-s);
+                height: var(--btn-height-s);
+                padding: 1px 1em;
+
+                svg {
+                    flex: 0 0 1rem;
+                    height: 1rem;
+                }
             }
         }
-    }
-
-    & > .wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: var(--size-m);
     }
 
     @include screen-min(m) {
         align-items: center;
         flex-direction: row;
         gap: var(--size-m);
-        // The content below overlaps the bottom of the header, and the
-        // header covers the gutters of its parent. Padding them back keeps
-        // its `.wrapper` as wide as the one below, so the columns line up.
         margin: 0 calc(var(--gutter-width) * -1) calc(var(--size-xl) * -1);
         padding: var(--size-xxl) var(--gutter-width) calc(var(--size-xxl) + var(--size-xl));
         z-index: auto;
 
         & > .wrapper {
             align-items: center;
+            display: flex;
             flex-direction: row;
             flex-wrap: wrap;
         }

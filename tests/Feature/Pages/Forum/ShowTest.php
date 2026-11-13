@@ -57,6 +57,43 @@ class ShowTest extends TestCase
             ], false);
     }
 
+    public function test_pagination_links_to_the_first_previous_next_and_last_page(): void
+    {
+        $forum = Forum::factory()->create(['id' => 999]);
+        Topic::factory()->for($forum)->count(Topic::PAGINATE_COUNT * 2 + 1)->create()
+            ->each(fn (Topic $topic) => Post::factory()->for($topic)->create());
+
+        $this->get(route('forum.show', $forum).'?p=2')
+            ->assertOk()
+            ->assertSeeInOrder([
+                'aria-label="'.__('pagination.first').'"', 'p=1', '#arrow-left-to-line',
+                'aria-label="'.__('pagination.previous').'"', 'p=1', '#arrow-left',
+                'Pagina 2 van 3',
+                'aria-label="'.__('pagination.next').'"', 'p=3', '#arrow-right',
+                'aria-label="'.__('pagination.last').'"', 'p=3', '#arrow-right-to-line',
+            ], false)
+            ->assertDontSee('resultaten');
+    }
+
+    public function test_pagination_disables_the_buttons_at_the_ends(): void
+    {
+        $forum = Forum::factory()->create(['id' => 999]);
+        Topic::factory()->for($forum)->count(Topic::PAGINATE_COUNT + 1)->create()
+            ->each(fn (Topic $topic) => Post::factory()->for($topic)->create());
+
+        $this->get(route('forum.show', $forum))
+            ->assertSee('Pagina 1 van 2')
+            ->assertDontSee('aria-label="'.__('pagination.first').'"', false)
+            ->assertDontSee('aria-label="'.__('pagination.previous').'"', false)
+            ->assertSee('aria-label="'.__('pagination.last').'"', false);
+
+        $this->get(route('forum.show', $forum).'?p=2')
+            ->assertSee('Pagina 2 van 2')
+            ->assertSee('aria-label="'.__('pagination.first').'"', false)
+            ->assertDontSee('aria-label="'.__('pagination.next').'"', false)
+            ->assertDontSee('aria-label="'.__('pagination.last').'"', false);
+    }
+
     public function test_header_has_no_path(): void
     {
         $forum = Forum::factory()->create(['id' => 999]);

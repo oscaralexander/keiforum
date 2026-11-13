@@ -71,4 +71,15 @@ class OnlineMembersTest extends TestCase
         $this->get(route('forum.show', $topic->forum))->assertOk()->assertSeeLivewire('online-members');
         $this->get(route('topic.show', [$topic->forum, $topic, $topic->slug]))->assertOk()->assertSeeLivewire('online-members');
     }
+
+    public function test_online_members_are_listed_below_the_sidebar(): void
+    {
+        User::factory()->create(['last_seen_at' => now()]);
+        $topic = Topic::factory()->create();
+        Post::factory()->create(['topic_id' => $topic->id]);
+
+        foreach ([route('home'), route('forum.show', $topic->forum), route('topic.show', [$topic->forum, $topic, $topic->slug])] as $url) {
+            $this->get($url)->assertSeeInOrder(['class="sidebarLayout__side"', 'class="onlineMembers"'], false);
+        }
+    }
 }

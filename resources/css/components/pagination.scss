@@ -5,7 +5,12 @@
     color: var(--color-text-lc);
     display: flex;
     font-size: var(--fontSize-s);
+    gap: var(--size-s);
     justify-content: space-between;
+
+    &__summary {
+        text-align: center;
+    }
 
     &__list {
         align-items: center;
@@ -25,9 +30,9 @@
         cursor: pointer;
         display: flex;
         font-weight: 500;
-        height: var(--btn-height-s);
+        height: var(--btn-height);
         justify-content: center;
-        min-width: var(--btn-height-s);
+        min-width: var(--btn-height);
         outline: var(--btn-outline);
         outline-offset: 2px;
         padding: 1px 0;
@@ -85,11 +90,6 @@
 
     @include screen-min(m) {
         font-size: var(--fontSize-m);
-
-        &__link {
-            height: var(--btn-height);
-            min-width: var(--btn-height);
-        }
     }
 }
 

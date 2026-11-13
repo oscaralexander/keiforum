@@ -17,7 +17,7 @@
         gap: var(--size-m);
 
         &+& {
-            padding-top: calc(var(--size-s) + 4px);
+            padding-top: calc(var(--size-m) + 4px);
             position: relative;
 
             &::before {

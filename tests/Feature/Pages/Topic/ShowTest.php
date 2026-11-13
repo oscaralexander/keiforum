@@ -259,13 +259,13 @@ class ShowTest extends TestCase
     public function test_header_shows_starter_date_and_area_in_order(): void
     {
         [, $topic] = $this->createTopicWithPost();
-        $topic->update(['created_at' => '2026-10-07 12:00:00']);
+        $topic->update(['created_at' => now()->setDate(now()->year - 1, 10, 7)]);
         $area = Area::query()->create(['name' => 'Testwijk', 'slug' => 'testwijk']);
         $topic->areas()->attach($area);
 
         Livewire::test('pages::topic.show', ['topic' => $topic->fresh()])
             ->assertSeeHtml('href="'.route('member.show', $topic->user).'"')
-            ->assertSeeInOrder([$topic->user->username, '7 okt 2026', 'Testwijk']);
+            ->assertSeeInOrder([$topic->user->username, '7 okt '.(now()->year - 1), 'Testwijk']);
     }
 
     public function test_header_shows_starter_and_date_without_area(): void
@@ -274,9 +274,28 @@ class ShowTest extends TestCase
 
         Livewire::test('pages::topic.show', ['topic' => $topic])
             ->assertSee($topic->user->username)
-            ->assertSee($topic->created_at->translatedFormat('j M Y'))
+            ->assertSee($topic->created_at->translatedFormat('j M'))
             ->assertSeeHtml('#pencil')
             ->assertDontSeeHtml('#map-pin');
+    }
+
+    public function test_header_date_leaves_out_the_current_year(): void
+    {
+        [, $topic] = $this->createTopicWithPost();
+        $topic->update(['created_at' => now()->setDate(now()->year, 4, 1)]);
+
+        Livewire::test('pages::topic.show', ['topic' => $topic->fresh()])
+            ->assertSeeHtml('>1 apr</time>')
+            ->assertDontSeeHtml('>1 apr '.now()->year.'</time>');
+    }
+
+    public function test_header_date_shows_the_year_for_earlier_years(): void
+    {
+        [, $topic] = $this->createTopicWithPost();
+        $topic->update(['created_at' => now()->setDate(now()->year - 1, 4, 1)]);
+
+        Livewire::test('pages::topic.show', ['topic' => $topic->fresh()])
+            ->assertSeeHtml('>1 apr '.(now()->year - 1).'</time>');
     }
 
     public function test_sidebar_lists_most_active_members_by_post_count(): void

@@ -117,9 +117,9 @@ new class extends Component
                         <x-forum-list-item :$forum wire:key="forum-{{ $forum->id }}" />
                     @endforeach
                 </div>
-                <livewire:online-members />
             </div>
             <livewire:community-sidebar />
         </div>
+        <livewire:online-members />
     </div>
 </div>
