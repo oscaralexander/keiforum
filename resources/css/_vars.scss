@@ -131,8 +131,8 @@ $sizes: (
 
     /* Line height */
     --lineHeight-s: 1;
-    --lineHeight-m: 1.25;
-    --lineHeight-l: 1.5;
+    --lineHeight-m: 1.3;
+    --lineHeight-l: 1.6;
 
     /* breakpoint */
     @each $key, $value in $screens {
