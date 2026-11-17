@@ -60,16 +60,11 @@ h2 {
     margin: 0;
 }
 
-h3 {
+h3, h4 {
     color: var(--color-text-hc);
     font-size: var(--fontSize-m);
     font-weight: 600;
-}
-
-h4 {
-    color: var(--color-text-hc);
-    font-size: var(--fontSize-m);
-    font-weight: 600;
+    line-height: var(--lineHeight-m);
 }
 
 img {
