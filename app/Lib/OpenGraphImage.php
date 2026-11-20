@@ -27,7 +27,7 @@ class OpenGraphImage
     /**
      * Bump to regenerate all images after changing the design.
      */
-    public const VERSION = 1;
+    public const VERSION = 2;
 
     public const CACHE_ROOT = 'og/topics';
 
@@ -41,9 +41,9 @@ class OpenGraphImage
 
     private const TITLE_Y = 152;
 
-    private const TITLE_FONT_SIZE = 48;
+    private const TITLE_FONT_SIZE = 56;
 
-    private const TITLE_LINE_HEIGHT = 60;
+    private const TITLE_LINE_HEIGHT = 70;
 
     private const TITLE_MAX_LINES = 5;
 
@@ -220,7 +220,7 @@ class OpenGraphImage
 
     private function titleFont(): string
     {
-        return resource_path('fonts/og/Parkinsans-Bold.ttf');
+        return resource_path('fonts/og/BricolageGrotesque-Bold.ttf');
     }
 
     /**
