@@ -34,4 +34,12 @@ class HeaderSimpleTest extends TestCase
                 ->assertDontSee('class="contrast header', false);
         }
     }
+
+    public function test_simple_layout_shows_the_logo_as_a_mask(): void
+    {
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertSee('<span aria-label="Keiforum" class="logo__mask" role="img"></span>', false)
+            ->assertDontSee('logo__image', false);
+    }
 }

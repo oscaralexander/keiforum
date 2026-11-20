@@ -29,8 +29,7 @@
         <div class="page page--simple">
             <div class="page__logo">
                 <a href="{{ route('home') }}" class="logo">
-                    <span class="logo__icon"></span>
-                    <span class="logo__name">Keiforum</span>
+                    <span aria-label="Keiforum" class="logo__mask" role="img"></span>
                 </a>
             </div>
             <div class="page__visual">

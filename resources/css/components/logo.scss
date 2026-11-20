@@ -6,36 +6,24 @@
     flex: 0 0 auto;
     text-decoration: none;
 
-    &__icon {
-        background: currentColor;
-        mask-image: url('@public/assets/img/keiforum-mask.svg');
-        mask-repeat: no-repeat;
-        mask-position: center;
-        mask-size: contain;
-        aspect-ratio: 1 / 1;
+    &__image {
+        display: block;
         height: 2rem;
+        width: auto;
     }
 
-    &__name {
-        font-family: var(--font-2);
-        font-size: var(--fontSize-l);
-        font-weight: 600;
-        margin-left: .5em;
-        transition: transform var(--duration-m);
-    }
-
-    &:active,
-    &:hover {
-        color: var(--color-link);
+    &__mask {
+        aspect-ratio: 1132 / 320;
+        background: currentColor;
+        display: block;
+        height: 2rem;
+        mask: url('@public/assets/img/keiforum-mask.svg') no-repeat center / contain;
     }
 
     @include screen-min(m) {
-        &__icon {
+        &__image,
+        &__mask {
             height: 2.5rem;
-        }
-
-        &__name {
-            font-size: var(--fontSize-xl);
         }
     }
 }

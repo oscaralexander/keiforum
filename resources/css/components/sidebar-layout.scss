@@ -17,19 +17,8 @@
         gap: var(--size-m);
 
         &+& {
-            padding-top: calc(var(--size-m) + 4px);
-            position: relative;
-
-            &::before {
-                background: rgb(from var(--color-1) r g b / .5);
-                content: '';
-                height: 4px;
-                left: 0;
-                mask: url('@public/assets/img/lines/line-2.svg') no-repeat 0 0 / 100% 100%;
-                position: absolute;
-                right: 0;
-                top: 0;
-            }
+            border-top: 1px solid rgb(from var(--color-1) r g b / .5);
+            padding-top: var(--size-m);
         }
     }
 

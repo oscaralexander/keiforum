@@ -46,8 +46,7 @@
             display: flex;
             align-items: center;
             height: var(--nav-height);
-            // Lines the logo up with the main nav, where the menu toggle precedes it below m
-            padding: 0 var(--gutter-width) 0 calc(var(--nav-padding-left) + var(--btn-height) + var(--size-s));
+            padding: 0 var(--gutter-width);
             position: absolute;
             left: 0;
             top: 0;

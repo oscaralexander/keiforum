@@ -35,6 +35,14 @@ class NavTest extends TestCase
         }
     }
 
+    public function test_logo_shows_the_full_keiforum_logo(): void
+    {
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('class="logo__image" src="'.versioned_asset('assets/img/keiforum.svg').'"', false)
+            ->assertDontSee('logo__name', false);
+    }
+
     public function test_guests_do_not_see_settings_link(): void
     {
         $this->get(route('home'))

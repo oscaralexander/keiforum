@@ -51,8 +51,7 @@
             <div></div>
         </button>
         <a href="{{ route('home') }}" class="logo" wire:navigate>
-            <img alt="Keiforum logo" class="logo__icon" src="{{ asset('assets/img/keiforum.svg') }}">
-            <span class="logo__name">Keiforum</span>
+            <img alt="Keiforum" class="logo__image" src="{{ versioned_asset('assets/img/keiforum.svg') }}">
         </a>
     </div>
     <div class="nav__menuSearch">
